@@ -1,14 +1,7 @@
 <template>
     <div class="profile-page">
         <section class="section-profile-cover section-shaped my-0">
-            <div class="shape shape-style-1 shape-primary shape-skew alpha-4">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="shape shape-login">
             </div>
         </section>
         <section class="section section-skew">
@@ -54,6 +47,7 @@
                             <div class="h6 mt-4"><i class="ni business_briefcase-24 mr-2"></i>Solution Manager - Creative Tim Officer</div>
                             <div><i class="ni education_hat mr-2"></i>University of Computer Science</div>
                         </div>
+                        <!-- <calendar/> -->
                         <div class="mt-5 py-5 border-top text-center">
                             <div class="row justify-content-center">
                                 <div class="col-lg-9">
@@ -69,7 +63,14 @@
     </div>
 </template>
 <script>
-export default {};
+// import Calendar from "./user/Calendar.vue";
+export default {
+    // components: {
+        // Calendar
+    // },
+};
 </script>
 <style>
+
+
 </style>
