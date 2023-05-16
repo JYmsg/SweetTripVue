@@ -50,12 +50,12 @@
                 </template>
             </modal>
         </div> -->
-        <!-- <div class="col-md-4">
-            <base-button block type="default" class=" mb-3" @click="modals.modal3 = true">
+        <div class="col-md-4">
+            <base-button block type="default" class=" mb-3" @click="login = true">
                 Form
-            </base-button> -->
+            </base-button>
 
-            <modal :show.sync="showModal"
+            <modal :show.sync="login"
                    body-classes="p-0"
                    modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow
@@ -103,15 +103,17 @@
                     </template>
                 </card>
             </modal>
-        <!-- </div> -->
+        </div>
     <!-- </div> -->
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
+
 export default {
   components: {
     Modal
-  },
+    },
+  props : ['login'],
   data() {
     return {
       modals: {
@@ -120,7 +122,7 @@ export default {
         login: false
       }
     };
-  }
+  },
 };
 </script>
 <style>

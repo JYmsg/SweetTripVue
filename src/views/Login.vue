@@ -1,14 +1,6 @@
 <template>
     <section class="section section-shaped section-lg my-0">
-        <div class="shape shape-style-1 bg-gradient-default">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="shape shape-style-1 shape-login">
         </div>
         <div class="container pt-lg-md">
             <div class="row justify-content-center">
@@ -19,29 +11,29 @@
                           class="border-0">
                         <template>
                             <div class="text-muted text-center mb-3">
-                                <small>Sign in with</small>
+                                
                             </div>
                             <div class="btn-wrapper text-center">
                                 <base-button type="neutral">
-                                    <img slot="icon" src="img/icons/common/github.svg">
-                                    Github
+                                    <img slot="icon" src="img/logo/kakao.png">
+                                    Kakao
                                 </base-button>
 
                                 <base-button type="neutral">
-                                    <img slot="icon" src="img/icons/common/google.svg">
-                                    Google
+                                    <img slot="icon" src="img/logo/naver.jpg">
+                                    Naver
                                 </base-button>
                             </div>
                         </template>
                         <template>
                             <div class="text-center text-muted mb-4">
-                                <small>Or sign in with credentials</small>
+                                <!-- <small>직접 </small> -->
                             </div>
                             <form role="form">
                                 <base-input alternative
                                             class="mb-3"
-                                            placeholder="Email"
-                                            addon-left-icon="ni ni-email-83">
+                                            placeholder="Id"
+                                            addon-left-icon="ni ni-key-25">
                                 </base-input>
                                 <base-input alternative
                                             type="password"
@@ -52,7 +44,7 @@
                                     Remember me
                                 </base-checkbox>
                                 <div class="text-center">
-                                    <base-button type="primary" class="my-4">Sign In</base-button>
+                                    <base-button type="primary" class="my-4">Login</base-button>
                                 </div>
                             </form>
                         </template>
@@ -60,13 +52,13 @@
                     <div class="row mt-3">
                         <div class="col-6">
                             <a href="#" class="text-light">
-                                <small>Forgot password?</small>
+                                <small style="color:black">비밀번호를 잊으셨나요?</small>
                             </a>
                         </div>
                         <div class="col-6 text-right">
-                            <a href="#" class="text-light">
-                                <small>Create new account</small>
-                            </a>
+                            <router-link to="register" class="text-light">
+                                <small style="color:black">회원가입 하러 가기 S2</small>
+                            </router-link>
                         </div>
                     </div>
                 </div>

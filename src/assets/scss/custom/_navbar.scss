@@ -186,7 +186,7 @@
     }
 
     .navbar-toggler-icon {
-        background-image: $navbar-dark-toggler-icon-bg;
+        background-image: url("/img/icons/common/hambuger.png");
     }
 }
 
@@ -194,10 +194,10 @@
     .navbar-transparent {
         .navbar-nav {
             .nav-link {
-                color: $navbar-dark-color;
+                color: #8CADF2;
 
                 @include hover-focus {
-                    color: $navbar-dark-hover-color;
+                    color: #195AE6;
                 }
 
                 &.disabled {
@@ -209,7 +209,7 @@
             .active > .nav-link,
             .nav-link.show,
             .nav-link.active {
-                color: $navbar-dark-active-color;
+                color:  #195AE6;
             }
         }
 

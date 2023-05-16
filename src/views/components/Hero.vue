@@ -1,6 +1,6 @@
 <template>
     <section class="section-hero section-shaped my-0">
-        <div class="shape shape-style-1 shape-user" />
+        <div class="shape shape-style-1 shape-main" />
             
         <!-- </div> -->
         <div class="container shape-container d-flex align-items-center">

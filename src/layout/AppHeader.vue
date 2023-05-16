@@ -1,39 +1,16 @@
 <template>
-    
+    <div class="container">
     <header class="header-global">
-
-        <!-- <base-nav
-                  type="info"
-                  effect="dark"
-                  expand
-                  title="Default Color"
-                  class="mt-4"
-                  content-id="navbar-Menu6">
-            <div class="row" slot="content-header" slot-scope="{closeMenu}">
-                <div class="col-6 collapse-brand">
-                    <a href="./index.html">
-                        <img src="img/brand/blue.png">
-                    </a>
-                </div>
-                <div class="col-6 collapse-close">
-                    <close-button @click="closeMenu" target="navbar-Menu6">
-
-                    </close-button>
-                </div>
-            </div>
-            <component :is="Menu6"></component>
-        </base-nav> -->
-
-        <base-nav class="navbar-main" transparent type="info" effect="light" expand>
+        <base-nav class="navbar-main" transparent type="white" effect="light" expand>
             <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-                <!-- Sweet🍨Trip -->
+                <!-- <img src="img/logo/boarding-pass.png" alt=""> -->
                 <img src="img/brand/logo.png" alt="logo">
             </router-link>
 
             <div class="row" slot="content-header" slot-scope="{closeMenu}">
                 <div class="col-6 collapse-brand">
                     <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/">
-                        <img src="img/brand/blue.png">
+                        <img src="img/brand/logo.png">
                     </a>
                 </div>
                 <div class="col-6 collapse-close">
@@ -76,11 +53,13 @@
                 </base-dropdown>
                 <!-- <base-dropdown tag="li" class="nav-item"> -->
                 <li class="nav-item">
-                    <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="showLogin">
-                        <i class="ni ni-collection d-lg-none"></i>
-                        <i class="ni ni-circle-08"></i>
+                    <router-link to="/login" class="nav-link">
+                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
+                        <i class="ni ni-circle-08 d-lg-none"></i>
                         <span class="nav-link-inner--text">Login</span>
-                    </a>
+                    <!-- </a> -->
+                    </router-link>
                 </li>
                     <!-- <router-link to="/landing" class="dropdown-item">Landing</router-link>
                     <router-link to="/profile" class="dropdown-item">Profile</router-link>
@@ -126,9 +105,10 @@
         </li> -->
     </ul>
     
-    <modals></modals>
+    <!-- <modals :login="login"></modals> -->
         </base-nav>
-        <!-- <modal :show.sync="showModal"
+    </header>
+    <!-- <modal :show.sync="login"
                    body-classes="p-0"
                    modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow
@@ -176,32 +156,31 @@
                     </template>
                 </card>
             </modal> -->
-    </header>
-    
+</div>
 </template>
 <script>
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
-import Modals from "../views/components/JavascriptComponents/Modals";
+// import Modal from "@/components/Modal.vue";
+// import Modals from "../views/components/JavascriptComponents/Modals";
 export default {
     data() {
         return {
-            showModal: false
+            login: false
         }
     },
   components: {
     BaseNav,
     CloseButton,
     BaseDropdown,
-    Modals
+    // Modals
     },
     methods: {
-        showLogin() {
-            console.log("login")
-            this.showModal = true;
+    //     showLogin() {
+    //         this.$emit.
 
-    }
+    // }
   }
 };
 </script>
