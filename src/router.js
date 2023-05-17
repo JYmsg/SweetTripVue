@@ -9,6 +9,12 @@ import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
+import HotplView from "@/views/HotplView.vue";
+import HotplList from "@/views/components/hotpl/HotplList.vue";
+import HotplRegist from "@/views/components/hotpl/HotplRegist.vue";
+import HotplDetail from "@/views/components/hotpl/HotplDetail.vue";
+import HotplModify from "@/views/components/hotpl/HotplModify.vue";
+
 Vue.use(Router);
 
 export default new Router({
@@ -20,8 +26,8 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Components,
-        footer: AppFooter
-      }
+        footer: AppFooter,
+      },
     },
     {
       path: "/information",
@@ -47,8 +53,8 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Login,
-        footer: AppFooter
-      }
+        footer: AppFooter,
+      },
     },
     {
       path: "/register",
@@ -56,8 +62,8 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Register,
-        footer: AppFooter
-      }
+        footer: AppFooter,
+      },
     },
     {
       path: "/profile",
@@ -65,15 +71,64 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Profile,
-        footer: AppFooter
-      }
-    }
+        footer: AppFooter,
+      },
+    },
+    {
+      path: "/hotplace",
+      name: "HotplView",
+      redirect: "/hotplace/list",
+      components: {
+        header: AppHeader,
+        default: HotplView,
+        footer: AppFooter,
+      },
+      children: [
+        {
+          path: "regist",
+          name: "HotplRegist",
+          components: {
+            header: AppHeader,
+            default: HotplRegist,
+            footer: AppFooter,
+          },
+          props: true,
+        },
+        {
+          path: "modify/:id",
+          name: "HotplModify",
+          components: {
+            header: AppHeader,
+            default: HotplModify,
+            footer: AppFooter,
+          },
+        },
+        {
+          path: "list",
+          name: "HotplList",
+          components: {
+            header: AppHeader,
+            default: HotplList,
+            footer: AppFooter,
+          },
+        },
+        {
+          path: ":id",
+          name: "HotplDetail",
+          components: {
+            header: AppHeader,
+            default: HotplDetail,
+            footer: AppFooter,
+          },
+        },
+      ],
+    },
   ],
-  scrollBehavior: to => {
+  scrollBehavior: (to) => {
     if (to.hash) {
       return { selector: to.hash };
     } else {
       return { x: 0, y: 0 };
     }
-  }
+  },
 });
