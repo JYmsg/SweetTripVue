@@ -53,7 +53,7 @@
             <router-link to="/search" class="nav-link">
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
-              <i class="ni ni-circle-08 d-lg-none"></i>
+              <i class="ni ni-square-pin d-lg-none"></i>
               <span class="nav-link-inner--text">여행위치 검색</span>
               <!-- </a> -->
             </router-link>
@@ -62,20 +62,20 @@
             <router-link to="/information" class="nav-link">
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
-              <i class="ni ni-circle-08 d-lg-none"></i>
+              <i class="ni ni-tablet-button d-lg-none"></i>
               <span class="nav-link-inner--text">정보공유방</span>
               <!-- </a> -->
             </router-link>
           </li>
           <li class="nav-item">
             <router-link to="/notice/list" class="nav-link">
-              <i class="ni ni-circle-08 d-lg-none"></i>
+              <i class="ni ni-bullet-list-67 d-lg-none"></i>
               <span class="nav-link-inner--text">공지사항</span>
             </router-link>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'HotplView' }" :user="user" class="nav-link">
-              <i class="ni ni-circle-08 d-lg-none"></i>
+              <i class="ni ni-like-2 d-lg-none"></i>
               <span class="nav-link-inner--text">HotPlace</span>
               <!-- </a> -->
             </router-link>
@@ -83,6 +83,7 @@
           <base-dropdown tag="li" class="nav-item" v-if="getUser">
             <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
               <i class="ni ni-circle-08"></i>
+              <i class="ni ni-bold-down"></i>
               <!-- <span class="nav-link-inner--text">Components</span> -->
             </a>
             <a href="#" class="dropdown-item" @click="logout">Logout</a>
