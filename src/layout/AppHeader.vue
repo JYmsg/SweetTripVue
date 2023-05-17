@@ -1,26 +1,25 @@
 <template>
-    <div class="container">
+  <div class="container">
     <header class="header-global">
-        <base-nav class="navbar-main" transparent type="white" effect="light" expand>
-            <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-                <img src="img/brand/logo.png" alt="logo">
-            </router-link>
+      <base-nav class="navbar-main" transparent type="white" effect="light" expand>
+        <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
+          <img src="img/brand/logo.png" alt="logo" />
+        </router-link>
 
-            <div class="row" slot="content-header" slot-scope="{closeMenu}">
-                <div class="col-6 collapse-brand">
-                    <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/">
-                        <img src="img/brand/logo.png">
-                    </a>
-                </div>
-                <div class="col-6 collapse-close">
-                    <close-button @click="closeMenu"></close-button>
-                </div>
-            </div>
+        <div class="row" slot="content-header" slot-scope="{ closeMenu }">
+          <div class="col-6 collapse-brand">
+            <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/">
+              <img src="img/brand/logo.png" />
+            </a>
+          </div>
+          <div class="col-6 collapse-close">
+            <close-button @click="closeMenu"></close-button>
+          </div>
+        </div>
 
-        <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
-        </ul>
+        <ul class="navbar-nav navbar-nav-hover align-items-lg-center"></ul>
         <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-            <!-- <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl">
+          <!-- <base-dropdown class="nav-item" menu-classes="dropdown-menu-xl">
             <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
                         <i class="ni ni-ui-04 d-lg-none"></i>
                         <span class="nav-link-inner--text">Components</span>
@@ -50,30 +49,36 @@
                         </a>
                     </div>
                 </base-dropdown> -->
-                <base-dropdown tag="li" class="nav-item" v-if="getUser">
-                    <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
-                        <i class="ni ni-circle-08"></i>
-                        <!-- <span class="nav-link-inner--text">Components</span> -->
-                    </a>
-                    <a href="#" class="dropdown-item" @click="logout">Logout</a>
-                    <router-link to="/profile" class="dropdown-item">MyPage</router-link>
-                </base-dropdown>
-                <li class="nav-item" v-else>
-                    <router-link to="/login" class="nav-link">
-                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
-                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
-                        <i class="ni ni-circle-08 d-lg-none"></i>
-                        <span class="nav-link-inner--text">Login</span>
-                    <!-- </a> -->
-                    </router-link>
-                </li>
-                <!-- <li class="nav-item">
+          <li class="nav-item">
+            <router-link :to="{ name: 'HotplView' }" :user="user" class="nav-link">
+              <span class="nav-link-inner--text">HotPlace</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
+          <base-dropdown tag="li" class="nav-item" v-if="getUser">
+            <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
+              <i class="ni ni-circle-08"></i>
+              <!-- <span class="nav-link-inner--text">Components</span> -->
+            </a>
+            <a href="#" class="dropdown-item" @click="logout">Logout</a>
+            <router-link to="/profile" class="dropdown-item">MyPage</router-link>
+          </base-dropdown>
+          <li class="nav-item" v-else>
+            <router-link to="/login" class="nav-link">
+              <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+              <!-- <i class="ni ni-collection d-lg-none"></i> -->
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">Login</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
+          <!-- <li class="nav-item">
                     <router-link to="/profile" class="nav-link">
                         <i class="ni ni-circle-08 d-lg-none"></i>
                         <span class="nav-link-inner--text">MyPage</span>
                     </router-link>
                 </li> -->
-                <!-- <li class="nav-item">
+          <!-- <li class="nav-item">
                     <a class="nav-link nav-link-icon" href="https://www.facebook.com/creativetim" target="_blank" rel="noopener"
                     data-toggle="tooltip" title="Like us on Facebook">
                     <i class="fa fa-facebook-square"></i>
@@ -101,7 +106,7 @@
                         <span class="nav-link-inner--text d-lg-none">Github</span>
                     </a>
                 </li> -->
-                <!-- <li class="nav-item d-none d-lg-block ml-lg-4">
+          <!-- <li class="nav-item d-none d-lg-block ml-lg-4">
                     <a href="https://www.creative-tim.com/product/vue-argon-design-system" target="_blank" rel="noopener"
                        class="btn btn-neutral btn-icon">
                 <span class="btn-inner--icon">
@@ -110,10 +115,10 @@
                 <span class="nav-link-inner--text">Download</span>
             </a>
         </li> -->
-    </ul>
-    
-    <!-- <modals :login="login"></modals> -->
-        </base-nav>
+        </ul>
+
+        <!-- <modals :login="login"></modals> -->
+      </base-nav>
     </header>
     <!-- <modal :show.sync="login"
                    body-classes="p-0"
@@ -163,7 +168,7 @@
                     </template>
                 </card>
             </modal> -->
-</div>
+  </div>
 </template>
 <script>
 import BaseNav from "@/components/BaseNav";
@@ -172,30 +177,29 @@ import CloseButton from "@/components/CloseButton";
 // import Modal from "@/components/Modal.vue";
 // import Modals from "../views/components/JavascriptComponents/Modals";
 export default {
-    props:{
-        user: null,
-    },
+  props: {
+    user: null,
+  },
   components: {
     BaseNav,
     CloseButton,
     BaseDropdown,
     // Modals
+  },
+  methods: {
+    logout() {
+      this.$emit("logout");
     },
-    methods: {
-        logout(){
-            this.$emit("logout");
-        }
   },
   computed: {
-    getUser(){
-        if(this.user){
-            return true;
-        }else{
-            return false;
-        }
-    }
-  }
+    getUser() {
+      if (this.user) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
 };
 </script>
-<style>
-</style>
+<style></style>
