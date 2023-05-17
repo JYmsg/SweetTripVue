@@ -19,7 +19,7 @@
                                 <b-form-select v-model="gugun" :options="guguns" class="me-2 rounded-4"></b-form-select>
                             </div>
                             <div class="col-lg-3 col-sm-6">
-                                <b-form-select v-model="place" :options="places" class="me-2 rounded-4"></b-form-select>
+                                <b-form-select v-model="type" :options="types" class="me-2 rounded-4"></b-form-select>
                             </div>
                             <div class="justify-content-center col-lg-3 col-sm-3">
                                 <base-input placeholder="Search" v-model="search"
@@ -27,10 +27,33 @@
                                 </base-input>
                             </div>
                             <div class="col-lg-1 col-sm-3">
-                                <base-button class="btn-1" type="neutral">검색</base-button>
+                                <base-button class="btn-1" type="neutral" @click="searchPlaces">검색</base-button>
                             </div>
-                            <div class="card-profile-stats d-flex justify-content-center">
-                                맵
+                        </div>
+                        <!-- 지도 -->
+                        <div id="map" class="m-3" style="width: 100%; height: 400px">
+                        </div>
+
+                        <div class="row justify-content-center mt-5">
+                            <div id="resultBox" style="width: 100%">
+                                
+                                <div class='row card m-3 col-lg-11 col-sm-11' v-for="place in places" :key="place.content_id">
+                                    <div class='row g-0'><div class='col-md-4'>
+                                        <img style='height:200px'
+                                        :src="`${place.first_image}`"
+                                        class='img-fluid rounded-start' alt='test'></div><div class='col-md-8'>
+                                            <div class='card-body'>
+                                                <h5 class='card-title' @click="moveCenter(`${place.latitude}`, `${place.longitude}`)">{{ place.title }}</h5>
+                                                <p class='card-text'>
+                                                    <small class='text-muted'>{{ place.addr1 +" "+ place.addr2}}</small>
+                                                </p>
+                                                <i class='ni ni-cart' size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!'>
+                                                </i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -44,6 +67,7 @@ import http from "@/util/http-common.js"
 export default {
     data() {
         return {
+            map: null,
             search: null,
             area: null,
             areas: [
@@ -70,8 +94,8 @@ export default {
             guguns: [
                 {value: null, text : '구군선택'}
             ],
-            place: null,
-            places: [
+            type: null,
+            types: [
                 {value: null, text : '관광지 유형'},
                 {value: 12, text : '관광지'},
                 {value: 14, text : '문화시설'},
@@ -81,7 +105,9 @@ export default {
                 {value: 32, text : '숙박'},
                 {value: 38, text : '쇼핑'},
                 {value: 39, text : '음식점'},
-            ]
+            ],
+            places: [],
+            markers: [],
         }
     },
     methods: {
@@ -104,9 +130,236 @@ export default {
                 alert("잘못된 접근 입니다.");
             })
         },
+        searchPlaces() {
+            http.post("/placeapi/place/list", {
+                sido_code: this.area,
+                gugun_code: this.gugun,
+                contentTypeId: this.type,
+                keyword: this.search
+            })
+            .then(({ data }) => {
+                this.places = [];
+                for (let i = 0; i < data.length; i++){
+                    this.$set(this.places, i, data[i]);
+                    let markerInfo = {
+                        title: data[i].title,
+                        latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
+                    };
+                    this.$set(this.markers, i, markerInfo);
+                };
+                this.displayMarker();
+            })
+            .catch(()=>{
+                alert("검색오류입니다.");
+            })
+        },
+        initMap() {
+            var container = document.getElementById("map");
+            var options = {
+                center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
+                level: 5, // 지도의 확대 레벨
+            };
+            this.map = new kakao.maps.Map(container, options);
+        },
+        displayMarker() {
+            var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+
+            var bounds = new kakao.maps.LatLngBounds();
+
+            for (var i = 0; i < this.markers.length; i++) {
+                // 마커 이미지의 이미지 크기 입니다
+                var imageSize = new kakao.maps.Size(24, 35);
+
+                // 마커 이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    map: this.map, // 마커를 표시할 지도
+                    position: this.markers[i].latlng, // 마커를 표시할 위치
+                    title: this.markers[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                    image: markerImage, // 마커 이미지
+                });
+
+                // LatLngBounds 객체에 좌표를 추가합니다
+                bounds.extend(this.markers[i].latlng);
+            }
+            this.map.setBounds(bounds);
+        },
+        moveCenter(lat, lng) {
+            this.map.setCenter(new kakao.maps.LatLng(lat, lng));
+        }
+    },
+    mounted() {
+        if (!window.kakao || !window.kakao.maps) {
+            const script = document.createElement("script");
+            script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
+            script.addEventListener("load", () => {
+                kakao.maps.load(this.initMap);
+            });
+            document.head.appendChild(script);
+        } else {
+            this.initMap();
+        }
     }
 }
 </script>
-<style>
 
+<style scoped>
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+.card > hr {
+  margin-right: 0;
+  margin-left: 0;
+}
+.card > .list-group {
+  border-top: inherit;
+  border-bottom: inherit;
+}
+.card > .list-group:first-child {
+  border-top-width: 0;
+  border-top-left-radius: calc(0.25rem - 1px);
+  border-top-right-radius: calc(0.25rem - 1px);
+}
+.card > .list-group:last-child {
+  border-bottom-width: 0;
+  border-bottom-right-radius: calc(0.25rem - 1px);
+  border-bottom-left-radius: calc(0.25rem - 1px);
+}
+.card > .card-header + .list-group,
+.card > .list-group + .card-footer {
+  border-top: 0;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  padding: 1rem 1rem;
+}
+
+.card-title {
+  margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+  margin-top: -0.25rem;
+  margin-bottom: 0;
+}
+
+.card-text:last-child {
+  margin-bottom: 0;
+}
+
+.card-link + .card-link {
+  margin-left: 1rem;
+}
+
+.card-header {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.card-header:first-child {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+
+.card-footer {
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+.card-footer:last-child {
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+}
+
+.card-header-tabs {
+  margin-right: -0.5rem;
+  margin-bottom: -0.5rem;
+  margin-left: -0.5rem;
+  border-bottom: 0;
+}
+
+.card-header-pills {
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  border-radius: calc(0.25rem - 1px);
+}
+
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: 100%;
+}
+
+.card-img,
+.card-img-top {
+  border-top-left-radius: calc(0.25rem - 1px);
+  border-top-right-radius: calc(0.25rem - 1px);
+}
+
+.card-img,
+.card-img-bottom {
+  border-bottom-right-radius: calc(0.25rem - 1px);
+  border-bottom-left-radius: calc(0.25rem - 1px);
+}
+
+.card-group > .card {
+  margin-bottom: 0.75rem;
+}
+@media (min-width: 576px) {
+  .card-group {
+    display: flex;
+    flex-flow: row wrap;
+  }
+  .card-group > .card {
+    flex: 1 0 0%;
+    margin-bottom: 0;
+  }
+  .card-group > .card + .card {
+    margin-left: 0;
+    border-left: 0;
+  }
+  .card-group > .card:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .card-group > .card:not(:last-child) .card-img-top,
+.card-group > .card:not(:last-child) .card-header {
+    border-top-right-radius: 0;
+  }
+  .card-group > .card:not(:last-child) .card-img-bottom,
+.card-group > .card:not(:last-child) .card-footer {
+    border-bottom-right-radius: 0;
+  }
+  .card-group > .card:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .card-group > .card:not(:first-child) .card-img-top,
+.card-group > .card:not(:first-child) .card-header {
+    border-top-left-radius: 0;
+  }
+  .card-group > .card:not(:first-child) .card-img-bottom,
+.card-group > .card:not(:first-child) .card-footer {
+    border-bottom-left-radius: 0;
+  }
+}
 </style>

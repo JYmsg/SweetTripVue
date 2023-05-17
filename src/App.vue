@@ -31,7 +31,6 @@ export default {
       http
         .post("/userapi/login", {
           id: user.id,
-
           password: user.password,
         })
         .then(() => {
