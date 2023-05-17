@@ -9,11 +9,17 @@ import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
+import NoticeView from "@/views/NoticeView.vue";
+import NoticeList from "@/views/notice/NoticeList.vue";
+import NoticeWrite from "@/views/notice/NoticeWrite.vue";
+import NoticeDetail from "@/views/notice/NoticeDetail.vue";
+import NoticeModify from "@/views/notice/NoticeModify.vue";
+
 import HotplView from "@/views/HotplView.vue";
-import HotplList from "@/views/components/hotpl/HotplList.vue";
-import HotplRegist from "@/views/components/hotpl/HotplRegist.vue";
-import HotplDetail from "@/views/components/hotpl/HotplDetail.vue";
-import HotplModify from "@/views/components/hotpl/HotplModify.vue";
+import HotplList from "@/views/hotpl/HotplList.vue";
+import HotplRegist from "@/views/hotpl/HotplRegist.vue";
+import HotplDetail from "@/views/hotpl/HotplDetail.vue";
+import HotplModify from "@/views/hotpl/HotplModify.vue";
 
 Vue.use(Router);
 
@@ -35,8 +41,55 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Information,
-        footer: AppFooter
-      }
+        footer: AppFooter,
+      },
+    },
+    {
+      path: "/notice",
+      name: "NoticeView",
+      components: {
+        header: AppHeader,
+        default: NoticeView,
+        footer: AppFooter,
+      },
+      children: [
+        {
+          path: "list",
+          name: "NoticeList",
+          components: {
+            header: AppHeader,
+            default: NoticeList,
+            footer: AppFooter,
+          },
+        },
+        {
+          path: "modify/:id",
+          name: "NoticeModify",
+          components: {
+            header: AppHeader,
+            default: NoticeModify,
+            footer: AppFooter,
+          },
+        },
+        {
+          path: "write/:writer_id",
+          name: "NoticeWrite",
+          components: {
+            header: AppHeader,
+            default: NoticeWrite,
+            footer: AppFooter,
+          },
+        },
+        {
+          path: "view/:id",
+          name: "NoticeDetail",
+          components: {
+            header: AppHeader,
+            default: NoticeDetail,
+            footer: AppFooter,
+          },
+        },
+      ],
     },
     {
       path: "/search",
@@ -44,8 +97,8 @@ export default new Router({
       components: {
         header: AppHeader,
         default: SearchPlace,
-        footer: AppFooter
-      }
+        footer: AppFooter,
+      },
     },
     {
       path: "/login",
