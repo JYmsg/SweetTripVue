@@ -49,47 +49,54 @@
                         </a>
                     </div>
                 </base-dropdown> -->
-                <li class="nav-item">
-                    <router-link to="/search" class="nav-link">
-                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
-                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
-                        <i class="ni ni-circle-08 d-lg-none"></i>
-                        <span class="nav-link-inner--text">여행위치 검색</span>
-                    <!-- </a> -->
-                    </router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link to="/information" class="nav-link">
-                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
-                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
-                        <i class="ni ni-circle-08 d-lg-none"></i>
-                        <span class="nav-link-inner--text">정보공유방</span>
-                    <!-- </a> -->
-                    </router-link>
-                  </li>
-                  <li class="nav-item">
-                    <router-link :to="{ name: 'HotplView' }" :user="user" class="nav-link">
-                      <span class="nav-link-inner--text">HotPlace</span>
-                      <!-- </a> -->
-                    </router-link>
-                  </li>
-                <base-dropdown tag="li" class="nav-item" v-if="getUser">
-                    <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
-                        <i class="ni ni-circle-08"></i>
-                        <!-- <span class="nav-link-inner--text">Components</span> -->
-                    </a>
-                    <a href="#" class="dropdown-item" @click="logout">Logout</a>
-                    <router-link to="/profile" class="dropdown-item">MyPage</router-link>
-                </base-dropdown>
-                <li class="nav-item" v-else>
-                    <router-link to="/login" class="nav-link">
-                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
-                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
-                        <i class="ni ni-circle-08 d-lg-none"></i>
-                        <span class="nav-link-inner--text">Login</span>
-                    <!-- </a> -->
-                    </router-link>
-                </li>
+          <li class="nav-item">
+            <router-link to="/search" class="nav-link">
+              <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+              <!-- <i class="ni ni-collection d-lg-none"></i> -->
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">여행위치 검색</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/information" class="nav-link">
+              <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+              <!-- <i class="ni ni-collection d-lg-none"></i> -->
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">정보공유방</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/notice/list" class="nav-link">
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">공지사항</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :to="{ name: 'HotplView' }" :user="user" class="nav-link">
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">HotPlace</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
+          <base-dropdown tag="li" class="nav-item" v-if="getUser">
+            <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
+              <i class="ni ni-circle-08"></i>
+              <!-- <span class="nav-link-inner--text">Components</span> -->
+            </a>
+            <a href="#" class="dropdown-item" @click="logout">Logout</a>
+            <router-link to="/profile" class="dropdown-item">MyPage</router-link>
+          </base-dropdown>
+          <li class="nav-item" v-else>
+            <router-link to="/login" class="nav-link">
+              <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+              <!-- <i class="ni ni-collection d-lg-none"></i> -->
+              <i class="ni ni-circle-08 d-lg-none"></i>
+              <span class="nav-link-inner--text">Login</span>
+              <!-- </a> -->
+            </router-link>
+          </li>
           <!-- <li class="nav-item">
                     <a class="nav-link nav-link-icon" href="https://www.facebook.com/creativetim" target="_blank" rel="noopener"
                     data-toggle="tooltip" title="Like us on Facebook">
