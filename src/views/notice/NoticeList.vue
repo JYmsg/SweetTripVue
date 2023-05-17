@@ -7,8 +7,8 @@
       <div class="container">
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
-            <div class="row justify-content-center mt-3">
-              <h4>공지사항</h4>
+            <div class="row justify-content-center m-5">
+              <h4>⚠️ 공지사항 ⚠️</h4>
             </div>
             <div v-if="user != null" class="row m-2" style="justify-content: right">
               <b-button @click="noticeWrite">공지사항 등록</b-button>
