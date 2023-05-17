@@ -59,7 +59,7 @@
                         </div>
                         <div class="col-6 text-right">
                             <router-link to="register" class="text-light">
-                                <small style="color:black">회원가입 하러 가기 S2</small>
+                                <small style="color:black">회원가입 하러 가기 ✏️</small>
                             </router-link>
                         </div>
                     </div>

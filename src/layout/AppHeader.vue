@@ -50,6 +50,24 @@
                         </a>
                     </div>
                 </base-dropdown> -->
+                <li class="nav-item">
+                    <router-link to="/search" class="nav-link">
+                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
+                        <i class="ni ni-circle-08 d-lg-none"></i>
+                        <span class="nav-link-inner--text">여행위치 검색</span>
+                    <!-- </a> -->
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/information" class="nav-link">
+                        <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
+                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
+                        <i class="ni ni-circle-08 d-lg-none"></i>
+                        <span class="nav-link-inner--text">정보공유방</span>
+                    <!-- </a> -->
+                    </router-link>
+                </li>
                 <base-dropdown tag="li" class="nav-item" v-if="getUser">
                     <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button">
                         <i class="ni ni-circle-08"></i>

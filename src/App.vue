@@ -34,8 +34,10 @@ export default {
           password: user.password
       })
       .then(({data}) => {
-          this.user = user;
-          this.$router.push({ name: "home" });
+        this.user = user;
+        
+        this.$router.push({ name: "home" });
+          
       })
       .catch(()=>{
           alert("로그인 실패")

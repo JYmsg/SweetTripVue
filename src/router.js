@@ -3,10 +3,11 @@ import Router from "vue-router";
 import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
 import Components from "./views/Components.vue";
-import Landing from "./views/Landing.vue";
+import Information from "./views/share/Information.vue";
 import Login from "./views/user/Login.vue";
 import Register from "./views/user/Register.vue";
-import Profile from "./views/Profile.vue";
+import Profile from "./views/user/Profile.vue";
+import SearchPlace from "@/views/searchPlace/Search.vue";
 
 Vue.use(Router);
 
@@ -23,11 +24,20 @@ export default new Router({
       }
     },
     {
-      path: "/landing",
-      name: "landing",
+      path: "/information",
+      name: "information",
       components: {
         header: AppHeader,
-        default: Landing,
+        default: Information,
+        footer: AppFooter
+      }
+    },
+    {
+      path: "/search",
+      name: "search",
+      components: {
+        header: AppHeader,
+        default: SearchPlace,
         footer: AppFooter
       }
     },
