@@ -50,10 +50,10 @@
       border-color: transparent;
     }
   }
-
+  /*profile 선택지 글씨 색 수정 user*/
   .nav-link.active,
   .nav-item.show .nav-link {
-    color: #195AE6;
+    color: white;
     background-color: $nav-tabs-link-active-bg;
     border-color: $nav-tabs-link-active-border-color;
   }
@@ -71,6 +71,7 @@
 // Pills
 //
 
+// profile 선택 창 글씨색 수정 user
 .nav-pills {
   .nav-link {
     @include border-radius($nav-pills-border-radius);
@@ -78,7 +79,7 @@
 
   .nav-link.active,
   .show > .nav-link {
-    color:  #195AE6;
+    color:  white;
     background-color: $nav-pills-link-active-bg;
   }
 }

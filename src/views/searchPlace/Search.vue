@@ -10,7 +10,7 @@
                     <div class="px-4">
                         <div class="m-5">
                           <div class="row float-right">
-                            <button type="button" class="btn btn-sky">
+                            <button type="button" class="btn btn-sky" @click="moveProfile">
                               <img src="img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info" v-if="getCarts">{{ cartslength }}</span>
                             </button>
                           </div>
@@ -115,18 +115,18 @@ export default {
                 {value: 38, text : '쇼핑'},
                 {value: 39, text : '음식점'},
             ],
-            places: [],
-            markers: [],
+          places: [],
+          markers: [],
           filters: [],
-            carts: [],
-            cartslength: 0,
+          carts: [],
+          cartslength: 0,
         }
   },
   computed: {
     ...mapState(["loginUser"]),
-    getCarts(){
+    async getCarts(){
       console.log("computed" , this.loginUser)
-      http.get("/cartapi/cart/list/" + this.loginUser.id)
+      await http.get("/cartapi/cart/list/" + this.loginUser.id)
       .then(({ data }) => {
         for (let i = 0; i < data.length; i++){
           this.$set(this.carts, i, data[i]);
@@ -165,7 +165,8 @@ export default {
             })
             .then(({ data }) => {
               console.log(data);
-              this.places = []; this.filters = [];
+              this.initMap();
+              this.places = []; this.filters = []; this.markers = [];
               for (let i = 0; i < data.length; i++){
                 var value = data[i];
                 if (value.first_image == "") { // 이미지가 없는 경우 이미지 대체
@@ -253,6 +254,10 @@ export default {
       // },
       moveCenter(lat, lng) {
             this.map.setCenter(new kakao.maps.LatLng(lat, lng));
+      },
+      moveProfile(){
+        console.log("move");
+        this.$router.push({ name: "profile" });
       },
       inCart(index, placeId) {
         console.log("incart", this.loginUser)
