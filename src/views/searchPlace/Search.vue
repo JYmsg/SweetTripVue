@@ -11,7 +11,7 @@
                         <div class="m-5">
                           <div class="row float-right">
                             <button type="button" class="btn btn-sky">
-                              <img src="img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info">{{ carts.length }}</span>
+                              <img src="img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info" v-if="getCarts">{{ cartslength }}</span>
                             </button>
                           </div>
                           <div class="row justify-content-center">
@@ -119,21 +119,24 @@ export default {
             markers: [],
           filters: [],
             carts: [],
+            cartslength: 0,
         }
   },
-  ...mapState(["loginUser"]),
-  created() {
-    console.log(this.loginUser)
-    http.get("/cartapi/cart/list/" + this.loginUser.id)
-    .then(({ data }) => {
-      for (let i = 0; i < data.length; i++){
-        this.$set(this.carts, i, data[i]);
-      }
-    })
-
+  computed: {
+    ...mapState(["loginUser"]),
+    getCarts(){
+      console.log("computed" , this.loginUser)
+      http.get("/cartapi/cart/list/" + this.loginUser.id)
+      .then(({ data }) => {
+        for (let i = 0; i < data.length; i++){
+          this.$set(this.carts, i, data[i]);
+        }
+        this.cartslength = this.carts.length;
+      })
+      return true;
+    }
   },
   methods: {
-    ...mapState(["loginUser"]),
         searchgugun() {
             http.get("/gugunapi/gugun/"+this.area)
             .then(({ data }) => {
@@ -154,13 +157,14 @@ export default {
             })
         },
         searchPlaces() {
-            http.post("/placeapi/place/list", {
+            http.post("/placeapi/place/list/"+this.loginUser.id, {
                 sido_code: this.area,
                 gugun_code: this.gugun,
                 contentTypeId: this.type,
                 keyword: this.search
             })
             .then(({ data }) => {
+              console.log(data);
               this.places = []; this.filters = [];
               for (let i = 0; i < data.length; i++){
                 var value = data[i];
@@ -173,7 +177,11 @@ export default {
                     latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
                 };
                 this.$set(this.markers, i, markerInfo);
-                this.$set(this.filters, i, "img/icons/noti/car-bean.png");
+                if(data[i].in == true){
+                  this.$set(this.filters, i, "img/icons/noti/car-full.png");
+                }else{
+                  this.$set(this.filters, i, "img/icons/noti/car-bean.png");
+                }
               };
               this.displayMarker();
             })
@@ -217,15 +225,15 @@ export default {
       moveCenter(lat, lng) {
             this.map.setCenter(new kakao.maps.LatLng(lat, lng));
       },
-      // ...mapState(["loginUser"]),
       inCart(index, placeId) {
-
+        console.log("incart", this.loginUser)
         http.post("/cartapi/cart/place", {
           user_id: this.loginUser.id,
           attraction_id : placeId
         }).then(({ data }) => {
           this.$set(this.filters, index, "img/icons/noti/car-full.png");
-          this.$set(this.carts, this.carts.length, places[placeId]);
+          this.$set(this.carts, this.cartslength, this.places[placeId]);
+          this.cartslength += 1;
           alert("장바구니 담았습니다.")
         }).catch(() => {
           alert("실패")
