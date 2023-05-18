@@ -37,9 +37,9 @@
                         <div class="row justify-content-center mt-5">
                             <div id="resultBox" style="width: 100%">
                                 
-                                <div class='row card m-3 col-lg-11 col-sm-11' v-for="place in places" :key="place.content_id">
-                                    <div class='row g-0'><div class='col-md-4'>
-                                        <img style='height:200px'
+                                <div class='row card m-3 col-lg-11 col-sm-11' v-for="(place, index) in places" :key="place.content_id">
+                                    <div class='row g-0'><div class='col-md-3'>
+                                        <img style='height:200px; width: 300px'
                                         :src="`${place.first_image}`"
                                         class='img-fluid rounded-start' alt='test'></div><div class='col-md-8'>
                                             <div class='card-body'>
@@ -47,8 +47,9 @@
                                                 <p class='card-text'>
                                                     <small class='text-muted'>{{ place.addr1 +" "+ place.addr2}}</small>
                                                 </p>
-                                                <i class='ni ni-cart' size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!'>
-                                                </i>
+                                                <img :src="filters[index]" style="width: 2rem; height: 2rem;" alt="cart" size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!' @click="inCart(index)" />
+                                                <!-- <i class='ni ni-cart' size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!'>
+                                                </i> -->
                                             </div>
                                         </div>
                                     </div>
@@ -64,6 +65,8 @@
 </template>
 <script>
 import http from "@/util/http-common.js"
+
+//https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B1%EB%A1%9C%20634/place/1431214756?c=19,0,0,0,dh&isCorrectAnswer=true 상세 위치 검색
 export default {
     data() {
         return {
@@ -108,6 +111,7 @@ export default {
             ],
             places: [],
             markers: [],
+            filters: [],
         }
     },
     methods: {
@@ -138,16 +142,21 @@ export default {
                 keyword: this.search
             })
             .then(({ data }) => {
-                this.places = [];
-                for (let i = 0; i < data.length; i++){
-                    this.$set(this.places, i, data[i]);
-                    let markerInfo = {
-                        title: data[i].title,
-                        latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
-                    };
-                    this.$set(this.markers, i, markerInfo);
+              this.places = []; this.filters = [];
+              for (let i = 0; i < data.length; i++){
+                var value = data[i];
+                if (value.first_image == "") { // 이미지가 없는 경우 이미지 대체
+                  data[i].first_image = "img/logo/no-image.PNG";
+                  }
+                this.$set(this.places, i, data[i]);
+                let markerInfo = {
+                    title: data[i].title,
+                    latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
                 };
-                this.displayMarker();
+                this.$set(this.markers, i, markerInfo);
+                this.$set(this.filters, i, "img/icons/noti/car-bean.png");
+              };
+              this.displayMarker();
             })
             .catch(()=>{
                 alert("검색오류입니다.");
@@ -185,10 +194,15 @@ export default {
                 bounds.extend(this.markers[i].latlng);
             }
             this.map.setBounds(bounds);
-        },
-        moveCenter(lat, lng) {
+      },
+      moveCenter(lat, lng) {
             this.map.setCenter(new kakao.maps.LatLng(lat, lng));
-        }
+      },
+      inCart(index) {
+        console.log(index);
+        this.$set(this.filters, index, "img/icons/noti/car-full.png");
+        // this.filters[index] = "img/icons/noti/car-full.png";
+      }
     },
     mounted() {
         if (!window.kakao || !window.kakao.maps) {
