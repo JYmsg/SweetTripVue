@@ -8,10 +8,13 @@
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
             <div class="row justify-content-center m-5">
-              <h4>⚠️ 공지사항 ⚠️</h4>
+              <h4>⚠️ QnA ⚠️</h4>
             </div>
-            <div v-if="user != null" class="row m-2" style="justify-content: right">
+            <div v-if="getUser && loginUser.id === 'admin'" class="row m-2" style="justify-content: right">
               <b-button @click="noticeWrite">공지사항 등록</b-button>
+            </div>
+            <div v-else-if="getUser" class="row m-2" style="justify-content: right">
+              <b-button @click="noticeWrite">질문 하기</b-button>
             </div>
             <div class="row justify-content-center">
               <b-table
@@ -31,11 +34,9 @@
 </template>
 <script>
 import http from "@/util/http-common.js";
+import { mapState } from "vuex";
 export default {
   name: "light-table",
-  props: {
-    user: null,
-  },
   data() {
     return {
       fields: ["writer_id", "title", "write_time", "hit"],
@@ -52,8 +53,16 @@ export default {
     };
   },
   computed: {
+    ...mapState(["loginUser"]),
     getData() {
       return this.boards;
+    },
+    getUser() {
+      if (this.loginUser) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   created() {
@@ -63,7 +72,7 @@ export default {
   },
   methods: {
     noticeWrite() {
-      this.$router.push({ name: "NoticeWrite", params: { writer_id: this.user.id } });
+      this.$router.push({ name: "NoticeWrite" });
     },
     viewNotice(notice) {
       this.$router.push({

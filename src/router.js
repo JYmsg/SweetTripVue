@@ -72,7 +72,7 @@ export default new Router({
           },
         },
         {
-          path: "write/:writer_id",
+          path: "write",
           name: "NoticeWrite",
           components: {
             header: AppHeader,
@@ -130,7 +130,6 @@ export default new Router({
     {
       path: "/hotplace",
       name: "HotplView",
-      redirect: "/hotplace/list",
       components: {
         header: AppHeader,
         default: HotplView,
@@ -145,7 +144,6 @@ export default new Router({
             default: HotplRegist,
             footer: AppFooter,
           },
-          props: true,
         },
         {
           path: "modify/:id",

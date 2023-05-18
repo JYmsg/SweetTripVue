@@ -52,7 +52,7 @@
           <li class="nav-item">
             <router-link to="/notice/list" class="nav-link">
               <i class="ni ni-bullet-list-67 d-lg-none"></i>
-              <span class="nav-link-inner--text">공지사항</span>
+              <span class="nav-link-inner--text">QnA</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -74,7 +74,7 @@
           <!-- </router-link>
           </li> -->
           <li class="nav-item">
-            <router-link :to="{ name: 'HotplView' }" class="nav-link">
+            <router-link :to="{ name: 'HotplList' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
               <span class="nav-link-inner--text">HotPlace</span>
               <!-- </a> -->
