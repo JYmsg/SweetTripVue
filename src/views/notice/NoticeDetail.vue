@@ -15,7 +15,7 @@
               {{ notice.writer_id }}
             </h4>
             <div style="text-align: right">조회 {{ notice.hit }}</div>
-            <div class="row mb-3 justify-content-center">
+            <div v-if="getUser" class="row mb-3 justify-content-center">
               <b-button :to="{ name: 'NoticeModify', params: { id: notice.id } }">수정</b-button>
               <b-button @click="noticeDelete">삭제</b-button>
             </div>
@@ -42,17 +42,17 @@
 
 <script>
 import http from "@/util/http-common.js";
-
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       notice: {
-        id: Number,
-        content: String,
-        writer_id: String,
-        title: String,
-        write_time: String,
-        hit: Number,
+        id: 0,
+        content: "",
+        writer_id: "",
+        title: "",
+        write_time: "",
+        hit: 0,
       },
     };
   },
@@ -72,8 +72,19 @@ export default {
           msg = "삭제가 완료되었습니다.";
         }
         alert(msg);
-        this.$router.push({ name: "BookList" });
+        this.noticeList();
       });
+    },
+  },
+  computed: {
+    ...mapState(["loginUser"]),
+    getUser() {
+      if (this.loginUser) {
+        if (this.loginUser.id === this.notice.writer_id) return true;
+        return false;
+      } else {
+        return false;
+      }
     },
   },
 };

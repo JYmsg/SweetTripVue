@@ -74,7 +74,7 @@
           <!-- </router-link>
           </li> -->
           <li class="nav-item">
-            <router-link :to="{ name: 'HotplView' }" class="nav-link">
+            <router-link :to="{ name: 'HotplList' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
               <span class="nav-link-inner--text">HotPlace</span>
               <!-- </a> -->

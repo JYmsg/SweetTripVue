@@ -16,29 +16,32 @@ export default new Vuex.Store({
       state.user = user;
     },
     SET_LOGIN_USER(state, user) {
+      console.log(user);
       state.loginUser = user;
     },
     LOGOUT(state) {
       state.loginUser = null;
-      router.push({name: "home"});
+      router.push({ name: "home" });
     },
   },
   actions: {
     createUser({ commit }, user) {
-      http.post("/userapi/user", user)
+      http
+        .post("/userapi/user", user)
         .then(() => {
           alert("등록되었습니다.");
-          router.push({name: "home"});
+          router.push({ name: "home" });
         })
         .catch((err) => {
           console.log(err);
         });
     },
     updateUser({ commit }, user) {
-      http.put("/userapi/user", user)
+      http
+        .put("/userapi/user", user)
         .then(() => {
           alert("수정 완료!");
-          router.push({name : "home"});
+          router.push({ name: "home" });
         })
         .catch((err) => {
           console.log(err);
@@ -46,17 +49,19 @@ export default new Vuex.Store({
     },
     deleteUser({ state }, id) {
       console.log(state);
-      http.delete("/userapi/user/"+id)
+      http
+        .delete("/userapi/user/" + id)
         .then(() => {
           alert("삭제 완료!");
-          router.push({name: "home"});
+          router.push({ name: "home" });
         })
         .catch((err) => {
           console.log(err);
         });
     },
     setUser({ commit }, id) {
-      http.get("/userapi/user/"+id)
+      http
+        .get("/userapi/user/" + id)
         .then(({ data }) => {
           commit("SET_USER", data);
         })
@@ -65,10 +70,13 @@ export default new Vuex.Store({
         });
     },
     setLoginUser({ commit }, user) {
-      http.post("/userapi/login", user)
+      // console.log(user);
+      http
+        .post("/userapi/login", user)
         .then(({ data }) => {
-            commit("SET_LOGIN_USER", data);
-            router.push({name: "home"});
+          console.log(data);
+          commit("SET_LOGIN_USER", data);
+          router.push({ name: "home" });
         })
         .catch((err) => {
           console.log(err);

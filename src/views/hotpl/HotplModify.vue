@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import http from "@/util/http-common";
 
 export default {
   name: "HotplModify",
@@ -57,30 +57,34 @@ export default {
   },
   methods: {
     updateHotpl() {
-      this.$emit("update-hotpl", this.hotpl);
+      http
+        .put(`/hotplaceapi/hotplace`, {
+          id: this.hotpl.id,
+          title: this.hotpl.title,
+          content: this.hotpl.content,
+          // img: this.hotpl.img,
+          img: "...png",
+        })
+        .then(({ data }) => {
+          let msg = "수정 처리시 문제가 발생했습니다.";
+          if (data === 1) {
+            msg = "수정이 완료되었습니다.";
+          }
+          alert(msg);
+          this.moveList();
+        });
     },
     moveList() {
       this.$router.push({ name: "HotplList" });
     },
   },
   created() {
-    const id = this.$route.params.id;
-    console.log(id);
-    const API_URL = `http://localhost:9999/trip/hotplaceapi/hotplace/${id}`;
-
-    axios({
-      url: API_URL,
-      method: "get",
-    })
-      .then(({ data }) => {
-        this.hotpl.id = data.id;
-        this.hotpl.title = data.title;
-        this.hotpl.content = data.content;
-        this.hotpl.img = data.img;
-      })
-      .catch(() => {
-        alert("정보 요청에 실패했습니다.");
-      });
+    http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
+      this.hotpl.id = this.$route.params.id;
+      this.hotpl.title = data.title;
+      this.hotpl.content = data.content;
+      this.hotpl.img = data.img;
+    });
   },
 };
 </script>

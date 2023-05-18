@@ -47,7 +47,7 @@
 
 <script>
 import http from "@/util/http-common";
-
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -63,7 +63,7 @@ export default {
       http
         .post("/noticeapi/notice", {
           content: this.notice.content,
-          writer_id: this.$route.params.writer_id,
+          writer_id: this.getUser,
           title: this.notice.title,
         })
         .then(({ data }) => {
@@ -77,6 +77,16 @@ export default {
     },
     noticeList() {
       this.$router.push({ name: "NoticeList" });
+    },
+  },
+  computed: {
+    ...mapState(["loginUser"]),
+    getUser() {
+      if (this.loginUser) {
+        return this.loginUser.id;
+      } else {
+        return null;
+      }
     },
   },
 };

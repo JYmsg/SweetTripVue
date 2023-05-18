@@ -9,26 +9,25 @@
           <div class="row">
             <div class="col" style="border: 1px solid red">지도</div>
             <div class="px-4 col" style="border: 1px solid blue">
-              <div class="form-row m-4">
-                <base-dropdown tag="li" class="nav-item" v-show="isShow">
+              <div class="form-row m-4" v-if="getUser">
+                <base-dropdown tag="li" class="nav-item">
                   <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button"> &#9776; </a>
                   <router-link :to="`modify/${hotpl.id}`" class="dropdown-item">수정</router-link>
                   <a href="#" class="dropdown-item" @click="deleteHotpl">삭제</a>
                 </base-dropdown>
               </div>
-              <div class="row justify-content-center text-center">
+              <div class="row justify-content-center text-center mt-2">
                 <h2>{{ hotpl.title }}</h2>
               </div>
-              <h5 class="section-subheading text-muted">
+              <h5 class="section-subheading text-muted text-center">
                 {{ hotpl.write_time }} <br />
                 {{ hotpl.writer_id }}
               </h5>
-              <div>&#128065; {{ hotpl.hit }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.like }}</div>
-              <div class="mt-3">
+              <div class="text-center">&#128065; {{ hotpl.hit }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.like }}</div>
+              <div class="mt-3 row justify-content-center">
                 {{ hotpl.img }}
               </div>
               <div class="row justify-content-center">
-                <!-- <div>{{ notice.content }}</div> -->
                 <b-form-textarea
                   class="w-75"
                   id="textarea-no-resize"
@@ -50,8 +49,9 @@
 </template>
 
 <script>
-import axios from "axios";
+import http from "@/util/http-common.js";
 import BaseDropdown from "@/components/BaseDropdown";
+import { mapState } from "vuex";
 
 export default {
   name: "HotplDetail",
@@ -67,45 +67,42 @@ export default {
         write_time: "",
         writer_id: "",
       },
-      isShow: true,
     };
+  },
+  created() {
+    http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
+      // console.log(data);
+      this.hotpl = data;
+    });
   },
   components: {
     BaseDropdown,
   },
   methods: {
     deleteHotpl() {
-      this.$emit("delete-hotpl", this.hotpl);
+      http.delete(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
+        let msg = "삭제 처리시 문제가 발생했습니다.";
+        if (data === 1) {
+          msg = "삭제가 완료되었습니다.";
+        }
+        alert(msg);
+        this.moveList();
+      });
     },
     moveList() {
       this.$router.push({ name: "HotplList" });
     },
   },
-  created() {
-    const id = this.$route.params.id;
-    console.log(id);
-    const API_URL = `http://localhost:9999/trip/hotplaceapi/hotplace/${id}`;
-
-    axios({
-      url: API_URL,
-      method: "get",
-    })
-      .then(({ data }) => {
-        this.hotpl.id = data.id;
-        this.hotpl.title = data.title;
-        this.hotpl.content = data.content;
-        this.hotpl.img = data.img;
-        this.hotpl.hit = data.hit + 1;
-        this.hotpl.like = data.like;
-        this.hotpl.write_time = data.write_time;
-        this.hotpl.writer_id = data.writer_id;
-      })
-      .catch(() => {
-        alert("정보 요청에 실패했습니다.");
-      });
-    if (this.hotpl.writer_id === this.use_user.id) {
-      this.isShow = true;
-    }
+  computed: {
+    ...mapState(["loginUser"]),
+    getUser() {
+      if (this.loginUser) {
+        if (this.loginUser.id === this.hotpl.writer_id) return true;
+        return false;
+      } else {
+        return false;
+      }
+    },
   },
 };
 </script>

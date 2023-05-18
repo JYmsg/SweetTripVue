@@ -10,13 +10,8 @@
             <div class="row justify-content-center mt-5">
               <h4>🔥 핫 플레이스 🔥</h4>
             </div>
-            <div v-if="user != null" class="row m-1" style="justify-content: right">
-              <router-link
-                class="btn btn-outline-warning float-end d-inline"
-                :to="{ name: 'HotplRegist', params: { id: user.id } }"
-                :user="user"
-                >핫 플레이스 등록하기</router-link
-              >
+            <div v-if="getUser" class="row m-1" style="justify-content: right">
+              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
             </div>
             <hr />
             <div class="hotpl-list">
@@ -31,7 +26,11 @@
                         <div class="card-body">
                           <div class="d-flex justify-content-between align-items-center">
                             <div>
-                              <router-link class="card-title m-0 h5" :to="`${hotpl.id}`">{{ hotpl.title }}</router-link>
+                              <router-link
+                                class="card-title m-0 h5"
+                                :to="{ name: 'HotplDetail', params: { id: hotpl.id } }"
+                                >{{ hotpl.title }}</router-link
+                              >
                             </div>
                             <div>
                               <i id="like" class="bi bi-heart fs-4"></i>
@@ -62,13 +61,48 @@
 </template>
 
 <script>
+import http from "@/util/http-common.js";
+import { mapState } from "vuex";
 export default {
   name: "HotplList",
-  props: {
-    hotpls: {
-      type: Array,
+  data() {
+    return {
+      hotpls: [
+        {
+          id: Number,
+          title: String,
+          content: String,
+          img: String,
+          hit: Number,
+          like: Number,
+          write_time: String,
+          writer_id: String,
+        },
+      ],
+    };
+  },
+  computed: {
+    ...mapState(["loginUser"]),
+    getData() {
+      return this.hotpls;
     },
-    user: null,
+    getUser() {
+      if (this.loginUser) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  created() {
+    http.get("/hotplaceapi/hotplace").then(({ data }) => {
+      this.hotpls = data;
+    });
+  },
+  methods: {
+    hotplRegist() {
+      this.$router.push({ name: "HotplRegist" });
+    },
   },
 };
 </script>
