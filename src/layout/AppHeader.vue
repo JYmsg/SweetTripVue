@@ -196,14 +196,11 @@ import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
 import { mapMutations, mapState } from "vuex";
 
-// import Modal from "@/components/Modal.vue";
-// import Modals from "../views/components/JavascriptComponents/Modals";
 export default {
   components: {
     BaseNav,
     CloseButton,
     BaseDropdown,
-    // Modals
   },
   methods: {
     ...mapMutations(["LOGOUT"]),
@@ -220,7 +217,6 @@ export default {
       } else {
         return false;
       }
-      // return true;
     },
   },
 };

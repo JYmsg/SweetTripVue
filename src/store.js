@@ -65,6 +65,7 @@ export default new Vuex.Store({
         });
     },
     setLoginUser({ commit }, user) {
+      console.log("로그인 성공")
       http.post("/userapi/login", user)
         .then(({ data }) => {
             commit("SET_LOGIN_USER", data);
