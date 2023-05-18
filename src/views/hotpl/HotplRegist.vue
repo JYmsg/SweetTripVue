@@ -1,25 +1,48 @@
 <template>
-  <section class="page-section container" style="margin-top: 6rem; width: 60%">
-    <div class="text-center">
-      {{title}} hello
-      <span class="mt-3 h3 d-inline-block" id="tripListTitle">핫 플레이스 등록하기</span>
-    </div>
-    <div class="mb-4" id="write-title-div">
-      <label for="title" class="h5">제목</label>
-      <input type="text" class="form-control" id="title" name="title" v-model="title" required />
-    </div>
-    <div class="mb-4" id="write-content-div">
-      <label for="content" class="h5">내용</label>
-      <textarea class="form-control" id="content" v-model="content" rows="10" name="content" required></textarea>
-    </div>
-    <div class="mb-4">
-      <label for="file" class="h5">사진 첨부</label>
-      <input type="file" class="form-control" id="file" name="file" accept="image/*" />
-    </div>
-    <div class="mt-5 text-center">
-      <button @click="createHotpl">등록 완료</button>
-    </div>
-  </section>
+  <div>
+    <section class="section-profile-cover section-shaped my-0">
+      <div class="shape shape-login"></div>
+    </section>
+    <section class="section section-skew">
+      <div class="container">
+        <card shadow class="card-profile mt--300" no-body>
+          <div class="px-4">
+            <div class="row justify-content-center m-4">
+              <h3>핫 플레이스 등록하기</h3>
+            </div>
+            <div class="row">
+              <div class="col">
+                
+                지도
+              </div>
+              <div class="col">
+                <div class="mb-4" id="write-place-div">
+                  <div class="ml-2" style="text-align:left">위치</div>
+                  <input type="text" placeholder="위치를 검색해 선택하세요" class="form-control" readonly required />
+                </div>
+                <div class="mb-4" id="write-title-div">
+                  <div class="ml-2" style="text-align:left">제목</div>
+                  <input type="text" placeholder="제목을입력하세요" class="form-control" id="title" name="title" v-model="title" required />
+                </div>
+                <div class="mb-4" id="write-content-div">
+                  <div class="ml-2" style="text-align:left">내용</div>
+                  <textarea placeholder="내용을입력하세요" class="form-control" id="content" v-model="content" rows="10" name="content" required></textarea>
+                </div>
+                <div class="mb-4">
+                  <div class="ml-2" style="text-align:left; color:red">이미지 최대 1개</div>
+                  <input type="file" class="form-control" id="file" name="file" accept="image/*" />
+                </div>
+                <div class="row m-3" style="justify-content: right">
+                  <b-button @click="createHotpl">등록 완료</b-button>
+                  <b-button @click="moveList">취소</b-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </card>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -33,7 +56,7 @@ export default {
   },
   data() {
     return {
-      title: "hi",
+      title: "",
       content: "",
       writer_id: "",
       latitude:"",
@@ -42,6 +65,9 @@ export default {
     };
   },
   methods: {
+    moveList() {
+      this.$router.push({ name: "HotplList" });
+    },
     createHotpl() {
       console.log(this.title);
       if (

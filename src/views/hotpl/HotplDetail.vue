@@ -9,14 +9,14 @@
           <div class="row">
             <div class="col" style="border: 1px solid red">지도</div>
             <div class="px-4 col" style="border: 1px solid blue">
-              <div class="form-row float-left m-3">
+              <div class="form-row m-4">
                 <base-dropdown tag="li" class="nav-item" v-show="isShow">
                   <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button"> &#9776; </a>
                   <router-link :to="`modify/${hotpl.id}`" class="dropdown-item">수정</router-link>
                   <a href="#" class="dropdown-item" @click="deleteHotpl">삭제</a>
                 </base-dropdown>
               </div>
-              <div class="row justify-content-center mt-5">
+              <div class="row justify-content-center text-center">
                 <h2>{{ hotpl.title }}</h2>
               </div>
               <h5 class="section-subheading text-muted">
