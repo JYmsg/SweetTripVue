@@ -93,21 +93,6 @@ export default {
       keyword: "",
     };
   },
-  // created() {
-  //   initMap() {
-  //     var container = document.getElementById("map");
-  //     var options = {
-  //         center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
-  //         level: 5, // 지도의 확대 레벨
-  //     };
-  //     this.map = new kakao.maps.Map(container, options);
-
-  //     this.ps = new kakao.maps.services.Places();
-  //     this.infowindow = new kakao.maps.InfoWindow({zIndex:1});
-
-  //     // this.searchPlaces();
-  //   },
-  // },
   methods: {
     createHotpl() {
       console.log(this.hotpl);
@@ -144,10 +129,8 @@ export default {
       this.ps = new kakao.maps.services.Places();
       this.infowindow = new kakao.maps.InfoWindow({zIndex:1});
 
-      // this.searchPlaces();
     },
     searchPlaces(){
-      // var keyword = document.getElementById("keyword").value;
       console.log(this.keyword);
       if(!this.keyword.replace(/^\s+|\s+$/g, '')){
         alert("키워드를 입력해주세요!")
