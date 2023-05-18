@@ -8,8 +8,15 @@
             <div class="container">
                 <card shadow class="card-profile mt--300" no-body>
                     <div class="px-4">
-                        <div class="row justify-content-center m-5">
-                            <h4>“🔍” 여행지를 검색하세요!</h4>
+                        <div class="m-5">
+                          <div class="row float-right">
+                            <button type="button" class="btn btn-sky">
+                              <img src="img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info">{{ carts.length }}</span>
+                            </button>
+                          </div>
+                          <div class="row justify-content-center">
+                              <h4>“🔍” 여행지를 검색하세요!</h4>
+                          </div>
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-lg-3 col-sm-6">
@@ -47,9 +54,7 @@
                                                 <p class='card-text'>
                                                     <small class='text-muted'>{{ place.addr1 +" "+ place.addr2}}</small>
                                                 </p>
-                                                <img :src="filters[index]" style="width: 2rem; height: 2rem;" alt="cart" size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!' @click="inCart(index)" />
-                                                <!-- <i class='ni ni-cart' size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!'>
-                                                </i> -->
+                                                <img :src="filters[index]" style="width: 2rem; height: 2rem;" alt="cart" size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!' @click="inCart(index, place.content_id)" />
                                             </div>
                                         </div>
                                     </div>
@@ -65,11 +70,12 @@
 </template>
 <script>
 import http from "@/util/http-common.js"
-
+import { mapState } from "vuex"
 //https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B1%EB%A1%9C%20634/place/1431214756?c=19,0,0,0,dh&isCorrectAnswer=true 상세 위치 검색
 export default {
     data() {
-        return {
+    return {
+          user: null,
             map: null,
             search: null,
             area: null,
@@ -111,10 +117,23 @@ export default {
             ],
             places: [],
             markers: [],
-            filters: [],
+          filters: [],
+            carts: [],
         }
-    },
-    methods: {
+  },
+  ...mapState(["loginUser"]),
+  created() {
+    console.log(this.loginUser)
+    http.get("/cartapi/cart/list/" + this.loginUser.id)
+    .then(({ data }) => {
+      for (let i = 0; i < data.length; i++){
+        this.$set(this.carts, i, data[i]);
+      }
+    })
+
+  },
+  methods: {
+    ...mapState(["loginUser"]),
         searchgugun() {
             http.get("/gugunapi/gugun/"+this.area)
             .then(({ data }) => {
@@ -198,12 +217,22 @@ export default {
       moveCenter(lat, lng) {
             this.map.setCenter(new kakao.maps.LatLng(lat, lng));
       },
-      inCart(index) {
-        console.log(index);
-        this.$set(this.filters, index, "img/icons/noti/car-full.png");
-        // this.filters[index] = "img/icons/noti/car-full.png";
+      // ...mapState(["loginUser"]),
+      inCart(index, placeId) {
+
+        http.post("/cartapi/cart/place", {
+          user_id: this.loginUser.id,
+          attraction_id : placeId
+        }).then(({ data }) => {
+          this.$set(this.filters, index, "img/icons/noti/car-full.png");
+          this.$set(this.carts, this.carts.length, places[placeId]);
+          alert("장바구니 담았습니다.")
+        }).catch(() => {
+          alert("실패")
+        })
+        
       }
-    },
+  },
     mounted() {
         if (!window.kakao || !window.kakao.maps) {
             const script = document.createElement("script");
