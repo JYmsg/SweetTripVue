@@ -74,7 +74,7 @@
           <!-- </router-link>
           </li> -->
           <li class="nav-item">
-            <router-link :to="{ name: 'HotplView' }" :user="user" class="nav-link">
+            <router-link :to="{ name: 'HotplView' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
               <span class="nav-link-inner--text">HotPlace</span>
               <!-- </a> -->
@@ -194,6 +194,8 @@
 import BaseNav from "@/components/BaseNav";
 import BaseDropdown from "@/components/BaseDropdown";
 import CloseButton from "@/components/CloseButton";
+import { mapMutations, mapState } from "vuex";
+
 // import Modal from "@/components/Modal.vue";
 // import Modals from "../views/components/JavascriptComponents/Modals";
 export default {
@@ -204,17 +206,21 @@ export default {
     // Modals
   },
   methods: {
+    ...mapMutations(["LOGOUT"]),
     logout() {
-      this.$emit("logout");
+      this.LOGOUT();
     },
   },
   computed: {
+    ...mapState(["loginUser"]),
     getUser() {
-      if (this.user) {
+      console.log(this.loginUser);
+      if (this.loginUser) {
         return true;
       } else {
         return false;
       }
+      // return true;
     },
   },
 };
