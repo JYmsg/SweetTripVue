@@ -75,6 +75,7 @@ export default {
   methods: {
     createHotpl() {
       console.log(this.hotpl);
+      if (this.hotpl.img === "") this.hotpl.img = null;
       http
         .post("/hotplaceapi/hotplace", {
           title: this.hotpl.title,
@@ -82,8 +83,7 @@ export default {
           writer_id: this.getUser,
           latitude: 1.1,
           longitude: 1.1,
-          // img:this.hotpl.img,
-          img: "...png",
+          img: this.hotpl.img,
         })
         .then(({ data }) => {
           let msg = "등록 처리시 문제가 발생했습니다.";

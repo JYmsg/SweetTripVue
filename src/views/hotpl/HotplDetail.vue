@@ -23,7 +23,9 @@
                 {{ hotpl.write_time }} <br />
                 {{ hotpl.writer_id }}
               </h5>
-              <div class="text-center">&#128065; {{ hotpl.hit }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.like }}</div>
+              <div class="text-center">
+                &#128065; {{ hotpl.hit + 1 }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.like }}
+              </div>
               <div class="mt-3 row justify-content-center">
                 {{ hotpl.img }}
               </div>

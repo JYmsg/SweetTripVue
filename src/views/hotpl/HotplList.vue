@@ -14,44 +14,53 @@
               <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
             </div>
             <hr />
-            <div class="hotpl-list">
-              <div v-if="hotpls.length">
-                <div v-for="(hotpl, index) in hotpls" :key="index">
-                  <div class="card mb-3 text-start">
-                    <div class="row g-0">
-                      <div class="col-md-3">
-                        {{ hotpl.img }}
-                      </div>
-                      <div class="col-md-9">
-                        <div class="card-body">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                              <router-link
-                                class="card-title m-0 h5"
-                                :to="{ name: 'HotplDetail', params: { id: hotpl.id } }"
-                                >{{ hotpl.title }}</router-link
-                              >
+            <div class="row justify-content-center">
+              <div class="hotpl-list" style="width: 90%">
+                <div v-if="hotpls.length">
+                  <div v-for="(hotpl, index) in hotpls" :key="index">
+                    <div class="card mb-3 text-start">
+                      <div class="row g-0">
+                        <div v-if="hotpl.img.length == 0" class="col-md-3">
+                          <img style="width: 100%; height: 100%" src="../../../public/img/logo/noupload.jpg" />
+                        </div>
+                        <div v-else class="col-md-3">
+                          {{ hotpl.img }}
+                        </div>
+                        <div class="col-md-9">
+                          <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                <div class="card-title m-0 h5" @click="hotplDetail(hotpl.id)">
+                                  {{ hotpl.title }}
+                                </div>
+                              </div>
+                              <!-- <div>
+                                <router-link
+                                  class="card-title m-0 h5"
+                                  :to="{ name: 'HotplDetail', params: { id: hotpl.id } }"
+                                  >{{ hotpl.title }}</router-link
+                                >
+                              </div> -->
+                              <div>
+                                <p class="h2"><b-icon icon="heart"></b-icon></p>
+                                <span>좋아요 {{ hotpl.like }}</span
+                                ><br />
+                                <span>조회수 {{ hotpl.hit }}</span>
+                              </div>
                             </div>
-                            <div>
-                              <i id="like" class="bi bi-heart fs-4"></i>
-                              <br />
-                              <span>좋아요 {{ hotpl.like }}</span
+                            <p class="card-text">
+                              <small class="text-muted">작성자: {{ hotpl.writer_id }}</small
                               ><br />
-                              <span>조회수 {{ hotpl.hit }}</span>
-                            </div>
+                              <small class="text-muted">{{ hotpl.write_time }}</small>
+                            </p>
                           </div>
-                          <p class="card-text">
-                            <small class="text-muted">작성자: {{ hotpl.writer_id }}</small
-                            ><br />
-                            <small class="text-muted">{{ hotpl.write_time }}</small>
-                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <div v-else>등록된 게시물이 없습니다.</div>
               </div>
-              <div v-else>등록된 게시물이 없습니다.</div>
             </div>
           </div>
         </card>
@@ -102,6 +111,9 @@ export default {
   methods: {
     hotplRegist() {
       this.$router.push({ name: "HotplRegist" });
+    },
+    hotplDetail(hotpl) {
+      this.$router.push({ name: "HotplDetail", params: { id: hotpl.id } });
     },
   },
 };
