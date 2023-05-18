@@ -198,13 +198,13 @@ export default {
             this.map = new kakao.maps.Map(container, options);
         },
         displayMarker() {
-            var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+            var imageSrc = "img/markers/marker_share.png"
 
             var bounds = new kakao.maps.LatLngBounds();
 
             for (var i = 0; i < this.markers.length; i++) {
                 // 마커 이미지의 이미지 크기 입니다
-                var imageSize = new kakao.maps.Size(24, 35);
+                var imageSize = new kakao.maps.Size(34, 35);
 
                 // 마커 이미지를 생성합니다
                 var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -217,11 +217,40 @@ export default {
                     image: markerImage, // 마커 이미지
                 });
 
+                // marker.setMap(this.map);
                 // LatLngBounds 객체에 좌표를 추가합니다
+                var content = '<div class="customoverlay">' +
+                '  <a href="https://map.naver.com/v5/search/'+this.places[i].title+'/place" target="_blank">' +
+                '    <span class="title">'+this.places[i].title+'</span>' +
+                '  </a>' +
+                '</div>';
+
+                var customOverlay = new kakao.maps.CustomOverlay({
+                  map: this.map,
+                  position: this.markers[i].latlng,
+                  content: content,
+                  yAnchor: 0.2
+                });
                 bounds.extend(this.markers[i].latlng);
+                customOverlay.setMap(this.map);
             }
-            this.map.setBounds(bounds);
+        this.map.setBounds(bounds);
+        // this.marksCss();
       },
+      // marksCss(){
+      //   var infoTitle = document.querySelectorAll('.info-title');
+      //   infoTitle.forEach(function(e) {
+      //       var w = e.offsetWidth + 10;
+      //       var ml = w/2;
+      //       e.parentElement.style.top = "82px";
+      //       e.parentElement.style.left = "50%";
+      //       e.parentElement.style.marginLeft = -ml+"px";
+      //       e.parentElement.style.width = w+"px";
+      //       e.parentElement.previousSibling.style.display = "none";
+      //       e.parentElement.parentElement.style.border = "0px";
+      //       e.parentElement.parentElement.style.background = "unset";
+      //   });
+      // },
       moveCenter(lat, lng) {
             this.map.setCenter(new kakao.maps.LatLng(lat, lng));
       },
@@ -256,7 +285,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
+.customoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+.customoverlay a {display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:14px;font-weight:bold;overflow:hidden;background: #8CADF2;background: #8CADF2 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;}
+.customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
+.customoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
 .card {
   position: relative;
   display: flex;
