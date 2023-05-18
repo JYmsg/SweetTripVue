@@ -197,9 +197,6 @@ import CloseButton from "@/components/CloseButton";
 // import Modal from "@/components/Modal.vue";
 // import Modals from "../views/components/JavascriptComponents/Modals";
 export default {
-  props: {
-    user: null,
-  },
   components: {
     BaseNav,
     CloseButton,
