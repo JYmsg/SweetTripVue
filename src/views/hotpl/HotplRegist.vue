@@ -15,11 +15,12 @@
                 <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
                 <div id="menu_wrap" class="bg_white">
                   <div class="option">
-                      <div>
-                          <form onsubmit="searchPlaces(); return false;">
-                              <input type="text" value="" id="keyword" size="15"> 
-                              <button id="submit_btn" @click="searchPlaces">검색</button> 
-                          </form>
+                      <div class="row no-gutters">
+                        <!-- <input type="text" value="" id="keyword" size="15"> -->
+                        <base-input class="col-lg-8 col-sm-8 mb-1 ml-2 mt-1" placeholder="Search" v-model="keyword" size="15"
+                              addon-left-icon="ni ni-zoom-split-in">
+                        </base-input>
+                        <base-button id="submit_btn" class="col-lg-3 col-sm-3" type="primary" style="height:3rem;" @click="searchPlaces">검색</base-button> 
                       </div>
                   </div>
                   <hr>
@@ -89,6 +90,7 @@ export default {
       map: null,
       infowindow: null,
       markers: [],
+      keyword: "",
     };
   },
   // created() {
@@ -145,14 +147,14 @@ export default {
       // this.searchPlaces();
     },
     searchPlaces(){
-      var keyword = document.getElementById("keyword").value;
-
-      if(!keyword.replace(/^\s+|\s+$/g, '')){
+      // var keyword = document.getElementById("keyword").value;
+      console.log(this.keyword);
+      if(!this.keyword.replace(/^\s+|\s+$/g, '')){
         alert("키워드를 입력해주세요!")
         return false;
       }
 
-      this.ps.keywordSearch(keyword, this.placesSearchCB);
+      this.ps.keywordSearch(this.keyword, this.placesSearchCB);
     },
     placesSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
@@ -217,17 +219,16 @@ export default {
 
     var el = document.createElement('li'),
      itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
-                '<div class="info">' +
+                '<div class="info" @click="selectPlace('+places+')" >' +
                 '   <h5>' + places.place_name + '</h5>';
     if (places.road_address_name) {
       itemStr += '    <span>' + places.road_address_name + '</span>' +
-                '   <span class="jibun gray">' +  places.address_name  + '</span>';
+                '<span class="badge badge-info">지번</span><span class="gray">' +  places.address_name  + '</span>';
     } else {
       itemStr += '    <span>' +  places.address_name  + '</span>'; 
     }
                  
-    itemStr += '  <span class="tel">' + places.phone  + '</span>' +
-                '</div>';           
+    itemStr += '</div>';           
 
     el.innerHTML = itemStr;
     el.className = 'item';
@@ -270,6 +271,7 @@ export default {
 
     for (i=1; i<=pagination.last; i++) {
         var el = document.createElement('a');
+        el.class="page-link";
         el.href = "#";
         el.innerHTML = i;
 
@@ -297,6 +299,9 @@ export default {
     while (el.hasChildNodes()) {
         el.removeChild (el.lastChild);
     }
+  },
+  selectPlace(place){
+    console.log(place);
   }
 },
   computed: {
@@ -362,4 +367,112 @@ export default {
 #pagination a {display:inline-block;margin-right:10px;}
 #pagination .on {font-weight: bold; cursor: default;color:#777;}
 
+/** 추가 디자인 */
+/* #menuDiv {
+  display: flex;
+  position: relative;
+  z-index: 2;
+  font-size: 12px;
+}
+
+#menu_wrap {
+  position: relative;
+  width: 400px;
+  height: 600px;
+  border-radius: 20px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+#map_title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+
+#form {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px 10px 15px;
+}
+
+#keyword {
+  width: 100%;
+  border: none;
+  outline: none;
+}
+
+#submit_btn {
+  background-color: #ff6e30;
+  border: none;
+  outline: none;
+}
+
+#placesList h5 {
+  color: #ff6e30;
+}
+
+#placesList li {
+  list-style: square;
+}
+#placesList .item {
+  border-bottom: 1px solid #888;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#placesList .item .info {
+  padding: 10px 0 10px 5px;
+}
+
+#placesList .item span {
+  display: block;
+  margin-top: 4px;
+}
+#placesList .info .gray {
+  color: #8a8a8a;
+}
+
+#placesList .info .tel {
+  color: #009900;
+}
+
+#btnDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#pagination {
+  margin: 10px auto;
+  text-align: center;
+}
+#pagination a {
+  display: inline-block;
+  margin-right: 10px;
+  color: #7b7b7b;
+}
+#pagination .on {
+  font-weight: bold;
+  cursor: default;
+  color: #ff6e30;
+}
+
+#btnOn {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#searchBtn {
+  width: 20px;
+  padding: 0px;
+  height: 70px;
+  background-color: #ffa230;
+  border: none;
+  outline: none;
+} */
 </style>
