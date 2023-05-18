@@ -70,7 +70,7 @@ export default new Vuex.Store({
         });
     },
     setLoginUser({ commit }, user) {
-      // console.log(user);
+      console.log("로그인 성공");
       http
         .post("/userapi/login", user)
         .then(({ data }) => {
