@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "./router";
 import { createVuexPersistedState } from "vue-persistedstate";
-
+import http from "@/util/http-common";
 
 Vue.use(Vuex);
 
@@ -11,9 +12,6 @@ export default new Vuex.Store({
     loginUser: null,
   },
   mutations: {
-    CREATE_USER(state, user) {
-      state.users.push(user);
-    },
     SET_USER(state, user) {
       state.user = user;
     },
@@ -22,6 +20,7 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.loginUser = null;
+      router.push({name: "home"});
     },
   },
   actions: {
@@ -66,7 +65,7 @@ export default new Vuex.Store({
         });
     },
     setLoginUser({ commit }, user) {
-      http.post("/userapi/login")
+      http.post("/userapi/login", user)
         .then(({ data }) => {
             commit("SET_LOGIN_USER", data);
             router.push({name: "home"});
@@ -82,5 +81,4 @@ export default new Vuex.Store({
       storage: window.sessionStorage, //기본값 localStorage
     }),
   ],
-  modules: { user},
 });

@@ -63,6 +63,7 @@
   </section>
 </template>
 <script>
+import { mapActions } from "vuex";
 // import http from "@/util/http-common.js";
 // import axios from "axios";
 export default {
@@ -74,41 +75,14 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["setLoginUser"]),
     login() {
       let user = {
         id: this.id,
         password: this.password,
       };
-      this.$emit("login", user);
-      // http.post("/userapi/login", {
-      //     id: this.id,
-      //     password: this.password
-      // })
-      // .then(({data}) => {
-      //     this.$router.push({ name: "home" });
-      // })
-      // .catch(()=>{
-      //     alert("로그인 실패")
-      // })
+      this.setLoginUser(user);
     },
-    // login(){
-    //     const API_URL = "userapi/login";
-
-    //     axios({
-    //         url: API_URL,
-    //         method: "POST",
-    //         data: {
-    //            id: this.id,
-    //             password: this.password,
-    //         }
-    //     })
-    //     .then(({data}) => {
-    //         this.$router.push({ name: "home" });
-    //     })
-    //     .catch(()=>{
-    //         alert("로그인 실패")
-    //     })
-    // }
   },
 };
 </script>
