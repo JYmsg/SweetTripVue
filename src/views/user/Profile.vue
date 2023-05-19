@@ -50,21 +50,11 @@
                         <!-- <calendar/> -->
                         <tabs fill class="flex-column flex-md-row">
                             <card shadow slot-scope="{activeTabIndex}">
-                                <tab-pane key="tab2">
-                                    <template slot="title">
-                                        <i class="ni ni-calendar-grid-58"></i> Calendar
-                                    </template>
-                                    <div style="background-color: black;">
-                                    Cosby sweater eu banh mi, qui irure terry richardson ex
-                                        squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan
-                                        american apparel, butcher voluptate nisi qui.</div>
-                                </tab-pane>
-
-                                <tab-pane key="tab3">
+                                <tab-pane key="tab1">
                                     <template slot="title">
                                         <i class="ni ni-cart"></i> Cart
                                     </template>
-                                    <div v-if="getCarts" id="resultBox" style="width: 100%">
+                                    <div v-if="getCarts && cartslength != 0" id="resultBox" style="width: 100%">
                                         <div class='row card m-3 col-lg-11 col-sm-11' v-for="cart in carts" :key="cart.content_id">
                                             <div class='row g-0' v-if="cart.place != null"><div class='col-md-3'>
                                                 <img style='height:200px; width: 300px'
@@ -92,7 +82,21 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-else class="row justify-content-center">
+                                        <h4>장바구니에 넣은 장소가 없습니다.</h4>
+                                        <base-button type="primary" size="sm" class="justify-content-end" @click="moveSearch()">지금바로 넣으러 가기!</base-button>
+                                    </div>
                                 </tab-pane>
+                                <tab-pane key="tab2">
+                                    <template slot="title">
+                                        <i class="ni ni-calendar-grid-58"></i> Calendar
+                                    </template>
+                                    <div style="background-color: black;">
+                                    Cosby sweater eu banh mi, qui irure terry richardson ex
+                                        squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan
+                                        american apparel, butcher voluptate nisi qui.</div>
+                                </tab-pane>
+
                             </card>
                         </tabs>
                         <div class="m-3"></div>
@@ -130,19 +134,14 @@ export default {
                 this.cartslength = this.carts.length;
             })
         return true;
-    }
+    },
   },
-// async mounted() {
-//     await http.get("/cartapi/cart/list/" + this.loginUser.id)
-//     .then(({data})=>{
-//         for(let i=0; i<data.length; i++){
-//             this.$set(this.carts, i, data[i]);
-//         }
-//         return this.carts.length;
-//     }).catch((err)=>{
-//         return 0;
-//     })
-// }
+    methods: {
+        moveSearch(){
+            // console.log("move");
+            this.$router.push({ name: "search" });
+        },
+    }
 };
 </script>
 <style>

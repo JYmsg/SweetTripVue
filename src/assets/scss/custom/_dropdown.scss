@@ -6,7 +6,7 @@
 }
 
 .dropdown-menu {
-    min-width: 12rem;
+   // min-width: 20rem; // user 수정
 
     .dropdown-item {
         padding: .5rem 1rem;
@@ -75,7 +75,7 @@
 }
 
 // Dropown: Sizes
-
+// user
 .dropdown-menu-sm {
     min-width: 100px;
     border: $border-radius-lg;

@@ -8,7 +8,7 @@
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
             <div class="row justify-content-center mt-5">
-              <h4>🔥 핫 플레이스 🔥</h4>
+              <h3>🔥 핫 플레이스 🔥</h3>
             </div>
             <div v-if="getUser" class="row m-1" style="justify-content: right">
               <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>

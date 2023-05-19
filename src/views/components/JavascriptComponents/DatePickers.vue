@@ -13,7 +13,7 @@
             </base-input>
         </div> -->
         <div class="col-md-11 mt-4 mt-md-0">
-            <small class="d-block text-uppercase font-weight-bold mb-3">여행 기간</small>
+            <p class="d-block text-uppercase font-weight-bold mb-2">여행 기간</p>
 
             <div class="input-daterange datepicker row align-items-center">
                 <div class="col">
@@ -23,7 +23,9 @@
                             @on-close="blur"
                             :config="{allowInput: true, mode: 'range',}"
                             class="form-control datepicker"
-                            v-model="dates.range">
+                            v-model="range"
+                            @change="sendRange()"
+                          >
                         </flat-picker>
                     </base-input>
                 </div>
@@ -40,10 +42,13 @@ export default {
   },
   data() {
     return {
-      dates: {
-        range: "2018-07-17 to 2018-07-19"
-      }
+      range: "2023-06-01 to 2023-06-05"
     };
-  }
+  },
+  watch: {
+    range(newrange){
+      this.$emit("sendRange", newrange);
+    }
+  },
 };
 </script>
