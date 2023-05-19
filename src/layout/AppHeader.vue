@@ -86,8 +86,8 @@
               <i class="ni ni-bold-down"></i>
               <!-- <span class="nav-link-inner--text">Components</span> -->
             </a>
-            <a href="#" class="dropdown-item" @click="logout" style="font-family: 'GangwonEdu_OTFBoldA'">Logout</a>
-            <router-link to="/profile" class="dropdown-item" style="font-family: 'GangwonEdu_OTFBoldA'"
+            <a href="#" class="dropdown-item user-nav" @click="logout" style="font-family: 'GangwonEdu_OTFBoldA'">Logout</a>
+            <router-link to="/profile" class="dropdown-item user-nav" style="font-family: 'GangwonEdu_OTFBoldA'"
               >MyPage</router-link
             >
           </base-dropdown>
@@ -223,4 +223,8 @@ export default {
   },
 };
 </script>
-<style></style>
+<style scoped>
+.user-nav{
+  min-width: 12rem;
+}
+</style>

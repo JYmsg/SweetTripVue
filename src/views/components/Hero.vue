@@ -34,10 +34,10 @@
                 여행 계획을 세우러 가요!
             </base-button>
             <modal :show.sync="modals.modal1">
-                <h6 slot="header" class="modal-title text-center" id="modal-title-default">여행 정보를 입력해주세요.</h6>
+                <h6 slot="header" class="modal-title ml-2" id="modal-title-default"><i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.</h6>
                 <!-- DataPickers -->
                 <div class="col-md-11 mt-4 mt-md-0">
-                  <small class="d-block text-uppercase font-weight-bold mb-3">여행 제목</small>
+                  <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
                   <div class="row align-items-center">
                     <div class="col">
                       <base-input placeholder="Title" v-model="search"
@@ -48,12 +48,12 @@
                 </div>
                 <date-pickers></date-pickers>
                 <div class="col-md-11 mt-4 mt-md-0">
-                  <small class="d-block text-uppercase font-weight-bold mb-3">초대 하기</small>
+                  <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
                   <base-input placeholder="Title" value="ssafy(evecomcom98@naver.com)"
                     addon-right-icon="ni ni-fat-remove" class="text-center" readonly>
                   </base-input>
-                  <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하세요">
-                    <div class="m-3">
+                  <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
+                    <div class="m-2" style="width: 20rem">
                       <b-input-group class="m-1">
                         <b-input placeholder="Title" v-model="title"
                           addon-left-icon="ni ni-tag">
@@ -65,7 +65,7 @@
                     </div>
                     <b-dropdown-divider></b-dropdown-divider>
                     <base-input placeholder="Title" value="ssafy(evecomcom98@naver.commymymy)"
-                      addon-right-icon="ni ni-fat-add" class="text-center" readonly>
+                      addon-right-icon="ni ni-fat-add" class="p-2" readonly>
                     </base-input>
                     <!-- <b-dropdown-item-button>ssafy(evecomcom98@naver.com)</b-dropdown-item-button> -->
                   </b-dropdown>           
@@ -144,4 +144,8 @@ export default {
   },
 };
 </script>
-<style></style>
+<style scoped>
+/* .dropdown-menu { 
+   min-width: 17rem;
+} */
+</style>
