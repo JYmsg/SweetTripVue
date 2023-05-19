@@ -72,8 +72,10 @@ export default {
     };
   },
   created() {
+    http.put(`/hotplaceapi/hit`, {
+      id: this.$route.params.id,
+    });
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
-      // console.log(data);
       this.hotpl = data;
     });
   },

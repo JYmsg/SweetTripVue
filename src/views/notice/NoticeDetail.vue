@@ -14,14 +14,22 @@
               {{ notice.write_time }} <br />
               {{ notice.writer_id }}
             </h4>
-            <div style="text-align: right">조회 {{ notice.hit }}</div>
-            <div v-if="loginUser.id === 'admin'" class="row mb-3 justify-content-center">
+            <div style="text-align: right">조회 {{ notice.hit + 1 }}</div>
+            <div v-if="getUser" class="row mb-3 justify-content-center">
+              <b-button v-if="loginUser.id === 'admin'" :to="{ name: 'NoticeModify', params: { id: notice.id } }"
+                >수정</b-button
+              >
+              <b-button v-else @click="noticeDelete">삭제</b-button>
+            </div>
+
+            <!-- <div v-if="loginUser.id === 'admin'" class="row mb-3 justify-content-center">
               <b-button v-if="getUser" :to="{ name: 'NoticeModify', params: { id: notice.id } }">수정</b-button>
               <b-button @click="noticeDelete">삭제</b-button>
             </div>
             <div v-else class="row mb-3 justify-content-center">
               <b-button v-if="getUser" @click="noticeDelete">삭제</b-button>
-            </div>
+            </div> -->
+
             <div class="row justify-content-center">
               <!-- <div>{{ notice.content }}</div> -->
               <b-form-textarea
@@ -60,6 +68,9 @@ export default {
     };
   },
   created() {
+    http.put(`/noticeapi/hit`, {
+      id: this.$route.params.id,
+    });
     http.get(`/noticeapi/notice/${this.$route.params.id}`).then(({ data }) => {
       this.notice = data;
     });

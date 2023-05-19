@@ -30,17 +30,12 @@
                           <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                               <div>
-                                <div class="card-title m-0 h5" @click="hotplDetail(hotpl.id)">
-                                  {{ hotpl.title }}
-                                </div>
-                              </div>
-                              <!-- <div>
                                 <router-link
                                   class="card-title m-0 h5"
                                   :to="{ name: 'HotplDetail', params: { id: hotpl.id } }"
                                   >{{ hotpl.title }}</router-link
                                 >
-                              </div> -->
+                              </div>
                               <div>
                                 <p class="h2"><b-icon icon="heart"></b-icon></p>
                                 <span>좋아요 {{ hotpl.like }}</span
@@ -111,9 +106,6 @@ export default {
   methods: {
     hotplRegist() {
       this.$router.push({ name: "HotplRegist" });
-    },
-    hotplDetail(hotpl) {
-      this.$router.push({ name: "HotplDetail", params: { id: hotpl.id } });
     },
   },
 };
