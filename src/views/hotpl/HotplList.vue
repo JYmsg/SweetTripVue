@@ -13,6 +13,7 @@
             <div v-if="getUser" class="row m-1" style="justify-content: right">
               <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
             </div>
+            <div></div>
             <hr />
             <div class="row justify-content-center">
               <div class="hotpl-list" style="width: 90%">
@@ -54,7 +55,7 @@
                     </div>
                   </div>
                 </div>
-                <div v-else>등록된 게시물이 없습니다.</div>
+                <div class="mb-4" v-else>등록된 게시물이 없습니다.</div>
               </div>
             </div>
           </div>

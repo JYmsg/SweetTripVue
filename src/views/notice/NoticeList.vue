@@ -76,6 +76,11 @@ export default {
       this.$router.push({ name: "NoticeWrite" });
     },
     viewNotice(notice) {
+      if (!this.loginUser) {
+        alert("로그인 후 이용해 주세요");
+        this.$router.push({ name: "login" });
+        return;
+      }
       this.$router.push({
         name: "NoticeDetail",
         params: { id: notice.id },

@@ -52,7 +52,7 @@
           <li class="nav-item">
             <router-link to="/notice/list" class="nav-link">
               <i class="ni ni-bullet-list-67 d-lg-none"></i>
-              <span class="nav-link-inner--text">QnA</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">QnA</span>
             </router-link>
           </li>
           <li class="nav-item">
@@ -60,7 +60,7 @@
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
               <i class="ni ni-square-pin d-lg-none"></i>
-              <span class="nav-link-inner--text">여행위치 검색</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">여행위치 검색</span>
               <!-- </a> -->
             </router-link>
           </li>
@@ -76,7 +76,7 @@
           <li class="nav-item">
             <router-link :to="{ name: 'HotplList' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
-              <span class="nav-link-inner--text">HotPlace</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">HotPlace</span>
               <!-- </a> -->
             </router-link>
           </li>
@@ -86,15 +86,17 @@
               <i class="ni ni-bold-down"></i>
               <!-- <span class="nav-link-inner--text">Components</span> -->
             </a>
-            <a href="#" class="dropdown-item" @click="logout">Logout</a>
-            <router-link to="/profile" class="dropdown-item">MyPage</router-link>
+            <a href="#" class="dropdown-item" @click="logout" style="font-family: 'GangwonEdu_OTFBoldA'">Logout</a>
+            <router-link to="/profile" class="dropdown-item" style="font-family: 'GangwonEdu_OTFBoldA'"
+              >MyPage</router-link
+            >
           </base-dropdown>
           <li class="nav-item" v-else>
             <router-link to="/login" class="nav-link">
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
               <i class="ni ni-circle-08 d-lg-none"></i>
-              <span class="nav-link-inner--text">Login</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">LOGIN</span>
               <!-- </a> -->
             </router-link>
           </li>

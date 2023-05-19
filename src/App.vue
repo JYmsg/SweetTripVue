@@ -19,6 +19,9 @@ export default {
 };
 </script>
 <style>
+#app {
+  font-family: "GangwonEdu_OTFBoldA";
+}
 a {
   text-decoration: none;
 }
