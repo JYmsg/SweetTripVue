@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       dates: {
-        range: "2018-07-17 to 2018-07-19"
+        range: "2023-06-01 to 2023-06-05"
       }
     };
   }

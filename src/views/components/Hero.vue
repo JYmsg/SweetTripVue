@@ -30,8 +30,11 @@
         </div>
         <div class="row align-items-center justify-content-around stars-and-coded">
           <div class="col-md-4 col-sm-4">
-            <base-button block type="primary" class=" mb-3" @click="modals.modal1 = true">
+            <base-button block type="primary" class=" mb-3" @click="modals.modal1 = true" v-if="getUser">
                 여행 계획을 세우러 가요!
+            </base-button>
+            <base-button block type="primary" class=" mb-3" v-else @click="moveLogin()">
+                로그인하고 시작하기
             </base-button>
             <modal :show.sync="modals.modal1">
                 <h6 slot="header" class="modal-title ml-2" id="modal-title-default"><i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.</h6>
@@ -47,15 +50,24 @@
                   </div>
                 </div>
                 <date-pickers></date-pickers>
+                
+                
                 <div class="col-md-11 mt-4 mt-md-0">
                   <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
-                  <base-input placeholder="Title" value="ssafy(evecomcom98@naver.com)"
-                    addon-right-icon="ni ni-fat-remove" class="text-center" readonly>
-                  </base-input>
+                  <div v-if="adds != []">
+                    <div v-for="(add, index) in adds" :key="add.id">
+                      <base-input
+                        addon-right-icon="ni ni-fat-remove" class="text-center" readonly
+                        @click="removeUser(index)"
+                        :value="add.id+'('+add.email+')'"
+                        >
+                      </base-input>
+                    </div>
+                  </div>
                   <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
                     <div class="m-2" style="width: 20rem">
                       <b-input-group class="m-1">
-                        <b-input placeholder="Title" v-model="title"
+                        <b-input placeholder="Title" v-model="keyword"
                           addon-left-icon="ni ni-tag">
                         </b-input>
                         <b-input-group-append>
@@ -64,9 +76,20 @@
                       </b-input-group>
                     </div>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <base-input placeholder="Title" value="ssafy(evecomcom98@naver.commymymy)"
+                    <!-- <base-input placeholder="Title" value="ssafy(evecomcom98@naver.commymymy)"
                       addon-right-icon="ni ni-fat-add" class="p-2" readonly>
-                    </base-input>
+                    </base-input> -->
+                    <div v-if="users.length">
+                      <div v-for="(user, index) in users" :key="user.id">
+                        <base-input
+                          addon-right-icon="ni ni-fat-add" class="p-2" readonly
+                          @click="addUser(index)"
+                          :value="user.id+'('+user.email+')'"
+                        >
+                        </base-input>
+                      </div>
+                    </div>
+                    <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
                     <!-- <b-dropdown-item-button>ssafy(evecomcom98@naver.com)</b-dropdown-item-button> -->
                   </b-dropdown>           
                 </div>
@@ -97,7 +120,7 @@
                 </div> -->
 
                 <template slot="footer">
-                    <base-button type="primary">Save changes</base-button>
+                    <base-button type="primary">Make a Plan</base-button>
                     <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
                     </base-button>
                 </template>
@@ -115,9 +138,11 @@
   </section>
 </template>
 <script>
+import http from "@/util/http-common.js"
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import Modal from "@/components/Modal.vue";
+import { mapState } from "vuex"
 const DatePickers = () => import("./JavascriptComponents/DatePickers");
 export default {
   components: {
@@ -128,18 +153,71 @@ export default {
   data() {
     return {
       modals: {
-        range: "2018-07-17 to 2018-07-19",
+        range: "2023-06-01 to 2023-06-05",
         modal1: false,
         modal2: false,
       },
-      title: "",
-      search: "검색하세요",
+      keyword: "",
+      search: "",
       users: [],
+      adds: [],
     };
+  },
+  computed: {
+    ...mapState(["loginUser"]),
+    getUser(){
+      console.log(this.loginUser);
+      if(this.loginUser){
+        return true;
+      }else{
+        return false;
+      }
+    },
   },
   methods: {
     searchId() {
-      
+      this.users = [];
+       http.get("/userapi/user/keyword/" + this.keyword)
+        .then(({ data }) => {
+          console.log(data);
+          for (let i = 0; i < data.length; i++){
+            console.log(this.loginUser.id, data[i].id)
+            if(this.loginUser.id != data[i].id){
+            //   this.$set(this.users, i, []);
+            // }else{
+              this.$set(this.users, i, data[i]);
+            }
+          }
+        }).catch((err)=>{
+          alert("유저를 불러오는데 실패했습니다.")
+        })
+    },
+    isAdd(user){
+      console.log(user);
+      for(let i=0; i<adds.length; i++){
+        if(adds[i] != null && adds[i].id == user.id){
+          return true;
+        }
+      }
+      return false;
+    },
+    addUser(index){
+      console.log("add", this.users[index]);
+      for(let i=0; i<this.adds.length; i++){
+        if(this.adds[i].id == this.users[index].id) {
+          this.$delete(this.users, index);
+          return;
+        }
+      }
+      this.$set(this.adds, this.adds.length, this.users[index]);
+      this.$delete(this.users, index);
+    },
+    removeUser(index){
+      console.log("delete", this.adds[index]);
+      this.$delete(this.adds, index);
+    },
+    moveLogin(){
+      this.$router.push({name: "login"});
     }
   },
 };
