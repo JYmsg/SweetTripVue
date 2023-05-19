@@ -22,16 +22,7 @@
               <b-button v-else @click="noticeDelete">삭제</b-button>
             </div>
 
-            <!-- <div v-if="loginUser.id === 'admin'" class="row mb-3 justify-content-center">
-              <b-button v-if="getUser" :to="{ name: 'NoticeModify', params: { id: notice.id } }">수정</b-button>
-              <b-button @click="noticeDelete">삭제</b-button>
-            </div>
-            <div v-else class="row mb-3 justify-content-center">
-              <b-button v-if="getUser" @click="noticeDelete">삭제</b-button>
-            </div> -->
-
             <div class="row justify-content-center">
-              <!-- <div>{{ notice.content }}</div> -->
               <b-form-textarea
                 class="w-75"
                 id="textarea-no-resize"
@@ -46,6 +37,38 @@
             </div>
           </div>
         </card>
+
+        <div class="comment justify-content-center">
+          <div class="row align-items-center m-3">
+            <b-form-textarea
+              no-resize
+              name="comment"
+              cols="35"
+              rows="2"
+              v-model="write.content"
+              placeholder="댓글을 입력하세요"
+            ></b-form-textarea>
+            <b-button size="sm" variant="outline-primary" class="ml-3" @click="checkComment">등록</b-button>
+          </div>
+          <div class="row mb-5 ml-4">
+            <b-form-checkbox v-model="write.private" id="checkbox-1" name="checkbox-1" value="1" unchecked-value="0">
+              <b-icon icon="lock-fill"></b-icon>
+            </b-form-checkbox>
+          </div>
+          <div>
+            <ul class="list-unstyled">
+              <b-media tag="li" v-for="(comment, index) in comments" :key="index">
+                <template #aside>
+                  <b-img blank blank-color="#abc" width="64" alt="placeholder" style="margin-right: 1rem"></b-img>
+                </template>
+                <h5 class="mt-0 mb-1">{{ comment.writer_id }}</h5>
+                <p class="mb-0">
+                  {{ comment.content }}
+                </p>
+              </b-media>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -65,6 +88,19 @@ export default {
         write_time: "",
         hit: 0,
       },
+      comments: [
+        {
+          id: 0,
+          content: "",
+          private: 0,
+          writer_id: "",
+          notice_id: "",
+        },
+      ],
+      write: {
+        content: "",
+        private: 0,
+      },
     };
   },
   created() {
@@ -73,6 +109,9 @@ export default {
     });
     http.get(`/noticeapi/notice/${this.$route.params.id}`).then(({ data }) => {
       this.notice = data;
+    });
+    http.get(`/commentapi/comment/${this.$route.params.id}`).then(({ data }) => {
+      this.comments = data;
     });
   },
   methods: {
@@ -88,6 +127,26 @@ export default {
         alert(msg);
         this.noticeList();
       });
+    },
+    checkComment() {
+      if (loginUser === null) {
+        alert("로그인 후 이용해 주세요.");
+        this.$router.push({ name: "Login" });
+      } else {
+        this.registComment();
+      }
+    },
+    registComment() {
+      http
+        .post("/commentapi/comment", {
+          content: this.write.content,
+          writer_id: loginUser.id,
+          notice_id: this.notice.id,
+          private: this.write.private,
+        })
+        .then(() => {
+          this.$router.push({ name: "NoticeDetail", params: { id: this.notice.id } });
+        });
     },
   },
   computed: {
@@ -105,7 +164,14 @@ export default {
 </script>
 
 <style scoped>
-.content {
+.comment {
+  width: 80%;
   margin: 0 auto;
+}
+.comment textarea {
+  width: 90%;
+}
+.comment button {
+  float: right;
 }
 </style>

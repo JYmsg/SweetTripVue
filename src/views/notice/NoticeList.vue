@@ -18,10 +18,11 @@
             </div>
             <div class="row justify-content-center">
               <b-table
-                striped
                 hover
+                style="cursor: pointer"
                 :items="getData"
                 :fields="fields"
+                :tbody-tr-class="rowClass"
                 class="text-center"
                 @row-clicked="viewNotice"
               ></b-table>
@@ -79,6 +80,10 @@ export default {
         name: "NoticeDetail",
         params: { id: notice.id },
       });
+    },
+    rowClass(item, type) {
+      if (!item || type !== "row") return;
+      if (item.writer_id === "admin") return "table-warning";
     },
   },
 };
