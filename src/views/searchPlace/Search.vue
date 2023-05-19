@@ -15,7 +15,7 @@
                             </button>
                           </div>
                           <div class="row justify-content-center">
-                              <h4>“🔍” 여행지를 검색하세요!</h4>
+                              <h3>🔍 여행지를 검색하세요!</h3>
                           </div>
                         </div>
                         <div class="row justify-content-center">

@@ -109,23 +109,6 @@
                             <img src="img/brand/creativetim-white-slim.png" class="ml-3" style="height: 30px;">
                         </a> -->
           </div>
-          <div>
-            <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
-            <date-pickers></date-pickers>
-            <!-- <div class="input-daterange datepicker row align-items-center">
-                <div class="col"> -->
-                    <!-- <base-input addon-left-icon="ni ni-calendar-grid-58"> -->
-                        <!-- <flat-picker slot-scope="{focus, blur}"
-                            @on-open="focus"
-                            @on-close="blur"
-                            :config="{allowInput: true, mode: 'range',}"
-                            class="form-control datepicker"
-                            v-model="dates.range">
-                        </flat-picker> -->
-                    <!-- </base-input> -->
-                <!-- </div>
-            </div> -->
-        </div>
         </div>
       </div>
     </div>

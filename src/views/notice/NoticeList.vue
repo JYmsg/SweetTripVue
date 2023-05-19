@@ -8,7 +8,7 @@
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
             <div class="row justify-content-center m-5">
-              <h4>⚠️ QnA ⚠️</h4>
+              <h3>⚠️ QnA ⚠️</h3>
             </div>
             <div v-if="getUser && loginUser.id === 'admin'" class="row m-2" style="justify-content: right">
               <b-button @click="noticeWrite">공지사항 등록</b-button>
