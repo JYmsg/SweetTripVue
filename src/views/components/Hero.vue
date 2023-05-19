@@ -50,7 +50,7 @@
                 <div class="col-md-11 mt-4 mt-md-0">
                   <small class="d-block text-uppercase font-weight-bold mb-3">초대 하기</small>
                   <base-input placeholder="Title" value="ssafy(evecomcom98@naver.com)"
-                    addon-left-icon="ni ni-circle-08" readonly>
+                    addon-right-icon="ni ni-fat-remove" class="text-center" readonly>
                   </base-input>
                   <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하세요">
                     <div class="m-3">
@@ -64,8 +64,11 @@
                       </b-input-group>
                     </div>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item-button>ssafy(evecomcom98@naver.com)</b-dropdown-item-button>
-                  </b-dropdown>                  
+                    <base-input placeholder="Title" value="ssafy(evecomcom98@naver.commymymy)"
+                      addon-right-icon="ni ni-fat-add" class="text-center" readonly>
+                    </base-input>
+                    <!-- <b-dropdown-item-button>ssafy(evecomcom98@naver.com)</b-dropdown-item-button> -->
+                  </b-dropdown>           
                 </div>
 
                 <!-- <div class="dropdown">
