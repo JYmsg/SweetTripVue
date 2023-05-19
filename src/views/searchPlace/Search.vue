@@ -204,36 +204,36 @@ export default {
             var bounds = new kakao.maps.LatLngBounds();
 
             for (var i = 0; i < this.markers.length; i++) {
-                // 마커 이미지의 이미지 크기 입니다
-                var imageSize = new kakao.maps.Size(34, 35);
+              // 마커 이미지의 이미지 크기 입니다
+              var imageSize = new kakao.maps.Size(34, 35);
 
-                // 마커 이미지를 생성합니다
-                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+              // 마커 이미지를 생성합니다
+              var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-                // 마커를 생성합니다
-                var marker = new kakao.maps.Marker({
-                    map: this.map, // 마커를 표시할 지도
-                    position: this.markers[i].latlng, // 마커를 표시할 위치
-                    title: this.markers[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                    image: markerImage, // 마커 이미지
-                });
+              // 마커를 생성합니다
+              var marker = new kakao.maps.Marker({
+                  map: this.map, // 마커를 표시할 지도
+                  position: this.markers[i].latlng, // 마커를 표시할 위치
+                  title: this.markers[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                  image: markerImage, // 마커 이미지
+              });
 
-                // marker.setMap(this.map);
-                // LatLngBounds 객체에 좌표를 추가합니다
-                var content = '<div class="customoverlay">' +
-                '  <a href="https://map.naver.com/v5/search/'+this.places[i].title+'/place" target="_blank">' +
-                '    <span class="title">'+this.places[i].title+'</span>' +
-                '  </a>' +
-                '</div>';
+              // marker.setMap(this.map);
+              // LatLngBounds 객체에 좌표를 추가합니다
+              var content = '<div class="customoverlay">' +
+              '  <a href="https://map.naver.com/v5/search/'+this.places[i].title+'/place" target="_blank">' +
+              '    <span class="title">'+this.places[i].title+'</span>' +
+              '  </a>' +
+              '</div>';
 
-                var customOverlay = new kakao.maps.CustomOverlay({
-                  map: this.map,
-                  position: this.markers[i].latlng,
-                  content: content,
-                  yAnchor: 0.2
-                });
-                bounds.extend(this.markers[i].latlng);
-                customOverlay.setMap(this.map);
+              var customOverlay = new kakao.maps.CustomOverlay({
+                map: this.map,
+                position: this.markers[i].latlng,
+                content: content,
+                yAnchor: 0.2
+              });
+              bounds.extend(this.markers[i].latlng);
+              customOverlay.setMap(this.map);
             }
         this.map.setBounds(bounds);
         // this.marksCss();
@@ -252,41 +252,41 @@ export default {
       //       e.parentElement.parentElement.style.background = "unset";
       //   });
       // },
-      moveCenter(lat, lng) {
-            this.map.setCenter(new kakao.maps.LatLng(lat, lng));
-      },
-      moveProfile(){
-        console.log("move");
-        this.$router.push({ name: "profile" });
-      },
-      inCart(index, placeId) {
-        console.log("incart", this.loginUser)
-        http.post("/cartapi/cart/place", {
-          user_id: this.loginUser.id,
-          attraction_id : placeId
-        }).then(({ data }) => {
-          this.$set(this.filters, index, "img/icons/noti/car-full.png");
-          this.$set(this.carts, this.cartslength, this.places[placeId]);
-          this.cartslength += 1;
-          alert("장바구니 담았습니다.")
-        }).catch(() => {
-          alert("실패")
-        })
-        
-      }
-  },
-    mounted() {
-        if (!window.kakao || !window.kakao.maps) {
-            const script = document.createElement("script");
-            script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
-            script.addEventListener("load", () => {
-                kakao.maps.load(this.initMap);
-            });
-            document.head.appendChild(script);
-        } else {
-            this.initMap();
-        }
+    moveCenter(lat, lng) {
+          this.map.setCenter(new kakao.maps.LatLng(lat, lng));
+    },
+    moveProfile(){
+      console.log("move");
+      this.$router.push({ name: "profile" });
+    },
+    inCart(index, placeId) {
+      console.log("incart", this.loginUser)
+      http.post("/cartapi/cart/place", {
+        user_id: this.loginUser.id,
+        attraction_id : placeId
+      }).then(({ data }) => {
+        this.$set(this.filters, index, "img/icons/noti/car-full.png");
+        this.$set(this.carts, this.cartslength, this.places[placeId]);
+        this.cartslength += 1;
+        alert("장바구니 담았습니다.")
+      }).catch(() => {
+        alert("실패")
+      })
+      
     }
+  },
+  mounted() {
+    if (!window.kakao || !window.kakao.maps) {
+        const script = document.createElement("script");
+        script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
+        script.addEventListener("load", () => {
+            kakao.maps.load(this.initMap);
+        });
+        document.head.appendChild(script);
+    } else {
+        this.initMap();
+    }
+  }
 }
 </script>
 

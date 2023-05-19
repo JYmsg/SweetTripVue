@@ -16,7 +16,6 @@
                 <div id="menu_wrap" class="bg_white">
                   <div class="option">
                       <div class="row no-gutters">
-                        <!-- <input type="text" value="" id="keyword" size="15"> -->
                         <base-input class="col-lg-8 col-sm-8 mb-1 ml-2 mt-1" placeholder="Search" v-model="keyword" size="15"
                               addon-left-icon="ni ni-zoom-split-in">
                         </base-input>
@@ -31,7 +30,7 @@
                       <div class="info row" @click="selectPlace(place)">
                         <h5>{{ index }}</h5><h4>{{place.place_name }}</h4>
                           <div v-if="place.road_address_name">
-                            <span>{{place.road_address_name}}</span>
+                            <span>{{place.road_address_name}}</span><br>
                             <span class="badge badge-info">지번</span><span class="gray">{{place.address_name}}</span>
                           </div>
                           <div>
@@ -46,6 +45,9 @@
               </div>
               <div class="col">
                 <div class="mb-4" id="write-place-div">
+                  <div>
+                      <b-form-select v-model="selected" :options="areas" class="me-2 rounded-4"></b-form-select>
+                  </div>
                   <div class="ml-2" style="text-align: left">위치</div>
                   <input type="text" v-model="title" class="form-control" readonly />
                 </div>
@@ -105,12 +107,33 @@ export default {
       title: "위치를 검색해 선택하세요.",
       lan: 0,
       log: 0,
+      address: "",
       ps: null,
       map: null,
-      // infowindow: null,
       markers: [],
       keyword: "",
-      places: []
+      places: [],
+      selected: null,
+      areas: [
+          {value: null, text : '검색할 지역 선택'},
+          {value: 1, text : '서울'},
+          {value: 2, text : '인천'},
+          {value: 3, text : '대전'},
+          {value: 4, text : '대구'},
+          {value: 5, text : '광주'},
+          {value: 6, text : '부산'},
+          {value: 7, text : '울산'},
+          {value: 8, text : '세종특별자치시'},
+          {value: 31, text : '경기도'},
+          {value: 32, text : '강원도'},
+          {value: 33, text : '충청북도'},
+          {value: 34, text : '충청남도'},
+          {value: 35, text : '경상북도'},
+          {value: 36, text : '경상남도'},
+          {value: 37, text : '전라북도'},
+          {value: 38, text : '전라남도'},
+          {value: 39, text : '제주도'},
+      ],
     };
   },
   methods: {
@@ -125,6 +148,9 @@ export default {
           latitude: this.lan,
           longitude: this.log,
           img: this.hotpl.img,
+          address: this.address, //장소위치정보
+          name: this.title, // 장소이름
+          sido: this.selected
         })
         .then(({ data }) => {
           let msg = "등록 처리시 문제가 발생했습니다.";
@@ -145,9 +171,7 @@ export default {
           level: 5, // 지도의 확대 레벨
       };
       this.map = new kakao.maps.Map(container, options);
-
       this.ps = new kakao.maps.services.Places();
-      // this.infowindow = new kakao.maps.InfoWindow({zIndex:1});
 
     },
     searchPlaces(){
@@ -202,25 +226,6 @@ export default {
     // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
     this.map.setBounds(bounds);
   },
-  // getListItem(index, places) {
-
-  //   var el = document.createElement('li'),
-  //    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
-  //               '<div class="info" @click="selectPlace('+places+')" >' +
-  //               '   <h5>' + places.place_name + '</h5>';
-  //   if (places.road_address_name) {
-  //     itemStr += '    <span>' + places.road_address_name + '</span>' +
-  //               '<span class="badge badge-info">지번</span><span class="gray">' +  places.address_name  + '</span>';
-  //   } else {
-  //     itemStr += '    <span>' +  places.address_name  + '</span>'; 
-  //   }
-                 
-  //   itemStr += '</div>';           
-
-  //   el.innerHTML = itemStr;
-  //   el.className = 'item';
-  //   return el;
-  // },
   addMarker(position, idx, title) {
     var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
       imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
@@ -289,6 +294,7 @@ export default {
     this.title = place.place_name;
     this.lan = place.x;
     this.log = place.y;
+    this.address = place.address_name;
   }
 },
   computed: {
