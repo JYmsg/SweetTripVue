@@ -9,7 +9,6 @@ import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
-import Plan from "@/views/Plan.vue";
 import NoticeView from "@/views/NoticeView.vue";
 import NoticeList from "@/views/notice/NoticeList.vue";
 import NoticeWrite from "@/views/notice/NoticeWrite.vue";
@@ -23,7 +22,7 @@ import HotplDetail from "@/views/hotpl/HotplDetail.vue";
 import HotplModify from "@/views/hotpl/HotplModify.vue";
 
 import PlanView from "@/views/PlanView.vue";
-import PlanRegist from "@/views/plan/PlanView.vue";
+import PlanRegist from "@/views/plan/PlanRegist.vue";
 
 Vue.use(Router);
 
@@ -45,15 +44,6 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Information,
-        footer: AppFooter,
-      },
-    },
-    {
-      path: "/plan",
-      name: "plan",
-      components: {
-        header: AppHeader,
-        default: Plan,
         footer: AppFooter,
       },
     },
