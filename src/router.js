@@ -9,6 +9,7 @@ import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
+import Plan from "@/views/Plan.vue";
 import NoticeView from "@/views/NoticeView.vue";
 import NoticeList from "@/views/notice/NoticeList.vue";
 import NoticeWrite from "@/views/notice/NoticeWrite.vue";
@@ -41,6 +42,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Information,
+        footer: AppFooter,
+      },
+    },
+    {
+      path: "/plan",
+      name: "plan",
+      components: {
+        header: AppHeader,
+        default: Plan,
         footer: AppFooter,
       },
     },

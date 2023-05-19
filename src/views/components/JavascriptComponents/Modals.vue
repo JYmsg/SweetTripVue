@@ -1,6 +1,6 @@
 <template>
     <!-- Modals -->
-    <!-- <div class="row">
+    <div class="row">
         <div class="col-md-4">
             <base-button block type="primary" class=" mb-3" @click="modals.modal1 = true">
                 Default
@@ -49,7 +49,7 @@
                     </base-button>
                 </template>
             </modal>
-        </div> -->
+        </div>
         <div class="col-md-4">
             <base-button block type="default" class=" mb-3" @click="login = true">
                 Form
@@ -104,7 +104,7 @@
                 </card>
             </modal>
         </div>
-    <!-- </div> -->
+    </div>
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
