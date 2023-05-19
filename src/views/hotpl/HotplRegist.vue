@@ -292,8 +292,8 @@ export default {
   selectPlace(place){
     console.log(place);
     this.title = place.place_name;
-    this.lan = place.x;
-    this.log = place.y;
+    this.lan = place.y;
+    this.log = place.x;
     this.address = place.address_name;
   }
 },

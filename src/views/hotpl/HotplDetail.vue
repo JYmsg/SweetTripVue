@@ -7,7 +7,11 @@
       <div class="container">
         <card shadow class="card-profile mt--300" no-body>
           <div class="row">
-            <div class="col" style="border: 1px solid red">지도</div>
+            <div class="col m-2" style="border: 1px solid red">
+              <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+            
+            
+            </div>
             <div class="px-4 col" style="border: 1px solid blue">
               <div class="form-row m-4" v-if="getUser">
                 <base-dropdown tag="li" class="nav-item">
@@ -68,7 +72,12 @@ export default {
         like: 0,
         write_time: "",
         writer_id: "",
+        latitude: 0,
+        longitude: 0,
+        name: "",
+        address: "",
       },
+      map: null,
     };
   },
   created() {
@@ -96,6 +105,54 @@ export default {
     moveList() {
       this.$router.push({ name: "HotplList" });
     },
+    initMap() {
+      http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
+        this.hotpl = data;
+        var container = document.getElementById("map");
+        console.log("hotpl", this.hotpl);
+        var mk = new kakao.maps.LatLng(this.hotpl.latitude, this.hotpl.longitude);
+        var options = {
+          center: mk, // 지도의 중심좌표
+          level: 5, // 지도의 확대 레벨
+        };
+        this.map = new kakao.maps.Map(container, options);
+        
+        var imageSrc = "img/markers/marker.png"
+        // 마커 이미지의 이미지 크기 입니다
+        var imageSize = new kakao.maps.Size(34, 35);
+
+        // // 마커 이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+        var markerInfo = {
+            title: this.hotpl.name,
+            latlng: mk
+        };
+        // // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: this.map, // 마커를 표시할 지도
+            position: markerInfo.latlng, // 마커를 표시할 위치
+            title: markerInfo.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image: markerImage, // 마커 이미지
+        });
+        console.log("marker", marker);
+        var content = '<div class="overlay_info">'
+            + '    <a href="#" target="_blank"><strong>'+this.hotpl.name+'</strong></a>'
+            + '    <div class="desc">'
+            + '        <span class="address">'+this.hotpl.address+'</span>'
+            + '    </div>'
+            + '</div>';
+
+        console.log("markerInfo", markerInfo)
+        var overlay = new kakao.maps.CustomOverlay({
+          content: content,
+          position: markerInfo.latlng,
+          xAnchor: 0.5, // 커스텀 오버레이의 x축 위치입니다. 1에 가까울수록 왼쪽에 위치합니다. 기본값은 0.5 입니다
+          yAnchor: 1.4     
+        });
+        overlay.setMap(this.map);
+      });
+    },
+
   },
   computed: {
     ...mapState(["loginUser"]),
@@ -108,7 +165,29 @@ export default {
       }
     },
   },
+  mounted() {
+    if (!window.kakao || !window.kakao.maps) {
+      const script = document.createElement("script");
+      script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
+      script.addEventListener("load", () => {
+          kakao.maps.load(this.initMap);
+      });
+        document.head.appendChild(script);
+    } else {
+        this.initMap();
+    }
+  }
 };
 </script>
 
-<style></style>
+<style>
+
+.overlay_info {border-radius: 6px; margin-bottom: 12px; float:left;position: relative; border: 1px solid #ccc; border-bottom: 2px solid #ddd;background-color:#fff;}
+.overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
+.overlay_info a {display: block; background: #d95050; background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 14px; border-radius: 6px 6px 0 0}
+.overlay_info .desc {padding:14px;position: relative; min-width: 190px; height: 56px}
+.overlay_info img {vertical-align: top;}
+.overlay_info .address {font-size: 12px; color: #333; position: absolute; white-space: normal}
+.overlay_info:after {content:'';position: absolute; margin-left: -11px; left: 50%; bottom: -12px; width: 22px; height: 12px; background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;}
+
+</style>

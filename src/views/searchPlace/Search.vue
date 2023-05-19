@@ -74,53 +74,53 @@ import { mapState } from "vuex"
 //https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B1%EB%A1%9C%20634/place/1431214756?c=19,0,0,0,dh&isCorrectAnswer=true 상세 위치 검색
 export default {
     data() {
-    return {
-          user: null,
-            map: null,
-            search: null,
-            area: null,
-            areas: [
-                {value: null, text : '검색할 지역 선택'},
-                {value: 1, text : '서울'},
-                {value: 2, text : '인천'},
-                {value: 3, text : '대전'},
-                {value: 4, text : '대구'},
-                {value: 5, text : '광주'},
-                {value: 6, text : '부산'},
-                {value: 7, text : '울산'},
-                {value: 8, text : '세종특별자치시'},
-                {value: 31, text : '경기도'},
-                {value: 32, text : '강원도'},
-                {value: 33, text : '충청북도'},
-                {value: 34, text : '충청남도'},
-                {value: 35, text : '경상북도'},
-                {value: 36, text : '경상남도'},
-                {value: 37, text : '전라북도'},
-                {value: 38, text : '전라남도'},
-                {value: 39, text : '제주도'},
-            ],
-            gugun: null,
-            guguns: [
-                {value: null, text : '구군선택'}
-            ],
-            type: null,
-            types: [
-                {value: null, text : '관광지 유형'},
-                {value: 12, text : '관광지'},
-                {value: 14, text : '문화시설'},
-                {value: 15, text : '축제공연행사'},
-                {value: 25, text : '여행코스'},
-                {value: 28, text : '레포츠'},
-                {value: 32, text : '숙박'},
-                {value: 38, text : '쇼핑'},
-                {value: 39, text : '음식점'},
-            ],
-          places: [],
-          markers: [],
-          filters: [],
-          carts: [],
-          cartslength: 0,
-        }
+      return {
+        user: null,
+        map: null,
+        search: null,
+        area: null,
+        areas: [
+            {value: null, text : '검색할 지역 선택'},
+            {value: 1, text : '서울'},
+            {value: 2, text : '인천'},
+            {value: 3, text : '대전'},
+            {value: 4, text : '대구'},
+            {value: 5, text : '광주'},
+            {value: 6, text : '부산'},
+            {value: 7, text : '울산'},
+            {value: 8, text : '세종특별자치시'},
+            {value: 31, text : '경기도'},
+            {value: 32, text : '강원도'},
+            {value: 33, text : '충청북도'},
+            {value: 34, text : '충청남도'},
+            {value: 35, text : '경상북도'},
+            {value: 36, text : '경상남도'},
+            {value: 37, text : '전라북도'},
+            {value: 38, text : '전라남도'},
+            {value: 39, text : '제주도'},
+        ],
+        gugun: null,
+        guguns: [
+            {value: null, text : '구군선택'}
+        ],
+        type: null,
+        types: [
+            {value: null, text : '관광지 유형'},
+            {value: 12, text : '관광지'},
+            {value: 14, text : '문화시설'},
+            {value: 15, text : '축제공연행사'},
+            {value: 25, text : '여행코스'},
+            {value: 28, text : '레포츠'},
+            {value: 32, text : '숙박'},
+            {value: 38, text : '쇼핑'},
+            {value: 39, text : '음식점'},
+        ],
+      places: [],
+      markers: [],
+      filters: [],
+      carts: [],
+      cartslength: 0,
+    }
   },
   computed: {
     ...mapState(["loginUser"]),
@@ -137,123 +137,108 @@ export default {
     }
   },
   methods: {
-        searchgugun() {
-            http.get("/gugunapi/gugun/"+this.area)
-            .then(({ data }) => {
-                this.gugun = null;
-                this.guguns = [];
-                let first = { value: null, text: '구군선택' };
-                this.$set(this.guguns, 0, first);
-                for (let i = 0; i < data.length; i++){
-                    let gugun = {
-                        value: data[i].gugun_code,
-                        text: data[i].gugun_name
-                    };
-                    this.$set(this.guguns, i+1, gugun);
-                }
-            })
-            .catch(()=>{
-                alert("잘못된 접근 입니다.");
-            })
-        },
-        searchPlaces() {
-            http.post("/placeapi/place/list/"+this.loginUser.id, {
-                sido_code: this.area,
-                gugun_code: this.gugun,
-                contentTypeId: this.type,
-                keyword: this.search
-            })
-            .then(({ data }) => {
-              console.log(data);
-              this.initMap();
-              this.places = []; this.filters = []; this.markers = [];
-              for (let i = 0; i < data.length; i++){
-                var value = data[i];
-                if (value.first_image == "") { // 이미지가 없는 경우 이미지 대체
-                  data[i].first_image = "img/logo/no-image.PNG";
-                  }
-                this.$set(this.places, i, data[i]);
-                let markerInfo = {
-                    title: data[i].title,
-                    latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
-                };
-                this.$set(this.markers, i, markerInfo);
-                if(data[i].in == true){
-                  this.$set(this.filters, i, "img/icons/noti/car-full.png");
-                }else{
-                  this.$set(this.filters, i, "img/icons/noti/car-bean.png");
-                }
-              };
-              this.displayMarker();
-            })
-            .catch(()=>{
-                alert("검색오류입니다.");
-            })
-        },
-        initMap() {
-            var container = document.getElementById("map");
-            var options = {
-                center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
-                level: 5, // 지도의 확대 레벨
-            };
-            this.map = new kakao.maps.Map(container, options);
-        },
-        displayMarker() {
-            var imageSrc = "img/markers/marker_share.png"
-
-            var bounds = new kakao.maps.LatLngBounds();
-
-            for (var i = 0; i < this.markers.length; i++) {
-              // 마커 이미지의 이미지 크기 입니다
-              var imageSize = new kakao.maps.Size(34, 35);
-
-              // 마커 이미지를 생성합니다
-              var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-
-              // 마커를 생성합니다
-              var marker = new kakao.maps.Marker({
-                  map: this.map, // 마커를 표시할 지도
-                  position: this.markers[i].latlng, // 마커를 표시할 위치
-                  title: this.markers[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                  image: markerImage, // 마커 이미지
-              });
-
-              // marker.setMap(this.map);
-              // LatLngBounds 객체에 좌표를 추가합니다
-              var content = '<div class="customoverlay">' +
-              '  <a href="https://map.naver.com/v5/search/'+this.places[i].title+'/place" target="_blank">' +
-              '    <span class="title">'+this.places[i].title+'</span>' +
-              '  </a>' +
-              '</div>';
-
-              var customOverlay = new kakao.maps.CustomOverlay({
-                map: this.map,
-                position: this.markers[i].latlng,
-                content: content,
-                yAnchor: 0.2
-              });
-              bounds.extend(this.markers[i].latlng);
-              customOverlay.setMap(this.map);
+    searchgugun() {
+      http.get("/gugunapi/gugun/"+this.area)
+      .then(({ data }) => {
+        this.gugun = null;
+        this.guguns = [];
+        let first = { value: null, text: '구군선택' };
+        this.$set(this.guguns, 0, first);
+        for (let i = 0; i < data.length; i++){
+          let gugun = {
+            value: data[i].gugun_code,
+            text: data[i].gugun_name
+          };
+          this.$set(this.guguns, i+1, gugun);
+        }
+      })
+      .catch(()=>{
+          alert("잘못된 접근 입니다.");
+      })
+    },
+    searchPlaces() {
+      http.post("/placeapi/place/list/"+this.loginUser.id, {
+        sido_code: this.area,
+        gugun_code: this.gugun,
+        contentTypeId: this.type,
+        keyword: this.search
+      })
+      .then(({ data }) => {
+        console.log(data);
+        this.initMap();
+        this.places = []; this.filters = []; this.markers = [];
+        for (let i = 0; i < data.length; i++){
+          var value = data[i];
+          if (value.first_image == "") { // 이미지가 없는 경우 이미지 대체
+            data[i].first_image = "img/logo/no-image.PNG";
             }
-        this.map.setBounds(bounds);
-        // this.marksCss();
-      },
-      // marksCss(){
-      //   var infoTitle = document.querySelectorAll('.info-title');
-      //   infoTitle.forEach(function(e) {
-      //       var w = e.offsetWidth + 10;
-      //       var ml = w/2;
-      //       e.parentElement.style.top = "82px";
-      //       e.parentElement.style.left = "50%";
-      //       e.parentElement.style.marginLeft = -ml+"px";
-      //       e.parentElement.style.width = w+"px";
-      //       e.parentElement.previousSibling.style.display = "none";
-      //       e.parentElement.parentElement.style.border = "0px";
-      //       e.parentElement.parentElement.style.background = "unset";
-      //   });
-      // },
+          this.$set(this.places, i, data[i]);
+          let markerInfo = {
+              title: data[i].title,
+              latlng: new kakao.maps.LatLng(data[i].latitude, data[i].longitude)
+          };
+          this.$set(this.markers, i, markerInfo);
+          if(data[i].in == true){
+            this.$set(this.filters, i, "img/icons/noti/car-full.png");
+          }else{
+            this.$set(this.filters, i, "img/icons/noti/car-bean.png");
+          }
+        };
+        this.displayMarker();
+      })
+      .catch(()=>{
+          alert("검색오류입니다.");
+      })
+    },
+    initMap() {
+      var container = document.getElementById("map");
+      var options = {
+          center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
+          level: 5, // 지도의 확대 레벨
+      };
+      this.map = new kakao.maps.Map(container, options);
+    },
+    displayMarker() {
+      var imageSrc = "img/markers/marker_share.png"
+
+      var bounds = new kakao.maps.LatLngBounds();
+
+      for (var i = 0; i < this.markers.length; i++) {
+        // 마커 이미지의 이미지 크기 입니다
+        var imageSize = new kakao.maps.Size(34, 35);
+
+        // 마커 이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: this.map, // 마커를 표시할 지도
+            position: this.markers[i].latlng, // 마커를 표시할 위치
+            title: this.markers[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image: markerImage, // 마커 이미지
+        });
+
+        // marker.setMap(this.map);
+        // LatLngBounds 객체에 좌표를 추가합니다
+        var content = '<div class="customoverlay">' +
+        '  <a href="https://map.naver.com/v5/search/'+this.places[i].title+'/place" target="_blank">' +
+        '    <span class="title">'+this.places[i].title+'</span>' +
+        '  </a>' +
+        '</div>';
+
+        var customOverlay = new kakao.maps.CustomOverlay({
+          map: this.map,
+          position: this.markers[i].latlng,
+          content: content,
+          yAnchor: 0.2
+        });
+        bounds.extend(this.markers[i].latlng);
+        customOverlay.setMap(this.map);
+      }
+      this.map.setBounds(bounds);
+    },
     moveCenter(lat, lng) {
-          this.map.setCenter(new kakao.maps.LatLng(lat, lng));
+      this.map.setCenter(new kakao.maps.LatLng(lat, lng));
     },
     moveProfile(){
       console.log("move");
@@ -277,12 +262,12 @@ export default {
   },
   mounted() {
     if (!window.kakao || !window.kakao.maps) {
-        const script = document.createElement("script");
-        script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
-        script.addEventListener("load", () => {
-            kakao.maps.load(this.initMap);
-        });
-        document.head.appendChild(script);
+      const script = document.createElement("script");
+      script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
+      script.addEventListener("load", () => {
+          kakao.maps.load(this.initMap);
+      });
+      document.head.appendChild(script);
     } else {
         this.initMap();
     }
