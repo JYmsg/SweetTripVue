@@ -43,13 +43,13 @@
                   <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
                   <div class="row align-items-center">
                     <div class="col">
-                      <base-input placeholder="Title" v-model="search"
+                      <base-input placeholder="Title" v-model="title"
                         addon-left-icon="ni ni-tag">
                       </base-input>
                     </div>
                   </div>
                 </div>
-                <date-pickers></date-pickers>
+                <date-pickers :range="range" @sendRange="sendRange"></date-pickers>
                 
                 
                 <div class="col-md-11 mt-4 mt-md-0">
@@ -120,7 +120,7 @@
                 </div> -->
 
                 <template slot="footer">
-                    <base-button type="primary">Make a Plan</base-button>
+                    <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
                     <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
                     </base-button>
                 </template>
@@ -153,14 +153,14 @@ export default {
   data() {
     return {
       modals: {
-        range: "2023-06-01 to 2023-06-05",
         modal1: false,
         modal2: false,
       },
       keyword: "",
-      search: "",
+      title: "",
       users: [],
       adds: [],
+      range: "",
     };
   },
   computed: {
@@ -181,10 +181,7 @@ export default {
         .then(({ data }) => {
           console.log(data);
           for (let i = 0; i < data.length; i++){
-            console.log(this.loginUser.id, data[i].id)
             if(this.loginUser.id != data[i].id){
-            //   this.$set(this.users, i, []);
-            // }else{
               this.$set(this.users, i, data[i]);
             }
           }
@@ -192,17 +189,15 @@ export default {
           alert("유저를 불러오는데 실패했습니다.")
         })
     },
-    isAdd(user){
-      console.log(user);
-      for(let i=0; i<adds.length; i++){
-        if(adds[i] != null && adds[i].id == user.id){
-          return true;
-        }
-      }
-      return false;
+    sendRange(range){
+      this.range = range;
+      // var dates = this.range.split(" to ");
+      console.log(range);
+      // this.startdate = dates[0];
+      // this.enddate = dates[1];
+      // console.log(startdate, enddate);
     },
     addUser(index){
-      console.log("add", this.users[index]);
       for(let i=0; i<this.adds.length; i++){
         if(this.adds[i].id == this.users[index].id) {
           this.$delete(this.users, index);
@@ -213,12 +208,25 @@ export default {
       this.$delete(this.users, index);
     },
     removeUser(index){
-      console.log("delete", this.adds[index]);
       this.$delete(this.adds, index);
     },
     moveLogin(){
       this.$router.push({name: "login"});
-    }
+    },
+    makeTravel(){
+      var dates = this.range.split(" to ");
+      console.log(this.add);
+      http.post("/travelapi/travel", {
+        users: this.adds,
+        user_id : this.loginUser.id,
+        title: this.title,
+        startdate: dates[0],
+        enddate: dates[1],
+      })
+      .then(({data})=>{
+        console.log(data);
+      })
+    },
   },
 };
 </script>

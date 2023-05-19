@@ -22,6 +22,9 @@ import HotplRegist from "@/views/hotpl/HotplRegist.vue";
 import HotplDetail from "@/views/hotpl/HotplDetail.vue";
 import HotplModify from "@/views/hotpl/HotplModify.vue";
 
+import PlanView from "@/views/PlanView.vue";
+import PlanRegist from "@/views/plan/PlanView.vue";
+
 Vue.use(Router);
 
 export default new Router({
@@ -53,6 +56,24 @@ export default new Router({
         default: Plan,
         footer: AppFooter,
       },
+    },
+    {
+      path: "/plan",
+      name: "PlanView",
+      components: {
+        default: PlanView,
+        footer: AppFooter,
+      },
+      children: [
+        {
+          path: "regist/:id",
+          name: "PlanRegist",
+          components: {
+            default: PlanRegist,
+            footer: AppFooter,
+          },
+        },
+      ],
     },
     {
       path: "/notice",

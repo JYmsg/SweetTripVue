@@ -23,7 +23,9 @@
                             @on-close="blur"
                             :config="{allowInput: true, mode: 'range',}"
                             class="form-control datepicker"
-                            v-model="dates.range">
+                            v-model="range"
+                            @change="sendRange()"
+                          >
                         </flat-picker>
                     </base-input>
                 </div>
@@ -40,10 +42,13 @@ export default {
   },
   data() {
     return {
-      dates: {
-        range: "2023-06-01 to 2023-06-05"
-      }
+      range: "2023-06-01 to 2023-06-05"
     };
-  }
+  },
+  watch: {
+    range(newrange){
+      this.$emit("sendRange", newrange);
+    }
+  },
 };
 </script>
