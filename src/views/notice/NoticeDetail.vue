@@ -21,7 +21,9 @@
               >
               <b-button v-else @click="noticeDelete">삭제</b-button>
             </div>
-
+            <div class="row mb-3 justify-content-center">
+              <b-button v-if="loginUser.id === 'admin'" @click="noticeDelete">삭제</b-button>
+            </div>
             <div class="row justify-content-center">
               <b-form-textarea
                 class="w-75"
@@ -51,7 +53,7 @@
             <b-button size="sm" variant="outline-primary" class="ml-3" @click="checkComment">등록</b-button>
           </div>
           <div class="row mb-5 ml-4">
-            <b-form-checkbox v-model="write.private" id="checkbox-1" name="checkbox-1" value="1" unchecked-value="0">
+            <b-form-checkbox v-model="write.pr" id="checkbox-1" name="checkbox-1" value="1" unchecked-value="0">
               <b-icon icon="lock-fill"></b-icon>
             </b-form-checkbox>
           </div>
@@ -62,9 +64,31 @@
                   <b-img blank blank-color="#abc" width="64" alt="placeholder" style="margin-right: 1rem"></b-img>
                 </template>
                 <h5 class="mt-0 mb-1">{{ comment.writer_id }}</h5>
-                <p class="mb-0">
-                  {{ comment.content }}
-                </p>
+                <div v-if="comment.pr == 0">
+                  <div class="mb-4 mr-3" v-if="loginUser.id === comment.writer_id">
+                    {{ comment.content }}
+                    <b-button size="sm" variant="outline-primary" class="ml-3" @change="deleteComment">삭제</b-button>
+                  </div>
+                  <div class="mb-4" v-else>
+                    {{ comment.content }}
+                  </div>
+                </div>
+                <div v-else>
+                  <div v-if="loginUser.id === comment.writer_id" class="mb-4 mr-3">
+                    {{ comment.content }}
+                    <b-button size="sm" variant="outline-primary" class="ml-3" @click="deleteComment(comment.id)"
+                      >삭제</b-button
+                    >
+                  </div>
+                  <div v-else-if="loginUser.id === notice.writer_id">
+                    <p class="mb-4">
+                      {{ comment.content }}
+                    </p>
+                  </div>
+                  <div v-else>
+                    <p class="mb-3"><b-icon icon="lock-fill"></b-icon>비밀댓글입니다.</p>
+                  </div>
+                </div>
               </b-media>
             </ul>
           </div>
@@ -92,14 +116,14 @@ export default {
         {
           id: 0,
           content: "",
-          private: 0,
+          pr: 0,
           writer_id: "",
           notice_id: "",
         },
       ],
       write: {
         content: "",
-        private: 0,
+        pr: 0,
       },
     };
   },
@@ -129,7 +153,7 @@ export default {
       });
     },
     checkComment() {
-      if (loginUser === null) {
+      if (!this.loginUser) {
         alert("로그인 후 이용해 주세요.");
         this.$router.push({ name: "Login" });
       } else {
@@ -140,13 +164,23 @@ export default {
       http
         .post("/commentapi/comment", {
           content: this.write.content,
-          writer_id: loginUser.id,
+          writer_id: this.loginUser.id,
           notice_id: this.notice.id,
-          private: this.write.private,
+          pr: this.write.pr,
         })
         .then(() => {
-          this.$router.push({ name: "NoticeDetail", params: { id: this.notice.id } });
+          this.$router.go(0);
         });
+    },
+    deleteComment(id) {
+      http.delete(`/commentapi/comment/${id}`).then(({ data }) => {
+        let msg = "삭제 처리시 문제가 발생했습니다.";
+        if (data === 1) {
+          msg = "삭제가 완료되었습니다.";
+        }
+        alert(msg);
+        this.$router.go(0);
+      });
     },
   },
   computed: {
