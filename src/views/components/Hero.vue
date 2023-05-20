@@ -30,13 +30,13 @@
         </div>
         <div class="row align-items-center justify-content-around stars-and-coded">
           <div class="col-md-4 col-sm-4">
-            <base-button block type="primary" class=" mb-3" @click="modals.modal1 = true" v-if="getUser">
+            <base-button block type="primary" class=" mb-3" @click="modal = true" v-if="getUser">
                 여행 계획을 세우러 가요!
             </base-button>
             <base-button block type="primary" class=" mb-3" v-else @click="moveLogin()">
                 로그인하고 시작하기
             </base-button>
-            <modal :show.sync="modals.modal1">
+            <modal :show.sync="modal">
                 <h6 slot="header" class="modal-title ml-2" id="modal-title-default"><i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.</h6>
                 <!-- DataPickers -->
                 <div class="col-md-11 mt-4 mt-md-0">
@@ -152,10 +152,7 @@ export default {
   },
   data() {
     return {
-      modals: {
-        modal1: false,
-        modal2: false,
-      },
+      modal: false,
       keyword: "",
       title: "",
       users: [],
