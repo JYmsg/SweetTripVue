@@ -18,9 +18,20 @@
             <div id="days" style="overflow:auto; max-height: 90vh;">
               <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
                 <h3 class="day pl-3 pt-1">Day{{index+1}}({{day.date}})</h3>
-                  <div class="text-center pb-2">
-                  <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;"></base-button>
-                </div>          
+                <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
+                  <div v-if="place">
+                    <div id="att_img_box" class="mb-1">
+                      <img id="att_img" :src="`${place.first_image}`" alt="">
+                    </div>
+                    <div id="att_address_box" class="text-center mb-1">
+                      <h4 class="mt-2 mb-0">{{ place.title }}</h4>
+                      <p>{{place.addr1}}</p>
+                    </div>
+                  </div>
+                </div>      
+                <div class="text-center pb-2 mt-2">
+                  <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
+                </div>
               </div>
             </div>
           </div>
@@ -32,9 +43,6 @@
               <h4 class="mt-2" style="color: white">장바구니</h4>
             </div>
             <div id="carts" style="overflow:auto; height: 92vh;" class="p-2" v-if="cartslength">
-
-
-
               <div id="cart" v-for="cart in carts" :key="cart.content_id" class="p-1">
                 <div class="place" v-if="cart.place != null">
                   <div id="cart_img_box" class="mb-1">
@@ -45,7 +53,7 @@
                     <p>{{cart.place.addr1}}</p>
                   </div>
                 </div>
-                <div class="hot" v-else>
+                <!-- <div class="hot" v-else>
                   <div id="cart_img_box" class="mb-1">
                     <img id="cart_img" src="img/theme/profile.jpg" alt="">
                   </div>
@@ -53,7 +61,7 @@
                     <h4 class="mt-2 mb-0" style="color: white">{{cart.hotplace.name}}</h4>
                     <p> {{cart.hotplace.address}} </p>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
             <div v-else class="text-center">
@@ -65,7 +73,7 @@
               <base-button class="btn-1 p-2" type="warning">계획취소</base-button>
             </div>
           </div>
-          <modal :show.sync="modals.modal1">
+          <modal :show.sync="modal">
                 <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
 
                 <p>Far far away, behind the word mountains, far from the countries Vokalia and
@@ -95,32 +103,35 @@ export default {
   components:{
     Modal,
   },
-    data(){
-        return{
-            map: null,
-            travel: null,
-            carts: [],
-            cartslength: 0,
-            modals:{
-              modal1: false,
-            },
+  data(){
+    return{
+      map: null,
+      travel: null,
+      carts: [],
+      cartslength: 0,
+      modal: false,
+      moveLine: null,
+      clickLine: null,
+      distanceOverlay: null,
+      dots : [],
+      markers: [],
+    }
+  },
+  async created(){
+    await http.get("/travelapi/travel/one/"+this.$route.params.id)
+    .then(({data})=>{
+      this.travel = data;
+    })
+    .catch((e)=>{
+      alert("여행 정보를 가져오는데 실패했습니다.");
+      this.$router.push({name: "home"});
+    });
+    await http.get("/cartapi/cart/list/" + this.loginUser.id)
+    .then(({ data }) => {
+        for (let i = 0; i < data.length; i++){
+        this.$set(this.carts, i, data[i]);
         }
-    },
-    async created(){
-      await http.get("/travelapi/travel/one/"+this.$route.params.id)
-      .then(({data})=>{
-        this.travel = data;
-      })
-      .catch((e)=>{
-        alert("여행 정보를 가져오는데 실패했습니다.");
-        this.$router.push({name: "home"});
-      });
-      await http.get("/cartapi/cart/list/" + this.loginUser.id)
-      .then(({ data }) => {
-          for (let i = 0; i < data.length; i++){
-          this.$set(this.carts, i, data[i]);
-          }
-          this.cartslength = this.carts.length;
+        this.cartslength = this.carts.length;
       })
     },
     computed: {
@@ -138,6 +149,30 @@ export default {
         this.initMap();
     }
   },
+  watch:{
+    travel : {
+      handler(newtravel){
+        // console.log("travel", newtravel);
+        this.makeMarkers(12);
+      },
+      deep: true,
+    },
+    'travel.days[0].places': {
+      handler(val){
+        // console.log("days0", val);
+        this.makeMarkers(0);
+      },
+      deep: true,
+    },
+    'travel.days': {
+      handler(val){
+        // console.log(this.travel.days[0].places);
+        // console.log("daysall", val);
+        this.initLine();
+      },
+      deep : true,
+    }
+  },
   methods: {
     initMap() {
       var container = document.getElementById("map");
@@ -146,6 +181,116 @@ export default {
           level: 5, // 지도의 확대 레벨
       };
       this.map = new kakao.maps.Map(container, options);
+    },
+    makeMarkers(index){
+      console.log(index);
+    },
+    initLine(){
+      this.deleteClickLine();
+      this.deleteDistnce();
+      this.deleteCircleDot();
+      // for(let i=0; i<this.travel.days[0].places.length; i++){
+      if(this.travel.days[0].places != null){
+        var firstPosition = new kakao.maps.LatLng(this.travel.days[0].places[0].latitude, this.travel.days[0].places[0].longitude);
+        this.clickLine = new kakao.maps.Polyline({
+            map: this.map, // 선을 표시할 지도입니다 
+            path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+            strokeWeight: 3, // 선의 두께입니다 
+            strokeColor: '#db4040', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다
+        });
+        // this.moveLine = new kakao.maps.Polyline({
+        //     strokeWeight: 3, // 선의 두께입니다 
+        //     strokeColor: '#db4040', // 선의 색깔입니다
+        //     strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+        //     strokeStyle: 'solid' // 선의 스타일입니다    
+        // });
+        this.displayCircleDot(firstPosition, 0);
+        console.log(this.travel.days[0].places.length);
+        for(let j=1; j<this.travel.days[0].places.length; j++){
+          var path = this.clickLine.getPath();
+          var clickPosition = new kakao.maps.LatLng(this.travel.days[0].places[j].latitude, this.travel.days[0].places[j].longitude);
+          path.push(clickPosition);
+          this.clickLine.setPath(path);
+
+          var distance = Math.round(this.clickLine.getLength());
+          this.displayCircleDot(clickPosition, distance);
+        }
+      }
+
+      // }
+      // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
+    },
+    displayCircleDot(position, distance){
+      // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+      var circleOverlay = new kakao.maps.CustomOverlay({
+        content: '<span class="dot"></span>',
+        position: position,
+        zIndex: 1
+      });
+      circleOverlay.setMap(this.map);
+      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: distance});
+    },
+    deleteClickLine(){
+      if(this.clickLine){
+        this.clickLine.setMap(null);
+        this.clickLine = null;
+      }
+    },
+    deleteDistnce(){
+      if(this.distanceOverlay){
+        this.distanceOverlay.setMap(null);
+        this.distanceOverlay = null
+      }
+    },
+    deleteCircleDot(){
+      for(let i=0; i<this.dots.length; i++){
+        if(this.dots[i].circle){
+          this.dots[i].circle.setMap(null);
+        }
+      }
+      this.dots = [];
+    },
+    dumy(index){
+      let dumy1 = {
+        content_id: 839237,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "카페티퍼스트에비뉴",
+        addr1: "서울특별시 강남구 도산대로59길 9",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/30/1922330_image2_1.jpg",
+        content_type_id: 39,
+        latitude: 37.52450471,
+        longitude: 127.0419442
+      };
+      let dumy2 = {
+        content_id: 1066064,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "한일축제한마당 in Seoul",
+        addr1: "서울특별시 강남구 영동대로 513 코엑스",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
+        content_type_id: 15,
+        latitude: 37.5119176,
+        longitude: 127.059218
+      };
+      let dumy3 = {
+        content_id: 2845175,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "카페 노티드 삼성",
+        addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
+        latitude: 37.510104,
+        longitude: 127.0639093,
+      }
+      this.travel.days[index].places = [];
+      console.lo
+      this.$set(this.travel.days[index].places, 0, dumy1);
+      this.$set(this.travel.days[index].places, 1, dumy2);
+      this.$set(this.travel.days[index].places, 2, dumy3);
+      console.log(this.travel);
     },
   }
 }
@@ -188,7 +333,7 @@ export default {
   width: 33%;
   height: 6rem;
 }
-#cart_img{
+#cart_img, #att_img{
   object-fit: cover;
   width: 100%;
   height: 100%
@@ -200,4 +345,35 @@ export default {
   background: black;
   overflow: hidden;
 }
+#att_img_box{
+  float: left;
+  width: 33%;
+  height: 6rem;
+}
+#att_address_box{
+  float: right;
+  width: 66%;
+  height: 6rem;
+  background: #F8F6F4;
+  overflow: hidden;
+}
+#attractions{
+  width: 100%;
+  height: 6.5rem;
+  /* background-color: #A5D7E8; */
+  background-color: black;
+}
+
+
+
+
+/* by kakao */
+.dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}    
+.dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
+.dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}    
+.number {font-weight:bold;color:#ee6152;}
+.dotOverlay:after {content:'';position:absolute;margin-left:-6px;left:50%;bottom:-8px;width:11px;height:8px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png')}
+.distanceInfo {position:relative;top:5px;left:5px;list-style:none;margin:0;}
+.distanceInfo .label {display:inline-block;width:50px;}
+.distanceInfo:after {content:none;}
 </style>
