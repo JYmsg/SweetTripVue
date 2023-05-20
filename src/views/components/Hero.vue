@@ -8,7 +8,7 @@
         <div class="row justify-content-center align-items-center">
           <div class="col-lg-7 text-center pt-lg">
             <!-- <img src="img/brand/white.png" style="width: 200px;" class="img-fluid"> -->
-            <h1 class="text-white">SWEET TRIP</h1>
+            <h1 class="text-white">SWEET TRIP, 당신의 여행 플래너</h1>
             <p class="lead text-white mt-4 mb-5">지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다</p>
             <!-- <div class="btn-wrapper">
                             <base-button tag="a"
@@ -160,7 +160,7 @@ export default {
       title: "",
       users: [],
       adds: [],
-      range: "",
+      range: "2023-06-01 to 2023-06-05",
     };
   },
   computed: {
@@ -225,6 +225,9 @@ export default {
       })
       .then(({data})=>{
         console.log(data);
+        this.$router.push({ name: 'PlanRegist', params: { id: data }});
+      }).catch((e)=>{
+        alert("여행 계획 생성 실패")
       })
     },
   },

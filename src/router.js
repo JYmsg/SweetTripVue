@@ -52,7 +52,6 @@ export default new Router({
       name: "PlanView",
       components: {
         default: PlanView,
-        footer: AppFooter,
       },
       children: [
         {
@@ -60,7 +59,6 @@ export default new Router({
           name: "PlanRegist",
           components: {
             default: PlanRegist,
-            footer: AppFooter,
           },
         },
       ],
