@@ -16,13 +16,20 @@
             <div v-else-if="getUser" class="row m-2" style="justify-content: right">
               <b-button @click="noticeWrite">질문 하기</b-button>
             </div>
-            <div class="row justify-content-center">
+            <div class="mb-2">
+              <b-form-select v-model="find" :options="finds" style="width:15%" class="mr-3"></b-form-select>
+              <input type="text" v-model="search"> <b-button class="ml-3" size="sm" @click="reloadList">확인</b-button>
+            </div>
+            <div>
               <b-table
                 hover
                 style="cursor: pointer"
+                id="notice-table"
                 :items="getData"
                 :fields="fields"
                 :tbody-tr-class="rowClass"
+                :per-page="perPage"
+                :current-page="currentPage"
                 class="text-center"
                 @row-clicked="viewNotice"
               ></b-table>
@@ -31,6 +38,13 @@
         </card>
       </div>
     </section>
+    <b-pagination
+      align="center"
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      aria-controls="notice-table"
+    ></b-pagination>
   </div>
 </template>
 <script>
@@ -40,7 +54,28 @@ export default {
   name: "light-table",
   data() {
     return {
-      fields: ["writer_id", "title", "write_time", "hit"],
+      fields: [
+        {
+          key: 'writer_id',
+          sortable: false,
+          thClass: 'w20'
+        },
+        { 
+          key: 'title',
+          sortable: false,
+          thClass: 'w50'
+        }, 
+        {
+          key: 'write_time',
+          sortable: true,
+          thClass: 'w20'
+        },
+        {
+          key: 'hit', 
+          sortable: true,
+          thClass: 'w10'
+        }
+      ],
       boards: [
         {
           id: 0,
@@ -51,6 +86,15 @@ export default {
           hit: 0,
         },
       ],
+      perPage:10,
+      currentPage:1,
+      finds: [
+        {value: null, text: '검색 위치를 선택해 주세요.'},
+        {value: "title", text: '제목'},
+        {value: "writer_id", text: '작성자'},
+      ],
+      find: null,
+      search: null,
     };
   },
   computed: {
@@ -65,9 +109,12 @@ export default {
         return false;
       }
     },
+    rows(){
+      return this.boards.length
+    }
   },
   created() {
-    http.get("/noticeapi/notice").then(({ data }) => {
+    http.get("/noticeapi/notice/none/none").then(({ data }) => {
       this.boards = data;
     });
   },
@@ -90,7 +137,24 @@ export default {
       if (!item || type !== "row") return;
       if (item.writer_id === "admin") return "table-warning";
     },
+    reloadList(){
+      if(this.search!=null){
+        http.get(`/noticeapi/notice/${this.find}/${this.search}`).then(({ data }) => {
+          this.boards = data;
+        });
+      }
+    }
   },
 };
 </script>
-<style></style>
+<style>
+th.w10{
+  width:10%;
+}
+th.w20{
+  width:20%;
+}
+th.w50{
+  width:50%;
+}
+</style>

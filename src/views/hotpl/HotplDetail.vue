@@ -20,7 +20,7 @@
             <div v-else class="row justify-content-center text-center mt-3">
               <h2>{{ hotpl.title }}</h2>
             </div>
-            <div class="text-center">&#128065; {{ hotpl.hit }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.like }}</div>
+            <div class="text-center">&#128065; {{ hotpl.hit }} &nbsp;&nbsp;&nbsp;&nbsp; &#9829; {{ hotpl.good }}</div>
             <h5 class="section-subheading text-muted mr-5" style="text-align: right">
               {{ hotpl.writer_id }}<br />
               {{ hotpl.write_time }}
@@ -70,7 +70,7 @@ export default {
         content: "",
         img: "",
         hit: 0,
-        like: 0,
+        good: 0,
         write_time: "",
         writer_id: "",
         latitude: 0,

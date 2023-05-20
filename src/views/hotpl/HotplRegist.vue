@@ -185,6 +185,7 @@ export default {
         });
     },
     moveList() {
+      console.log(this.selected);
       this.$router.push({ name: "HotplList" });
     },
     initMap() {

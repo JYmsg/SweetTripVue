@@ -13,7 +13,17 @@
             <div v-if="getUser" class="row m-1" style="justify-content: right">
               <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
             </div>
-            <div></div>
+
+            <b-form-group >
+              <b-form-radio-group
+                id="radio-group-1"
+                v-model="selected"
+                :options="options"
+                name="radio-options"
+              ></b-form-radio-group>
+            </b-form-group>
+            <input type="text" placeholder="제목으로 검색하세요." v-model="search"> <b-button class="ml-3" size="sm" @click="reloadList">확인</b-button>
+
             <hr />
             <div class="row justify-content-center">
               <div class="hotpl-list" style="width: 90%">
@@ -38,8 +48,11 @@
                                 >
                               </div>
                               <div>
-                                <p class="h2"><b-icon icon="heart"></b-icon></p>
-                                <span>좋아요 {{ hotpl.like }}</span
+                                <!-- <p class="h2">
+                                  <b-icon icon="heart" v-if="checkLike(hotpl.id)"></b-icon>
+                                  <b-icon icon="heart-fill" v-else></b-icon>
+                                </p> -->
+                                <span>좋아요 {{ hotpl.good }}</span
                                 ><br />
                                 <span>조회수 {{ hotpl.hit }}</span>
                               </div>
@@ -67,9 +80,15 @@
 
 <script>
 import http from "@/util/http-common.js";
+import BaseNav from "@/components/BaseNav";
+import BaseDropdown from "@/components/BaseDropdown";
 import { mapState } from "vuex";
 export default {
   name: "HotplList",
+  components: {
+    BaseNav,
+    BaseDropdown,
+  },
   data() {
     return {
       hotpls: [
@@ -79,11 +98,24 @@ export default {
           content: String,
           img: String,
           hit: Number,
-          like: Number,
+          good: Number,
           write_time: String,
           writer_id: String,
         },
       ],
+      like :[
+        {
+          user_id: String,
+          hotplace_id: Number,
+        },
+      ],
+      selected: 'write_time',
+      options: [
+        { text: '최신글', value: 'write_time' },
+        { text: '좋아요수', value: 'good' },
+        { text: '조회수', value: 'hit' },
+      ],
+      search: ""
     };
   },
   computed: {
@@ -100,7 +132,7 @@ export default {
     },
   },
   created() {
-    http.get("/hotplaceapi/hotplace").then(({ data }) => {
+    http.get("/hotplaceapi/hotplace/none/none").then(({ data }) => {
       this.hotpls = data;
     });
   },
@@ -108,6 +140,26 @@ export default {
     hotplRegist() {
       this.$router.push({ name: "HotplRegist" });
     },
+    reloadList(){
+      console.log(this.search.length, this.selected);
+      if(this.search.length<1){
+        http.get(`/hotplaceapi/hotplace/${this.selected}/none`).then(({ data }) => {
+          this.hotpls = data;
+        });
+      } else{
+        http.get(`/hotplaceapi/hotplace/${this.selected}/${this.search}`).then(({ data }) => {
+          this.hotpls = data;
+        });
+      }
+    },
+    // checkLike(id){
+    //   http.get(`/likehotplaceapi/likehotpl/${this.loginUser.id}/${id}`).then(({ data }) => {
+    //     this.like = data;
+    //   });
+    //   if(this.like.length>0){
+    //     return true;
+    //   } else return false;
+    // }
   },
 };
 </script>
