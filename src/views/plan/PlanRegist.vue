@@ -230,6 +230,17 @@ export default {
         zIndex: 1
       });
       circleOverlay.setMap(this.map);
+      if(distance > 0) {
+        var distanceOverlay = new kakao.maps.CustomOverlay({
+            content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+            position: position,
+            yAnchor: 1,
+            zIndex: 2
+        });
+
+        // 지도에 표시합니다
+        distanceOverlay.setMap(this.map);
+      }
       this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: distance});
     },
     deleteClickLine(){
