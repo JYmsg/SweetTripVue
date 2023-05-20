@@ -219,8 +219,39 @@ export default {
         }
       }
 
-      // }
-      // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
+      if(path.length > 1){
+        if(this.dots[this.dots.length-1].distance){
+          this.dots[this.dots.length-1].distance.setMap(null);
+          this.dots[this.dots.length-1].distance = null;
+        }
+        var distance = Math.round(this.clickLine.getLength()),
+            content = this.getTimeHTML(distance);
+
+        this.showDistance(content, path[path.length-1]);
+      }else{
+        this.deleteClickLine();
+        this.deleteCircleDot(); 
+        this.deleteDistnce();
+      }
+    },
+    showDistance(content, position) {
+    
+      if (this.distanceOverlay) { // 커스텀오버레이가 생성된 상태이면     
+        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+        this.distanceOverlay.setPosition(position);
+        this.distanceOverlay.setContent(content);
+          
+      } else { // 커스텀 오버레이가 생성되지 않은 상태이면         
+          // 커스텀 오버레이를 생성하고 지도에 표시합니다
+          this.distanceOverlay = new kakao.maps.CustomOverlay({
+            map: this.map, // 커스텀오버레이를 표시할 지도입니다
+            content: content,  // 커스텀오버레이에 표시할 내용입니다
+            position: position, // 커스텀오버레이를 표시할 위치입니다.
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3
+          });      
+      }
     },
     displayCircleDot(position, distance){
       // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
@@ -241,7 +272,7 @@ export default {
         // 지도에 표시합니다
         distanceOverlay.setMap(this.map);
       }
-      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: distance});
+      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: distanceOverlay});
     },
     deleteClickLine(){
       if(this.clickLine){
@@ -262,6 +293,42 @@ export default {
         }
       }
       this.dots = [];
+    },
+    getTimeHTML(distance){
+      // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
+      var walkkTime = distance / 67 | 0;
+      var walkHour = '', walkMin = '';
+
+      // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+      if (walkkTime > 60) {
+          walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
+      }
+      walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+      // 자전거의 평균 시속은 16km/h 이고 이것을 기준으로 자전거의 분속은 267m/min입니다
+      var bycicleTime = distance / 227 | 0;
+      var bycicleHour = '', bycicleMin = '';
+
+      // 계산한 자전거 시간이 60분 보다 크면 시간으로 표출합니다
+      if (bycicleTime > 60) {
+          bycicleHour = '<span class="number">' + Math.floor(bycicleTime / 60) + '</span>시간 '
+      }
+      bycicleMin = '<span class="number">' + bycicleTime % 60 + '</span>분'
+
+      // 거리와 도보 시간, 자전거 시간을 가지고 HTML Content를 만들어 리턴합니다
+      var content = '<ul class="dotOverlay distanceInfo">';
+      content += '    <li>';
+      content += '        <span class="label">총거리</span><span class="number">' + distance + '</span>m';
+      content += '    </li>';
+      content += '    <li>';
+      content += '        <span class="label">도보</span>' + walkHour + walkMin;
+      content += '    </li>';
+      content += '    <li>';
+      content += '        <span class="label">자전거</span>' + bycicleHour + bycicleMin;
+      content += '    </li>';
+      content += '</ul>'
+
+      return content;
     },
     dumy(index){
       let dumy1 = {
