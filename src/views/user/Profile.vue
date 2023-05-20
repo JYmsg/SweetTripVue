@@ -68,7 +68,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class='row g-0' v-else><div class='col-md-3'>
+                                            <div class='row g-0' v-else>
+                                                <div class='col-md-3' @click="moveHot(cart.hotplace.id)">
                                                 <img style='height:200px; width: 300px'
                                                 :src="`${cart.hotplace.img}`"
                                                 class='img-fluid rounded-start' alt='test'></div><div class='col-md-8'>
@@ -141,7 +142,10 @@ export default {
             // console.log("move");
             this.$router.push({ name: "search" });
         },
-    }
+        moveHot(index){
+            this.$router.push({ name: 'HotplDetail', params: { id: index }});
+        }
+    },
 };
 </script>
 <style>
