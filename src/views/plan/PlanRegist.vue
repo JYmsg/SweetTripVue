@@ -17,7 +17,7 @@
             </div>
             <div id="days" style="overflow:auto; max-height: 90vh;">
               <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
-                <h3 class="day pl-3 pt-1">Day{{index+1}}({{day.date}})</h3>
+                <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
                 <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
                   <div v-if="place">
                     <div id="att_img_box" class="mb-1">
@@ -53,19 +53,10 @@
                     <p>{{cart.place.addr1}}</p>
                   </div>
                 </div>
-                <!-- <div class="hot" v-else>
-                  <div id="cart_img_box" class="mb-1">
-                    <img id="cart_img" src="img/theme/profile.jpg" alt="">
-                  </div>
-                  <div id="address_box" class="text-center mb-1">
-                    <h4 class="mt-2 mb-0" style="color: white">{{cart.hotplace.name}}</h4>
-                    <p> {{cart.hotplace.address}} </p>
-                  </div>
-                </div> -->
               </div>
             </div>
             <div v-else class="text-center">
-              <h5>장바구니에 아무것도 없습니다.</h5>
+              <h5 style="color: white" class="m-2">장바구니에 아무것도 없습니다.</h5>
             </div>
             <div id="buttons" class="mt-2" style="float: right;">
               <base-button class="btn-1 p-2" type="info">임시저장</base-button>
@@ -111,10 +102,12 @@ export default {
       cartslength: 0,
       modal: false,
       moveLine: null,
-      clickLine: null,
-      distanceOverlay: null,
+      clickLines: [],
+      testLine: null,
+      distanceOverlays: [],
       dots : [],
       markers: [],
+      colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
     }
   },
   async created(){
@@ -178,82 +171,86 @@ export default {
       var container = document.getElementById("map");
       var options = {
           center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
-          level: 5, // 지도의 확대 레벨
+          level: 8, // 지도의 확대 레벨
       };
       this.map = new kakao.maps.Map(container, options);
     },
     makeMarkers(index){
       console.log(index);
     },
-    initLine(){
-      this.deleteClickLine();
+    onlyLine(index){
+      for(let i=0; i<this.travel.days.length; i++){
+        this.deleteClickLine(i);
+      }
       this.deleteDistnce();
       this.deleteCircleDot();
-      // for(let i=0; i<this.travel.days[0].places.length; i++){
-      if(this.travel.days[0].places != null){
-        var firstPosition = new kakao.maps.LatLng(this.travel.days[0].places[0].latitude, this.travel.days[0].places[0].longitude);
-        this.clickLine = new kakao.maps.Polyline({
-            map: this.map, // 선을 표시할 지도입니다 
-            path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-            strokeWeight: 3, // 선의 두께입니다 
-            strokeColor: '#db4040', // 선의 색깔입니다
-            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-            strokeStyle: 'solid' // 선의 스타일입니다
-        });
-        // this.moveLine = new kakao.maps.Polyline({
-        //     strokeWeight: 3, // 선의 두께입니다 
-        //     strokeColor: '#db4040', // 선의 색깔입니다
-        //     strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-        //     strokeStyle: 'solid' // 선의 스타일입니다    
-        // });
-        this.displayCircleDot(firstPosition, 0);
-        console.log(this.travel.days[0].places.length);
-        for(let j=1; j<this.travel.days[0].places.length; j++){
-          var path = this.clickLine.getPath();
-          var clickPosition = new kakao.maps.LatLng(this.travel.days[0].places[j].latitude, this.travel.days[0].places[j].longitude);
-          path.push(clickPosition);
-          this.clickLine.setPath(path);
-
-          var distance = Math.round(this.clickLine.getLength());
-          this.displayCircleDot(clickPosition, distance);
-        }
+    },
+    initLine(){
+      for(let i=0; i<this.travel.days.length; i++){
+        this.deleteClickLine(i);
+        this.deleteDistnce(i);
       }
-
-      if(path.length > 1){
-        if(this.dots[this.dots.length-1].distance){
-          this.dots[this.dots.length-1].distance.setMap(null);
-          this.dots[this.dots.length-1].distance = null;
+      this.deleteCircleDot();
+      for(let i=0; i<this.travel.days.length; i++){
+        if(this.travel.days[i].places != null){
+          var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
+          var clickLine = new kakao.maps.Polyline({
+              map: this.map, // 선을 표시할 지도입니다 
+              path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+              strokeWeight: 3, // 선의 두께입니다 
+              strokeColor: this.colors[i % 9], // 선의 색깔입니다
+              strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+              strokeStyle: 'solid' // 선의 스타일입니다
+          });
+          this.$set(this.clickLines, i, clickLine);
+          this.displayCircleDot(firstPosition, 0);
+          // console.log(this.travel.days[0].places.length);
+          for(let j=1; j<this.travel.days[i].places.length; j++){
+            var path = this.clickLines[i].getPath();
+            var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
+            path.push(clickPosition);
+            this.clickLines[i].setPath(path);
+  
+            var distance = Math.round(this.clickLines[i].getLength());
+            this.displayCircleDot(clickPosition, distance);
+          }
+          if(path.length > 1){
+            if(this.dots[this.dots.length-1].distance){
+              this.dots[this.dots.length-1].distance.setMap(null);
+              this.dots[this.dots.length-1].distance = null;
+            }
+            var distance = Math.round(this.clickLines[i].getLength()),
+                content = this.getTimeHTML(distance);
+    
+            this.showDistance(content, path[path.length-1], i);
+          }else{
+            this.deleteClickLine(i);
+            this.deleteCircleDot(); 
+            this.deleteDistnce(i);
+          }
         }
-        var distance = Math.round(this.clickLine.getLength()),
-            content = this.getTimeHTML(distance);
-
-        this.showDistance(content, path[path.length-1]);
-      }else{
-        this.deleteClickLine();
-        this.deleteCircleDot(); 
-        this.deleteDistnce();
       }
     },
-    showDistance(content, position) {
+    showDistance(content, position, index) {
     
-      if (this.distanceOverlay) { // 커스텀오버레이가 생성된 상태이면     
+      if (this.distanceOverlays[index]) { // 커스텀오버레이가 생성된 상태이면     
         // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
-        this.distanceOverlay.setPosition(position);
-        this.distanceOverlay.setContent(content);
+        this.distanceOverlays[index].setPosition(position);
+        this.distanceOverlays[index].setContent(content);
           
       } else { // 커스텀 오버레이가 생성되지 않은 상태이면         
           // 커스텀 오버레이를 생성하고 지도에 표시합니다
-          this.distanceOverlay = new kakao.maps.CustomOverlay({
+          this.$set(this.distanceOverlays, index, new kakao.maps.CustomOverlay({
             map: this.map, // 커스텀오버레이를 표시할 지도입니다
             content: content,  // 커스텀오버레이에 표시할 내용입니다
             position: position, // 커스텀오버레이를 표시할 위치입니다.
             xAnchor: 0,
             yAnchor: 0,
             zIndex: 3
-          });      
+          }));    
       }
     },
-    displayCircleDot(position, distance){
+    displayCircleDot(position, distance, index){
       // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
       var circleOverlay = new kakao.maps.CustomOverlay({
         content: '<span class="dot"></span>',
@@ -262,28 +259,27 @@ export default {
       });
       circleOverlay.setMap(this.map);
       if(distance > 0) {
-        var distanceOverlay = new kakao.maps.CustomOverlay({
+        this.$set(this.distanceOverlays, index, new kakao.maps.CustomOverlay({
             content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
             position: position,
             yAnchor: 1,
             zIndex: 2
-        });
-
+        }));
         // 지도에 표시합니다
-        distanceOverlay.setMap(this.map);
+        this.distanceOverlays[index].setMap(this.map);
       }
-      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: distanceOverlay});
+      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: this.distanceOverlays[index]});
     },
-    deleteClickLine(){
-      if(this.clickLine){
-        this.clickLine.setMap(null);
-        this.clickLine = null;
+    deleteClickLine(index){
+      if(this.clickLines[index]){
+        this.clickLines[index].setMap(null);
+        this.clickLines[index] = null;
       }
     },
-    deleteDistnce(){
-      if(this.distanceOverlay){
-        this.distanceOverlay.setMap(null);
-        this.distanceOverlay = null
+    deleteDistnce(index){
+      if(this.distanceOverlays[index]){
+        this.distanceOverlays[index].setMap(null);
+        this.distanceOverlays[index] = null
       }
     },
     deleteCircleDot(){
@@ -331,6 +327,46 @@ export default {
       return content;
     },
     dumy(index){
+      if(index == 1){
+      let dumy1 = {
+        content_id: 839237,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "강남청소년수련관",
+        addr1: "서울특별시 강남구 도산대로59길 9",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/23/2462023_image2_1.jpg",
+        content_type_id: 39,
+        latitude: 37.52044985000000000,
+        longitude: 127.05414320000000000
+      };
+      let dumy2 = {
+        content_id: 1066064,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "서울특별시립수서청소년수련관",
+        addr1: "서울특별시 강남구 영동대로 513 코엑스",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
+        content_type_id: 15,
+        latitude: 37.48359919000000000,
+        longitude: 127.08880780000000000
+      };
+      let dumy3 = {
+        content_id: 2845175,
+        sido_code: 1,
+        gugun_code: 1,
+        title: "세븐럭카지노(강남코엑스점)",
+        addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
+        first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
+        latitude: 37.51202589000000000,
+        longitude: 127.05753200000000000,
+      }
+        this.travel.days[index].places = [];
+        console.lo
+        this.$set(this.travel.days[index].places, 0, dumy1);
+        this.$set(this.travel.days[index].places, 1, dumy2);
+        this.$set(this.travel.days[index].places, 2, dumy3);
+        console.log(this.travel);
+      }else{
       let dumy1 = {
         content_id: 839237,
         sido_code: 1,
@@ -369,6 +405,7 @@ export default {
       this.$set(this.travel.days[index].places, 1, dumy2);
       this.$set(this.travel.days[index].places, 2, dumy3);
       console.log(this.travel);
+      }
     },
   }
 }
