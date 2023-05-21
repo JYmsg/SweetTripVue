@@ -42,7 +42,7 @@
             <div id="title_bag" class="text-center p-1">
               <h4 class="mt-2" style="color: white">장바구니</h4>
             </div>
-            <div id="carts" style="overflow:auto; height: 92vh;" class="p-2" v-if="cartslength">
+            <div id="carts" style="overflow:auto; height: 85vh;" class="p-2" v-if="cartslength">
               <div id="cart" v-for="cart in carts" :key="cart.content_id" class="p-1">
                 <div class="place" v-if="cart.place != null">
                   <div id="cart_img_box" class="mb-1">
@@ -60,8 +60,8 @@
             </div>
             <div id="buttons" class="mt-2" style="float: right;">
               <base-button class="btn-1 p-2" type="info">임시저장</base-button>
-              <base-button class="btn-1 p-2" type="primary">계획완료</base-button>
-              <base-button class="btn-1 p-2" type="warning">계획취소</base-button>
+              <base-button class="btn-1 p-2" type="primary" @click="submitTravel()">계획완료</base-button>
+              <base-button class="btn-1 p-2" type="warning" @click="deleteTravel()">계획취소</base-button>
             </div>
           </div>
           <modal :show.sync="modal">
@@ -143,24 +143,8 @@ export default {
     }
   },
   watch:{
-    travel : {
-      handler(newtravel){
-        // console.log("travel", newtravel);
-        this.makeMarkers(12);
-      },
-      deep: true,
-    },
-    'travel.days[0].places': {
-      handler(val){
-        // console.log("days0", val);
-        this.makeMarkers(0);
-      },
-      deep: true,
-    },
     'travel.days': {
       handler(val){
-        // console.log(this.travel.days[0].places);
-        // console.log("daysall", val);
         this.initLine();
       },
       deep : true,
@@ -174,6 +158,7 @@ export default {
           level: 8, // 지도의 확대 레벨
       };
       this.map = new kakao.maps.Map(container, options);
+      this.initLine();
     },
     makeMarkers(index){
       console.log(index);
@@ -185,46 +170,42 @@ export default {
       }
       this.deleteCircleDot();
       if(this.travel.days[i].places != null){
-          var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
-          var clickLine = new kakao.maps.Polyline({
-              map: this.map, // 선을 표시할 지도입니다 
-              path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-              strokeWeight: 3, // 선의 두께입니다 
-              strokeColor: this.colors[i % 9], // 선의 색깔입니다
-              strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-              strokeStyle: 'solid' // 선의 스타일입니다
-          });
-          this.$set(this.clickLines, i, clickLine);
-          this.displayCircleDot(firstPosition, 0);
-          // console.log(this.travel.days[0].places.length);
-          for(let j=1; j<this.travel.days[i].places.length; j++){
-            var path = this.clickLines[i].getPath();
-            var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
-            path.push(clickPosition);
-            this.clickLines[i].setPath(path);
-  
-            var distance = Math.round(this.clickLines[i].getLength());
-            this.displayCircleDot(clickPosition, distance);
-          }
-          if(path.length > 1){
-            if(this.dots[this.dots.length-1].distance){
-              this.dots[this.dots.length-1].distance.setMap(null);
-              this.dots[this.dots.length-1].distance = null;
-            }
-            var distance = Math.round(this.clickLines[i].getLength()),
-                content = this.getTimeHTML(distance);
-    
-            this.showDistance(content, path[path.length-1], i);
-          }else{
-            this.deleteClickLine(i);
-            this.deleteCircleDot(); 
-            this.deleteDistnce(i);
-          }
+        var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
+        var clickLine = new kakao.maps.Polyline({
+            map: this.map, // 선을 표시할 지도입니다 
+            path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+            strokeWeight: 3, // 선의 두께입니다 
+            strokeColor: this.colors[i % 9], // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다
+        });
+        this.$set(this.clickLines, i, clickLine);
+        this.displayCircleDot(firstPosition, 0);
+        // console.log(this.travel.days[0].places.length);
+        for(let j=1; j<this.travel.days[i].places.length; j++){
+          var path = this.clickLines[i].getPath();
+          var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
+          path.push(clickPosition);
+          this.clickLines[i].setPath(path);
+
+          var distance = Math.round(this.clickLines[i].getLength());
+          this.displayCircleDot(clickPosition, distance);
         }
-
-
-
-
+        if(path.length > 1){
+          if(this.dots[this.dots.length-1].distance){
+            this.dots[this.dots.length-1].distance.setMap(null);
+            this.dots[this.dots.length-1].distance = null;
+          }
+          var distance = Math.round(this.clickLines[i].getLength()),
+              content = this.getTimeHTML(distance);
+  
+          this.showDistance(content, path[path.length-1], i);
+        }else{
+          this.deleteClickLine(i);
+          this.deleteCircleDot(); 
+          this.deleteDistnce(i);
+        }
+      }
     },
     initLine(){
       for(let i=0; i<this.travel.days.length; i++){
@@ -371,7 +352,7 @@ export default {
     dumy(index){
       if(index == 1){
       let dumy1 = {
-        content_id: 839237,
+        content_id: 131139,
         sido_code: 1,
         gugun_code: 1,
         title: "강남청소년수련관",
@@ -382,7 +363,7 @@ export default {
         longitude: 127.05414320000000000
       };
       let dumy2 = {
-        content_id: 1066064,
+        content_id: 131455,
         sido_code: 1,
         gugun_code: 1,
         title: "서울특별시립수서청소년수련관",
@@ -393,7 +374,7 @@ export default {
         longitude: 127.08880780000000000
       };
       let dumy3 = {
-        content_id: 2845175,
+        content_id: 131903,
         sido_code: 1,
         gugun_code: 1,
         title: "세븐럭카지노(강남코엑스점)",
@@ -407,10 +388,15 @@ export default {
         this.$set(this.travel.days[index].places, 0, dumy1);
         this.$set(this.travel.days[index].places, 1, dumy2);
         this.$set(this.travel.days[index].places, 2, dumy3);
+        this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
+        this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
+        this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
+        // this.$set(this.travel.days[index].places, 1, dumy2);
+        // this.$set(this.travel.days[index].places, 2, dumy3);
         console.log(this.travel);
       }else{
-      let dumy1 = {
-        content_id: 839237,
+        let dumy1 = {
+          content_id: 839237,
         sido_code: 1,
         gugun_code: 1,
         title: "카페티퍼스트에비뉴",
@@ -442,12 +428,34 @@ export default {
         longitude: 127.0639093,
       }
       this.travel.days[index].places = [];
-      console.lo
       this.$set(this.travel.days[index].places, 0, dumy1);
       this.$set(this.travel.days[index].places, 1, dumy2);
       this.$set(this.travel.days[index].places, 2, dumy3);
+      this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
+      this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
+      this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
       console.log(this.travel);
       }
+    },
+    submitTravel(){
+      http.put("/travelapi/travel", this.travel)
+      .then(({data})=>{
+        alert("계획 생성 완료");
+        this.$router.push({name: "home"});
+      })
+      .catch((e)=>{
+        alert("계획 생성 실패");
+      })
+    },
+    deleteTravel(){
+      http.delete("/travelapi/travel/"+this.travel.id)
+      .then(({data})=>{
+        alert("계획이 삭제 되었습니다.");
+        this.$router.push({name: "home"});
+      })
+      .catch((e)=>{
+        alert("계획 삭제 실패");
+      })
     },
   }
 }
