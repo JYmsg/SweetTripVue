@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     createHotpl() {
-      console.log(this.hotpl);
+      console.log(this.selected);
       if (this.hotpl.img === "") this.hotpl.img = "not.png"; // 수정
       http
         .post("/hotplaceapi/hotplace", {
@@ -183,7 +183,7 @@ export default {
           img: this.hotpl.img,
           address: this.address, //장소위치정보
           name: this.title, // 장소이름
-          sido: this.selected,
+          sido_code: this.selected,
         })
         .then(({ data }) => {
           let msg = "등록 처리시 문제가 발생했습니다.";

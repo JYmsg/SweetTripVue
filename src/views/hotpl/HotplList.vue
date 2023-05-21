@@ -164,7 +164,7 @@ export default {
     },
   },
   created() {
-    http.get("/hotplaceapi/hotplace/none/none").then(({ data }) => {
+    http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/none/none`).then(({ data }) => {
       this.hotpls = data;
       for (let i = 0; i < data.length; i++) {
         this.$set(this.change, i, "img/icons/noti/heart-bean.png");
