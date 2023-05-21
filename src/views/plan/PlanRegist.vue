@@ -21,7 +21,7 @@
               </div>
             </div>
             <plan-list v-if="select" :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine"></plan-list>
-            <plan-search v-else :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine"></plan-search>
+            <plan-search v-else :daylength="daylength" :colors="colors" @addPlace="addPlace" @onlyLine="onlyLine"></plan-search>
             <!-- <div id="days" style="overflow:auto; max-height: 90vh;">
               <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
                 <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
@@ -71,22 +71,22 @@
               <base-button class="btn-1 p-2" type="warning" @click="deleteTravel()">계획취소</base-button>
             </div>
           </div>
-          <modal :show.sync="modal">
-                <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
+            <modal :show.sync="modal">
+              <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
 
-                <p>Far far away, behind the word mountains, far from the countries Vokalia and
-                    Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
-                    right at the coast of the Semantics, a large language ocean.</p>
-                <p>A small river named Duden flows by their place and supplies it with the necessary
-                    regelialia. It is a paradisematic country, in which roasted parts of sentences
-                    fly into your mouth.</p>
+              <p>Far far away, behind the word mountains, far from the countries Vokalia and
+                  Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
+                  right at the coast of the Semantics, a large language ocean.</p>
+              <p>A small river named Duden flows by their place and supplies it with the necessary
+                  regelialia. It is a paradisematic country, in which roasted parts of sentences
+                  fly into your mouth.</p>
 
-                <template slot="footer">
-                    <base-button type="primary">Save changes</base-button>
-                    <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
-                    </base-button>
-                </template>
-            </modal>
+              <template slot="footer">
+                  <base-button type="primary">Save changes</base-button>
+                  <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
+                  </base-button>
+              </template>
+          </modal>
         </div>
       </div>
     </div>
@@ -111,6 +111,7 @@ export default {
       travel: null,
       carts: [],
       cartslength: 0,
+      daylength: 0,
       modal: false,
       clickLines: [],
       testLine: null,
@@ -126,6 +127,8 @@ export default {
     await http.get("/travelapi/travel/one/"+this.$route.params.id)
     .then(({data})=>{
       this.travel = data;
+      this.daylength = data.days.length;
+      console.log(this.daylength);
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
@@ -163,6 +166,17 @@ export default {
     }
   },
   methods: {
+    addPlace(index, place){
+      console.log(index, place);
+      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+      console.log(this.travel.days[index].places);
+      console.log(place);
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+      this.$set(this.travel.days[index].attractions, this.travel.days[index].length, dumy1.content_id);
+      
+      // this.travel.days[index].places()
+    },
     change(index){
       if(index == 1){
         this.Title[1] = "noTitle";
@@ -383,6 +397,7 @@ export default {
       return content;
     },
     dumy(index){
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       if(index == 1){
       let dumy1 = {
         content_id: 131139,
@@ -416,11 +431,9 @@ export default {
         latitude: 37.51202589000000000,
         longitude: 127.05753200000000000,
       }
-        this.travel.days[index].places = [];
-        console.lo
-        this.$set(this.travel.days[index].places, 0, dumy1);
-        this.$set(this.travel.days[index].places, 1, dumy2);
-        this.$set(this.travel.days[index].places, 2, dumy3);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
         this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
         this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
         this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
@@ -460,10 +473,9 @@ export default {
         latitude: 37.510104,
         longitude: 127.0639093,
       }
-      this.travel.days[index].places = [];
-      this.$set(this.travel.days[index].places, 0, dumy1);
-      this.$set(this.travel.days[index].places, 1, dumy2);
-      this.$set(this.travel.days[index].places, 2, dumy3);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
       this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
       this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
       this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);

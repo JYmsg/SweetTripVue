@@ -1,47 +1,293 @@
 <template>
 <div>
-    <div id="date" class="p-2 pb-0">
-        <h5>{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
+    <div class="searchlist p-2 pb-0 row justify-content-center no-gutters">
+        <div class="col-lg-4 col-sm-4">
+            <b-form-select v-model="area" :options="areas" class="me-2 rounded-4" @change="searchgugun"></b-form-select>
+        </div>
+        <div class="col-lg-4 col-sm-4">
+            <b-form-select v-model="gugun" :options="guguns" class="me-2 rounded-4"></b-form-select>
+        </div>
+        <div class="col-lg-4 col-sm-4">
+            <b-form-select v-model="type" :options="types" class="me-2 rounded-4"></b-form-select>
+        </div>
     </div>
-    <div id="days" style="overflow:auto; max-height: 90vh;" class="mt-0">
-        <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
-        <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
-        <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
-            <div v-if="place">
-            <div id="att_img_box" class="mb-1">
-                <img id="att_img" :src="`${place.first_image}`" alt="">
-            </div>
-            <div id="att_address_box" class="text-center mb-1">
-                <h4 class="mt-2 mb-0">{{ place.title }}</h4>
-                <p>{{place.addr1}}</p>
-            </div>
+    <div class="searchlist p-2 pb-0 row justify-content-center no-gutters">
+        <div class="col-lg-8 col-sm-8 m-1">
+            <base-input placeholder="Search" v-model="search"
+                addon-left-icon="ni ni-zoom-split-in">
+            </base-input>
+        </div>
+        <div class="col-lg-3 col-sm-3 mt-1">
+            <base-button class="btn-1" type="neutral" @click="searchAll">검색</base-button>
+        </div>
+    </div>
+    <div id="days" style="overflow:auto; height: 85vh;" class="mt-0">
+        <div id="attractions" v-for="(place, index) in places" :key="place.content_id" class="p-1">
+            <div v-if="place" @click="detail(index)">
+                <div id="att_img_box" class="mb-1">
+                    <img id="att_img" :src="`${place.first_image}`" alt="">
+                </div>
+                <div id="att_address_box" class="text-center mb-1">
+                    <h4 class="mt-2 mb-0">{{ place.title }}</h4>
+                    <p>{{place.addr1}}</p>
+                </div>
             </div>
         </div>      
-        <div class="text-center pb-2 mt-2">
-            <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
-        </div>
-        </div>
     </div>
+    <modal id="planSearchModal" :show.sync="modal" v-if="modalPlace">
+        <h3 slot="header" class="modal-title ml-2" id="modal-title-default">{{ modalPlace.title }}</h3>
+        <img id="modal_img" :src="`${modalPlace.first_image}`" alt="">
+        <p class="m-2">{{modalPlace.overview}}</p>
+        <!-- <p>A small river named Duden flows by their place and supplies it with the necessary
+            regelialia. It is a paradisematic country, in which roasted parts of sentences
+            fly into your mouth.</p> -->
+
+        <template slot="footer">
+            <div class="">
+                <b-form-select v-model="add" :options="adds" class="rounded-4"></b-form-select>
+            </div>
+            <base-button type="primary" @click="addPlace()">추가하기</base-button>
+            <base-button type="link" class="ml-auto" @click="modal = false">Close
+            </base-button>
+        </template>
+    </modal>
 </div>
 </template>
 <script>
+import http from "@/util/http-common.js"
+import Modal from "@/components/Modal.vue";
+import { mapState } from 'vuex';
 export default {
     props: [
-      'travel',
-      'colors'
+      'daylength',
     ],
+    components:{
+        Modal,
+    },
+    data(){
+        return {
+            modal: false,
+            area: 1,
+            areas: [
+                {value: 1, text : '서울'},
+                {value: 2, text : '인천'},
+                {value: 3, text : '대전'},
+                {value: 4, text : '대구'},
+                {value: 5, text : '광주'},
+                {value: 6, text : '부산'},
+                {value: 7, text : '울산'},
+                {value: 8, text : '세종특별자치시'},
+                {value: 31, text : '경기도'},
+                {value: 32, text : '강원도'},
+                {value: 33, text : '충청북도'},
+                {value: 34, text : '충청남도'},
+                {value: 35, text : '경상북도'},
+                {value: 36, text : '경상남도'},
+                {value: 37, text : '전라북도'},
+                {value: 38, text : '전라남도'},
+                {value: 39, text : '제주도'},
+                ],
+                gugun: null,
+                guguns: [
+                    {value: null, text : '구군선택'}
+                ],
+                type: null,
+                types: [
+                    {value: null, text : '관광지 유형'},
+                    {value: 12, text : '관광지'},
+                    {value: 14, text : '문화시설'},
+                    {value: 15, text : '축제공연행사'},
+                    {value: 25, text : '여행코스'},
+                    {value: 28, text : '레포츠'},
+                    {value: 32, text : '숙박'},
+                    {value: 38, text : '쇼핑'},
+                    {value: 39, text : '음식점'},
+            ],
+            adds : [
+                {value: null, text : '날짜선택'},
+            ],
+            add: null,
+            search: "",
+            places: [],
+            modalPlace: null,
+        }
+    },
+    async created(){
+        await this.searchgugun();
+        console.log(this.daylength);
+        for(let i=0; i<this.daylength; i++){
+            this.$set(this.adds, i+1, {value: i, text: "Day"+(i+1)});
+        }
+    },
+    computed: {
+      ...mapState(["loginUser"]),
+    },
+    watch:{
+        area: {
+            handler(val){
+                this.searchAll();
+            }
+        },
+        gugun:{
+            handler(val){
+                this.searchAll();
+            }
+        },
+        type:{
+            handler(val){
+                this.searchAll();
+            }
+        }
+    },
     methods:{
+        async detail(index){
+            console.log(this.places[index])
+            await http.get("/placeapi/place/one/"+this.places[index].content_id)
+            .then(({data})=>{
+                this.modalPlace = {
+                    title: this.places[index].title,
+                    overview: data.overview,
+                    first_image: this.places[index].first_image,
+                    index: index,
+                }
+                console.log(this.modalPlace);
+            })
+            this.modal = true;
+        },
         dumy(index){
             this.$emit("dumy", index);
         },
         onlyLine(index){
             this.$emit("onlyLine", index);
+        },
+        async searchgugun() {
+            this.gugun = null;
+            if(this.area != null){
+                await http.get("/gugunapi/gugun/"+this.area)
+                .then(({ data }) => {
+                    this.gugun = null;
+                    this.guguns = [];
+                    let first = { value: null, text: '구군선택' };
+                    this.$set(this.guguns, 0, first);
+                    for (let i = 0; i < data.length; i++){
+                        let gugun = {
+                            value: data[i].gugun_code,
+                            text: data[i].gugun_name
+                    };
+                    this.$set(this.guguns, i+1, gugun);
+                    }
+                })
+                .catch(()=>{
+                    alert("잘못된 접근 입니다.");
+                })
+            }
+            this.searchAll();
+        },
+        addPlace(){
+            if(this.add == null){
+                alert("날짜를 선택하세요")
+            }else{
+                this.$emit("addPlace", this.add, this.places[this.modalPlace.index]);
+            }
+        },
+        async searchAll(){
+            console.log("클릭햇음")
+            console.log(this.area, this.type)
+            this.places = [];
+            // if(this.area == null){
+            //     if(this.type == null){
+            //         console.log("here")
+            //         await http.get("/placeapi/place/list")
+            //         .then(({data})=>{
+            //             for(let i=0; i<data.length; i++){
+            //                 this.$set(this.places, i, data[i]);
+            //             }
+            //         })
+            //         .catch((e)=>{
+            //             alert("검색 오류 입니다.");
+            //         })
+            //     }
+            //     else{
+            //         http.get("/placeapi/place/list/type/"+this.type)
+            //         .then(({data})=>{
+            //             for(let i=0; i<data.length; i++){
+            //                 this.$set(this.places, i, data[i]);
+            //             }
+            //         })
+            //         .catch((e)=>{
+            //             alert("검색 오류 입니다.")
+            //         })
+            //     }
+            // }
+            // else{
+            if(this.type == null){
+                // 시도 선택만
+                if(this.gugun == null){
+                    http.get("/placeapi/place/list/sido/"+this.area)
+                    .then(({data})=>{
+                        for(let i=0; i<data.length; i++){
+                            this.$set(this.places, i, data[i]);
+                        }
+                    })
+                    .catch((e)=>{
+                        alert("검색 오류 입니다.")
+                    })
+                }
+                else{
+                    http.get("/placeapi/place/list/sido/"+this.area+"/"+this.gugun)
+                    .then(({data})=>{
+                        for(let i=0; i<data.length; i++){
+                            this.$set(this.places, i, data[i]);
+                        }
+                    })
+                    .catch((e)=>{
+                        alert("검색 오류 입니다.")
+                    })
+                }
+            }
+            else{
+                //시도+관광지타입
+                if(this.gugun == null){
+                    http.get("/placeapi/place/list/"+this.area+"/"+this.type)
+                    .then(({data})=>{
+                        for(let i=0; i<data.length; i++){
+                            this.$set(this.places, i, data[i]);
+                        }
+                    })
+                    .catch((e)=>{
+                        alert("검색 오류 입니다.")
+                    })
+                }
+                else{
+                    //전부 선택+키워드 없음.
+                    http.post("/placeapi/place/list/"+this.loginUser.id, {
+                        sido_code: this.area,
+                        gugun_code: this.gugun,
+                        contentTypeId: this.type,
+                        keyword: ""
+                    })
+                    .then(({data})=>{
+                        for(let i=0; i<data.length; i++){
+                            this.$set(this.places, i, data[i]);
+                        }
+                    })
+                    .catch((e)=>{
+                        alert("검색 오류 입니다.")
+                    })
+                }
+            }
+            // }
+            // if(!this.keyword.replace(/^\s+|\s+$/g, "")){
+            //     alert("키워드를 입력해주세요!");
+            //     return false;
+            // }
+            console.log(this.places)
         }
     },
 }
 </script>
 <style>
-#date{
+.searchlist{
     background-color: #C4DFDF;
 }
 #sidebar{
@@ -75,5 +321,8 @@ export default {
   height: 6rem;
   background: #F8F6F4;
   overflow: hidden;
+}
+#modal_img{
+    width: 100%;
 }
 </style>
