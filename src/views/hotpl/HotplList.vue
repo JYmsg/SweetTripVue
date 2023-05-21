@@ -23,11 +23,11 @@
               ></b-form-radio-group>
             </b-form-group>
             <input type="text" placeholder="제목으로 검색하세요." v-model="search"> <b-button class="ml-3" size="sm" @click="reloadList">확인</b-button>
-
+            
             <hr />
             <div class="row justify-content-center">
               <div class="hotpl-list" style="width: 90%">
-                <div v-if="hotpls.length">
+                <div v-if="hotpls.length && getlike">
                   <div v-for="(hotpl, index) in hotpls" :key="index">
                     <div class="card mb-3 text-start">
                       <div class="row g-0">
@@ -48,13 +48,13 @@
                                 >
                               </div>
                               <div>
-                                <!-- <p class="h2">
-                                  <b-icon icon="heart" v-if="checkLike(hotpl.id)"></b-icon>
-                                  <b-icon icon="heart-fill" v-else></b-icon>
-                                </p> -->
-                                <span>좋아요 {{ hotpl.good }}</span
-                                ><br />
-                                <span>조회수 {{ hotpl.hit }}</span>
+                                <div class="h2" v-if="getUser">
+                                  <img :src="change[index]" style="width:2.5rem; height:2.5rem;" size='sm' type='default' @click="changeHeart(hotpl.id, index)"/>
+                                </div>
+                                <span v-if="controll[index] && change[index]==='img/icons/noti/heart-color.png'">좋아요 {{ hotpl.good+1 }}</span>
+                                <span v-else-if="!controll[index]">좋아요 {{ hotpl.good }}</span>
+                                <br />
+                                <span class="h5">조회 {{ hotpl.hit }}</span>
                               </div>
                             </div>
                             <p class="card-text">
@@ -103,12 +103,13 @@ export default {
           writer_id: String,
         },
       ],
-      like :[
+      likes: [
         {
-          user_id: String,
           hotplace_id: Number,
-        },
+        }
       ],
+      change:[],
+      controll:[],
       selected: 'write_time',
       options: [
         { text: '최신글', value: 'write_time' },
@@ -130,11 +131,30 @@ export default {
         return false;
       }
     },
+    getlike(){
+      for(let i=0;i<this.hotpls.length;i++){
+        for(let j=0;j<this.likes.length;j++){
+          if(this.hotpls[i].id===this.likes[j].hotplace_id){
+            this.$set(this.change, i, "img/icons/noti/heart-color.png");
+          }
+        }
+      }
+      return true;
+    },
   },
   created() {
     http.get("/hotplaceapi/hotplace/none/none").then(({ data }) => {
       this.hotpls = data;
+      for(let i=0;i<data.length;i++){
+        this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+        this.$set(this.controll, i, false);
+      }
     });
+    if(this.getUser){
+      http.get(`/likeapi/likehotpl/${this.loginUser.id}`).then(({ data }) => {
+        this.likes = data;
+      });
+    }
   },
   methods: {
     hotplRegist() {
@@ -152,14 +172,33 @@ export default {
         });
       }
     },
-    // checkLike(id){
-    //   http.get(`/likehotplaceapi/likehotpl/${this.loginUser.id}/${id}`).then(({ data }) => {
-    //     this.like = data;
-    //   });
-    //   if(this.like.length>0){
-    //     return true;
-    //   } else return false;
-    // }
+    changeHeart(id, index){
+      console.log(id, index);
+      if(this.change[index]==="img/icons/noti/heart-color.png"){
+        http.put(`/hotplaceapi/good/${id}/-1`);
+
+        http
+          .delete(`/likeapi/likehotpl/${this.loginUser.id}/${id}`)
+          .then(() => {
+            let msg = "좋아요가 취소되었습니다.";
+            alert(msg);
+            this.$set(this.change, index, "img/icons/noti/heart-baen.png");
+            this.$router.go(0);
+          });
+      } else{
+        http
+          .post("/likeapi/likehotpl", {
+            user_id: this.loginUser.id,
+            hotplace_id: id
+          }).then(() => {
+            this.$set(this.change, index, "img/icons/noti/heart-color.png");
+          });
+
+        http.put(`/hotplaceapi/good/${id}/1`);
+
+        this.$set(this.controll, index, true);
+      }
+    },
   },
 };
 </script>
