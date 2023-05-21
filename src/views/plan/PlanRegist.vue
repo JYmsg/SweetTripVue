@@ -11,11 +11,18 @@
         <!-- 계획표는 할당된 곳의 7칸 -->
         <div class="col-lg-7 col-sm-7 m-0">
           <div id="sidebar" class="p-3">
-            <div id="title_plan" class="text-center p-1">
-              <h4 class="mt-2">여행 계획표</h4>
-              <h5>{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
+            <div class="row no-gutters">
+              <div :id="Title[0]" class="text-center p-1 col-lg-6" @click="change(1)" >
+                <h4 class="mt-2" :id="Title[0]">여행 계획표</h4>
+              </div>
+              <div :id="Title[1]" class="text-center p-1 col-lg-6" @click="change(2)">
+                <h4 class="mt-2" :id="Title[1]">검색</h4>
+                <!-- <h5>분리중</h5> -->
+              </div>
             </div>
-            <div id="days" style="overflow:auto; max-height: 90vh;">
+            <plan-list v-if="select" :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine"></plan-list>
+            <plan-search v-else :daylength="daylength" :colors="colors" @addPlace="addPlace" @onlyLine="onlyLine"></plan-search>
+            <!-- <div id="days" style="overflow:auto; max-height: 90vh;">
               <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
                 <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
                 <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
@@ -33,7 +40,7 @@
                   <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <!-- 장바구니는 5칸 -->
@@ -64,22 +71,22 @@
               <base-button class="btn-1 p-2" type="warning" @click="deleteTravel()">계획취소</base-button>
             </div>
           </div>
-          <modal :show.sync="modal">
-                <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
+            <modal :show.sync="modal">
+              <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
 
-                <p>Far far away, behind the word mountains, far from the countries Vokalia and
-                    Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
-                    right at the coast of the Semantics, a large language ocean.</p>
-                <p>A small river named Duden flows by their place and supplies it with the necessary
-                    regelialia. It is a paradisematic country, in which roasted parts of sentences
-                    fly into your mouth.</p>
+              <p>Far far away, behind the word mountains, far from the countries Vokalia and
+                  Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
+                  right at the coast of the Semantics, a large language ocean.</p>
+              <p>A small river named Duden flows by their place and supplies it with the necessary
+                  regelialia. It is a paradisematic country, in which roasted parts of sentences
+                  fly into your mouth.</p>
 
-                <template slot="footer">
-                    <base-button type="primary">Save changes</base-button>
-                    <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
-                    </base-button>
-                </template>
-            </modal>
+              <template slot="footer">
+                  <base-button type="primary">Save changes</base-button>
+                  <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
+                  </base-button>
+              </template>
+          </modal>
         </div>
       </div>
     </div>
@@ -90,9 +97,13 @@
 import Modal from "@/components/Modal.vue";
 import http from "@/util/http-common.js";
 import { mapState } from 'vuex';
+import PlanList from './element/PlanList.vue';
+import PlanSearch from './element/PlanSearch.vue';
 export default {
   components:{
     Modal,
+    PlanList,
+    PlanSearch,
   },
   data(){
     return{
@@ -100,13 +111,15 @@ export default {
       travel: null,
       carts: [],
       cartslength: 0,
+      daylength: 0,
       modal: false,
-      moveLine: null,
       clickLines: [],
       testLine: null,
       distanceOverlays: [],
       dots : [],
       markers: [],
+      select: true,
+      Title: ["title_plan", "noTitle"],
       colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
     }
   },
@@ -114,6 +127,8 @@ export default {
     await http.get("/travelapi/travel/one/"+this.$route.params.id)
     .then(({data})=>{
       this.travel = data;
+      this.daylength = data.days.length;
+      console.log(this.daylength);
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
@@ -151,6 +166,31 @@ export default {
     }
   },
   methods: {
+    addPlace(index, place){
+      console.log(index, place);
+      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+      console.log(this.travel.days[index].places);
+      console.log(place);
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+      this.$set(this.travel.days[index].attractions, this.travel.days[index].length, dumy1.content_id);
+      
+      // this.travel.days[index].places()
+    },
+    change(index){
+      if(index == 1){
+        this.Title[1] = "noTitle";
+        this.Title[0] = "title_plan";
+        this.select = true;
+      }
+      else{
+        this.Title[0] = "noTitle";
+        this.Title[1] = "title_plan";
+        this.select = false;
+      }
+      this.initMap();
+
+    },
     initMap() {
       var container = document.getElementById("map");
       var options = {
@@ -158,7 +198,14 @@ export default {
           level: 8, // 지도의 확대 레벨
       };
       this.map = new kakao.maps.Map(container, options);
-      this.initLine();
+      if(this.select){
+        this.initLine();
+      }else{
+        this.testLine = null;
+        this.distanceOverlays = [];
+        this.dots = [];
+        this.markers = [];
+      }
     },
     makeMarkers(index){
       console.log(index);
@@ -350,6 +397,7 @@ export default {
       return content;
     },
     dumy(index){
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       if(index == 1){
       let dumy1 = {
         content_id: 131139,
@@ -383,11 +431,9 @@ export default {
         latitude: 37.51202589000000000,
         longitude: 127.05753200000000000,
       }
-        this.travel.days[index].places = [];
-        console.lo
-        this.$set(this.travel.days[index].places, 0, dumy1);
-        this.$set(this.travel.days[index].places, 1, dumy2);
-        this.$set(this.travel.days[index].places, 2, dumy3);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
         this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
         this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
         this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
@@ -427,10 +473,9 @@ export default {
         latitude: 37.510104,
         longitude: 127.0639093,
       }
-      this.travel.days[index].places = [];
-      this.$set(this.travel.days[index].places, 0, dumy1);
-      this.$set(this.travel.days[index].places, 1, dumy2);
-      this.$set(this.travel.days[index].places, 2, dumy3);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
       this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
       this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
       this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
@@ -468,6 +513,14 @@ export default {
 }
 #title_plan{
   background-color: #C4DFDF;
+  height: 5.5%;
+  border-radius: 20px 20px 0px 0px;
+}
+#noTitle{
+  background-color: black;
+  color: white;
+  height: 5.5%;
+  border-radius: 20px 20px 0px 0px;
 }
 .day{
   background-color: #D2E9E9;
