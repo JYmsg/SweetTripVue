@@ -178,12 +178,53 @@ export default {
     makeMarkers(index){
       console.log(index);
     },
-    onlyLine(index){
-      for(let i=0; i<this.travel.days.length; i++){
-        this.deleteClickLine(i);
+    onlyLine(i){
+      for(let j=0; j<this.travel.days.length; j++){
+        this.deleteClickLine(j);
+        this.deleteDistnce(j);
       }
-      this.deleteDistnce();
       this.deleteCircleDot();
+      if(this.travel.days[i].places != null){
+          var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
+          var clickLine = new kakao.maps.Polyline({
+              map: this.map, // 선을 표시할 지도입니다 
+              path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+              strokeWeight: 3, // 선의 두께입니다 
+              strokeColor: this.colors[i % 9], // 선의 색깔입니다
+              strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+              strokeStyle: 'solid' // 선의 스타일입니다
+          });
+          this.$set(this.clickLines, i, clickLine);
+          this.displayCircleDot(firstPosition, 0);
+          // console.log(this.travel.days[0].places.length);
+          for(let j=1; j<this.travel.days[i].places.length; j++){
+            var path = this.clickLines[i].getPath();
+            var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
+            path.push(clickPosition);
+            this.clickLines[i].setPath(path);
+  
+            var distance = Math.round(this.clickLines[i].getLength());
+            this.displayCircleDot(clickPosition, distance);
+          }
+          if(path.length > 1){
+            if(this.dots[this.dots.length-1].distance){
+              this.dots[this.dots.length-1].distance.setMap(null);
+              this.dots[this.dots.length-1].distance = null;
+            }
+            var distance = Math.round(this.clickLines[i].getLength()),
+                content = this.getTimeHTML(distance);
+    
+            this.showDistance(content, path[path.length-1], i);
+          }else{
+            this.deleteClickLine(i);
+            this.deleteCircleDot(); 
+            this.deleteDistnce(i);
+          }
+        }
+
+
+
+
     },
     initLine(){
       for(let i=0; i<this.travel.days.length; i++){
@@ -279,12 +320,13 @@ export default {
     deleteDistnce(index){
       if(this.distanceOverlays[index]){
         this.distanceOverlays[index].setMap(null);
-        this.distanceOverlays[index] = null
+        // this.$set(this.distanceOverlays, index, null);
       }
     },
     deleteCircleDot(){
       for(let i=0; i<this.dots.length; i++){
         if(this.dots[i].circle){
+          // this.dots[i].distance.setMap(null);
           this.dots[i].circle.setMap(null);
         }
       }
