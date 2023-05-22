@@ -2,13 +2,14 @@
 <div>
     <div id="date" class="p-2 pb-0">
         <h5>{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
+        <base-button type="info" size="sm" @click="add()">날짜추가</base-button>
+        <base-button type="default" size="sm" @click="remove()">날짜삭제</base-button>
     </div>
-    <div id="days" style="overflow:auto; max-height: 90vh;" class="mt-0">
+    <div id="days" style="overflow:auto; max-height: 80vh;" class="mt-0">
         <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id"
         @drop.prevent="drop(index)"
         @dragenter.prevent
         @dragover.prevent
-        
         >
           <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
           <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1" 
@@ -49,6 +50,12 @@ export default {
       drop(index) {
         console.log("listin")
         this.$emit("drop", index);
+      },
+      add(){
+        this.$emit("add");
+      },
+      remove(){
+        this.$emit("remove");
       },
     },
 }
