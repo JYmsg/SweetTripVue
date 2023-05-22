@@ -20,7 +20,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -68,11 +68,18 @@ import http from "@/util/http-common.js";
 import { mapState } from 'vuex';
 import PlanList from './element/PlanList.vue';
 import PlanSearch from './element/PlanSearch.vue';
+import Moment from 'moment';
 export default {
   components:{
     Modal,
     PlanList,
     PlanSearch,
+    Moment,
+  },
+  watch:{
+    daylength(){
+      this.initLine();
+    }
   },
   data(){
     return{
@@ -117,7 +124,6 @@ export default {
         this.$set(this.carts, i, data[i]);
         }
         this.cartslength = this.carts.length;
-      // console.log(this.carts);
       })
   },
     computed: {
@@ -140,6 +146,37 @@ export default {
     }
   },
   methods: {
+    add(){
+      var day = {
+        date : Moment(this.travel.enddate).add(1, 'days').format('YYYY-MM-DD'),
+        weather: '맑음',
+        travel_id : this.travel.id,
+        places : [],
+      }
+      http.post("/travelapi/day", day)
+      .then(({data})=>{
+        this.travel.enddate = Moment(this.travel.enddate).add(1, 'days').format('YYYY-MM-DD');
+        this.$set(this.travel.days, this.travel.days.length, day);
+        this.daylength += 1;
+        console.log(this.travel.enddate);
+        this.$set(this.dots, this.dots.length, []);
+        this.$set(this.distanceOverlays, this.distanceOverlays.length, null);
+        this.$set(this.clickLines, this.clickLines.length, null);
+      })
+    },
+    remove(){
+      http.delete("/travelapi/day/"+this.travel.days[this.daylength-1].id)
+      .then(({data})=>{
+        this.$delete(this.travel.days, this.daylength-1);
+        this.daylength-=1;
+        this.travel.enddate = Moment(this.travel.enddate).subtract(1, 'days').format('YYYY-MM-DD');
+        console.log(this.travel);
+        this.$delete(this.travel.days, this.daylength);
+        this.$delete(this.dots, this.dots.length-1);
+        this.$delete(this.distanceOverlays, this.distanceOverlays.length-1);
+        this.$delete(this.clickLines, this.clickLines.length-1);
+      })
+    },
     moveCart(place) {
       this.movePlace = place;
     },
@@ -415,10 +452,6 @@ export default {
         this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
         this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
         this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
-        // this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
-        // this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
-        // this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
-        // console.log(this.travel);
       }else{
         let dumy1 = {
           content_id: 839237,
@@ -462,7 +495,7 @@ export default {
       http.put("/travelapi/travel", this.travel)
       .then(({data})=>{
         alert("계획 생성 완료");
-        this.$router.push({name: "home"});
+        this.$router.push({name: "PlanDetail", id: this.travel.id});
       })
       .catch((e)=>{
         alert("계획 생성 실패");
@@ -482,10 +515,7 @@ export default {
       console.log("imhere")
       if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, this.movePlace);
-      // this.initMap();
       this.onlyLine(index);
-      // this.travel.days[index]
-
     },
   }
 }

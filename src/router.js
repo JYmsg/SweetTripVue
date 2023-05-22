@@ -24,6 +24,7 @@ import HotplModify from "@/views/hotpl/HotplModify.vue";
 
 import PlanView from "@/views/PlanView.vue";
 import PlanRegist from "@/views/plan/PlanRegist.vue";
+import PlanDetail from "@/views/plan/PlanDetail.vue";
 
 Vue.use(Router);
 
@@ -45,6 +46,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: Information,
+        footer: AppFooter,
+      },
+    },
+    {
+      path: "/plan/detail/:id",
+      name: "PlanDetail",
+      components: {
+        header: AppHeader,
+        default: PlanDetail,
         footer: AppFooter,
       },
     },
