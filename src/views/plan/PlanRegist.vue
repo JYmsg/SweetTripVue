@@ -495,7 +495,7 @@ export default {
       http.put("/travelapi/travel", this.travel)
       .then(({data})=>{
         alert("계획 생성 완료");
-        this.$router.push({name: "home"});
+        this.$router.push({name: "PlanDetail", id: this.travel.id});
       })
       .catch((e)=>{
         alert("계획 생성 실패");
