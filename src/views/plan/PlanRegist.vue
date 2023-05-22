@@ -20,7 +20,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -32,7 +32,11 @@
             </div>
             <div id="carts" style="overflow:auto; height: 85vh;" class="p-2" v-if="cartslength">
               <div id="cart" v-for="cart in carts" :key="cart.content_id" class="p-1">
-                <div class="place" v-if="cart.place != null">
+                <div class="place" v-if="cart.place != null"
+                  draggable="true"
+                  @dragstart="moveCart(cart.place)"
+                
+                >
                   <div id="cart_img_box" class="mb-1">
                     <img id="cart_img" :src="`${cart.place.first_image}`" alt="">
                   </div>
@@ -87,6 +91,7 @@ export default {
       colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
       places: [],
       InfoWindow: null,
+      movePlace: null,
     }
   },
   async created(){
@@ -135,6 +140,9 @@ export default {
     }
   },
   methods: {
+    moveCart(place) {
+      this.movePlace = place;
+    },
     addPlace(index, place){
       if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
@@ -447,10 +455,6 @@ export default {
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
-      // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy1.content_id);
-      // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy2.content_id);
-      // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy3.content_id);
-      // console.log(this.travel);
       }
       this.initLine();
     },
@@ -473,6 +477,15 @@ export default {
       .catch((e)=>{
         alert("계획 삭제 실패");
       })
+    },
+    drop(index) {
+      console.log("imhere")
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, this.movePlace);
+      // this.initMap();
+      this.onlyLine(index);
+      // this.travel.days[index]
+
     },
   }
 }
