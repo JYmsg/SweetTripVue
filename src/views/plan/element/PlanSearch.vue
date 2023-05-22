@@ -59,7 +59,7 @@ import Modal from "@/components/Modal.vue";
 import { mapState } from 'vuex';
 export default {
     props: [
-      'daylength',
+        'daylength',
     ],
     components:{
         Modal,
@@ -120,7 +120,7 @@ export default {
         }
     },
     computed: {
-      ...mapState(["loginUser"]),
+        ...mapState(["loginUser"]),
     },
     watch:{
         area: {
@@ -291,36 +291,36 @@ export default {
     background-color: #C4DFDF;
 }
 #sidebar{
-  width: 100%;
-  height: 100%;
-  background-color: #F8F6F4;
+    width: 100%;
+    height: 100%;
+    background-color: #F8F6F4;
 }
 #title_plan{
-  background-color: #C4DFDF;
+    background-color: #C4DFDF;
 }
 .day{
-  background-color: #D2E9E9;
+    background-color: #D2E9E9;
 }
 #days{
-  background-color: #E3F4F4;
+    background-color: #E3F4F4;
 }
 #attractions{
-  width: 100%;
-  height: 6.5rem;
+    width: 100%;
+    height: 6.5rem;
   /* background-color: #A5D7E8; */
-  background-color: black;
+    background-color: black;
 }
 #att_img_box{
-  float: left;
-  width: 33%;
-  height: 6rem;
+    float: left;
+    width: 33%;
+    height: 6rem;
 }
 #att_address_box{
-  float: right;
-  width: 66%;
-  height: 6rem;
-  background: #F8F6F4;
-  overflow: hidden;
+    float: right;
+    width: 66%;
+    height: 6rem;
+    background: #F8F6F4;
+    overflow: hidden;
 }
 #modal_img{
     width: 100%;
