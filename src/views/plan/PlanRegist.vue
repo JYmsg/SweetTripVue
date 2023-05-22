@@ -93,8 +93,11 @@ export default {
     .then(({data})=>{
       this.travel = data;
       this.daylength = data.days.length;
-      for (let i = 0; i < this.daylength; i++)
-          this.$set(this.dots, i, []);
+      for (let i = 0; i < this.daylength; i++) {
+        this.$set(this.dots, i, []);
+        this.$set(this.distanceOverlays, i, null);
+        this.$set(this.clickLines, i, null);
+      }
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
@@ -138,7 +141,6 @@ export default {
     addPlace(index, place){
       if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
-      // this.$set(this.travel.days[index].attractions, this.travel.days[index].length, dumy1.content_id);
 
     },
     moveMap(lat, lng) {
@@ -184,27 +186,41 @@ export default {
         this.deleteCircleDot(j);
       }
       if(this.travel.days[i].places != null){
-          var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
-          var clickLine = new kakao.maps.Polyline({
-              map: this.map, // 선을 표시할 지도입니다 
-              path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-              strokeWeight: 5, // 선의 두께입니다 
-              strokeColor: this.colors[i % 9], // 선의 색깔입니다
-              strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-              strokeStyle: 'solid' // 선의 스타일입니다
-          });
-          this.$set(this.clickLines, i, clickLine);
-          this.displayCircleDot(firstPosition, 0, i);
-          for(let j=1; j<this.travel.days[i].places.length; j++){
-            var path = this.clickLines[i].getPath();
-            var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
-            path.push(clickPosition);
-            this.clickLines[i].setPath(path);
-  
-            var distance = Math.round(this.clickLines[i].getLength());
-            this.displayCircleDot(clickPosition, distance, i);
-          }
+        var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
+        var clickLine = new kakao.maps.Polyline({
+            map: this.map, // 선을 표시할 지도입니다 
+            path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+            strokeWeight: 5, // 선의 두께입니다 
+            strokeColor: this.colors[i % 9], // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다
+        });
+        this.$set(this.clickLines, i, clickLine);
+        this.displayCircleDot(firstPosition, 0, i);
+        for(let j=1; j<this.travel.days[i].places.length; j++){
+          var path = this.clickLines[i].getPath();
+          var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
+          path.push(clickPosition);
+          this.clickLines[i].setPath(path);
+
+          var distance = Math.round(this.clickLines[i].getLength());
+          this.displayCircleDot(clickPosition, distance, i);
         }
+        if(path.length > 1){
+          if(this.dots[i][this.dots[i].length-1].distance){ //dayi의 마지막 점의 거리 distanceOveray가 존재하면
+            this.dots[i][this.dots[i].length-1].distance.setMap(null); // null로 수정해줍니다.
+            this.dots[i][this.dots[i].length-1].distance = null;
+          }
+          var distance = Math.round(this.clickLines[i].getLength()),
+              content = this.getTimeHTML(distance);
+  
+          this.showDistance(content, path[path.length-1], i); // dayi의 distanceOveray를 총 거리정보로 변경해줍니다.
+        }else{
+          this.deleteClickLine(i);
+          this.deleteCircleDot(i); 
+          this.deleteDistnce(i);
+        }
+      }
     },
     initLine(){
       // 지도에 표시된 것들을 모두 제거
@@ -235,20 +251,20 @@ export default {
             var distance = Math.round(this.clickLines[i].getLength());
             this.displayCircleDot(clickPosition, distance, i);
           }
-          // if(path.length > 1){
-          //   if(this.dots[j][this.dots[j].length-1].distance){
-          //     this.dots[j][this.dots[j].length-1].distance.setMap(null);
-          //     this.dots[j][this.dots[j].length-1].distance = null;
-          //   }
-          //   var distance = Math.round(this.clickLines[i].getLength()),
-          //       content = this.getTimeHTML(distance);
+          if(path.length > 1){
+            if(this.dots[i][this.dots[i].length-1].distance){ //dayi의 마지막 점의 거리 distanceOveray가 존재하면
+              this.dots[i][this.dots[i].length-1].distance.setMap(null); // null로 수정해줍니다.
+              this.dots[i][this.dots[i].length-1].distance = null;
+            }
+            var distance = Math.round(this.clickLines[i].getLength()),
+                content = this.getTimeHTML(distance);
     
-          //   this.showDistance(content, path[path.length-1], i);
-          // }else{
-          //   this.deleteClickLine(i);
-          //   this.deleteCircleDot(i); 
-          //   this.deleteDistnce(i);
-          // }
+            this.showDistance(content, path[path.length-1], i); // dayi의 distanceOveray를 총 거리정보로 변경해줍니다.
+          }else{
+            this.deleteClickLine(i);
+            this.deleteCircleDot(i); 
+            this.deleteDistnce(i);
+          }
         }
       }
     },
@@ -258,6 +274,7 @@ export default {
         // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
         this.distanceOverlays[index].setPosition(position);
         this.distanceOverlays[index].setContent(content);
+        this.distanceOverlays[index].setMap(this.map);
           
       } else { // 커스텀 오버레이가 생성되지 않은 상태이면         
           // 커스텀 오버레이를 생성하고 지도에 표시합니다
@@ -268,7 +285,8 @@ export default {
             xAnchor: 0,
             yAnchor: 0,
             zIndex: 3
-          }));    
+          }));
+          this.distanceOverlays[index].setMap(this.map);
       }
     },
     displayCircleDot(position, distance, index){
@@ -288,6 +306,7 @@ export default {
         });
         // 지도에 표시합니다
         distanceOverlay.setMap(this.map);
+        this.$set(this.distanceOverlays, index, distanceOverlay);
         this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: distanceOverlay});
       }
       else {
