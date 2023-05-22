@@ -12,7 +12,10 @@
             </div>
             <div class="row">
               <div class="col m-3" v-if="initMap">
-                <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden"></div>
+                <div
+                  id="map"
+                  style="width: 100%; height: 100%; position: relative; overflow: hidden"
+                ></div>
                 <div id="menu_wrap" style="background-color: white; opacity: 0.8">
                   <div class="option">
                     <div class="row no-gutters">
@@ -62,7 +65,11 @@
               <div class="col">
                 <div class="mb-4" id="write-place-div">
                   <div>
-                    <b-form-select v-model="selected" :options="areas" class="me-2 rounded-4"></b-form-select>
+                    <b-form-select
+                      v-model="selected"
+                      :options="areas"
+                      class="me-2 rounded-4"
+                    ></b-form-select>
                   </div>
                   <div class="ml-2" style="text-align: left">위치</div>
                   <input type="text" v-model="title" class="form-control" readonly />
@@ -90,8 +97,13 @@
                   ></textarea>
                 </div>
                 <div class="mb-4">
-                  <div class="ml-2" style="text-align: left; color: red">이미지 최대 1개</div>
-                  <input type="file" id="upload-image" accept="image/*" @change="fileChange($event.target.files)" />
+                  <div class="ml-2" style="text-align: left; color: red">이미지 1개 필수</div>
+                  <input
+                    type="file"
+                    id="upload-image"
+                    accept="image/*"
+                    @change="fileChange($event.target.files)"
+                  />
                   <!-- <label for="upload-image">
                     <img src="img/brand/aa.jpg" />
                   </label> -->
@@ -121,7 +133,7 @@ export default {
         writer_id: "",
         latitude: "",
         longitude: "",
-        img: "",
+        img: "not",
       },
       title: "위치를 검색해 선택하세요.",
       lan: 0,
@@ -160,21 +172,11 @@ export default {
       this.hotpl.img = file[0];
       // await this.base64(this.hotpl.img);
     },
-    // base64(file) {
-    //   console.log(file);
-    //   return new Promise((resolve) => {
-    //     let a = new FileReader();
-    //     a.onload = (e) => {
-    //       resolve(e.target.result);
-    //       const previewImage = document.getElementById("preview");
-    //       previewImage.src = e.target.result;
-    //     };
-    //     a.readAsDataURL(file);
-    //     console.log(a);
-    //   });
-    // },
     createHotpl() {
-      console.log(this.hotpl);
+      if (this.hotpl.img === "not") {
+        alert("파일을 추가해 주세요");
+        return;
+      }
 
       let form = new FormData();
       form.append("title", this.hotpl.title);
@@ -269,7 +271,8 @@ export default {
       this.map.setBounds(bounds);
     },
     addMarker(position, idx, title) {
-      var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      var imageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37), // 마커 이미지의 크기
         imgOptions = {
           spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -445,7 +448,8 @@ export default {
 }
 #placesList .info .jibun {
   padding-left: 26px;
-  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png)
+    no-repeat;
 }
 #placesList .info .tel {
   color: #009900;
@@ -456,7 +460,8 @@ export default {
   width: 36px;
   height: 37px;
   margin: 10px 0 0 10px;
-  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png)
+    no-repeat;
 }
 #placesList .item .marker_1 {
   background-position: 0 -10px;

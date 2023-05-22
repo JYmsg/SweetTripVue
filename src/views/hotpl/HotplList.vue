@@ -14,7 +14,9 @@
               <b-button variant="outline-info" size="sm" @click="moveMain">목록으로</b-button>
             </div>
             <div v-if="getUser" class="row m-1" style="justify-content: right">
-              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
+              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">
+                핫 플레이스 등록하기
+              </div>
             </div>
             <b-form-group>
               <b-form-radio-group
@@ -34,11 +36,14 @@
                   <div v-for="(hotpl, index) in hotpls" :key="index">
                     <div class="card mb-3 text-start">
                       <div class="row g-0">
-                        <div v-if="hotpl.img.length == 0" class="col-md-3">
-                          <img style="width: 100%; height: 100%" src="../../../public/img/logo/noupload.jpg" />
+                        <div v-if="hotpl.img === 'not'" class="col-md-3">
+                          <img
+                            style="width: 100%; height: 100%"
+                            src="../../../public/img/logo/noupload.jpg"
+                          />
                         </div>
                         <div v-else class="col-md-3">
-                          {{ hotpl.img }}
+                          <img style="width: 100%; height: 100%" :src="hotpl.src" />
                         </div>
                         <div class="col-md-9">
                           <div class="card-body">
@@ -62,10 +67,15 @@
                                 </div>
                                 <span
                                   class="h5"
-                                  v-if="controll[index] && change[index] === 'img/icons/noti/heart-color.png'"
+                                  v-if="
+                                    controll[index] &&
+                                    change[index] === 'img/icons/noti/heart-color.png'
+                                  "
                                   >좋아요 {{ hotpl.good + 1 }}</span
                                 >
-                                <span class="h5" v-else-if="!controll[index]">좋아요 {{ hotpl.good }}</span>
+                                <span class="h5" v-else-if="!controll[index]"
+                                  >좋아요 {{ hotpl.good }}</span
+                                >
                                 <br />
                                 <span class="h5">조회수 {{ hotpl.hit }}</span>
                               </div>
@@ -114,6 +124,7 @@ export default {
           good: Number,
           write_time: String,
           writer_id: String,
+          src: String,
         },
       ],
       likes: [
@@ -162,6 +173,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         this.$set(this.change, i, "img/icons/noti/heart-bean.png");
         this.$set(this.controll, i, false);
+        this.hotpls[i].src = `img/upload/${data[i].img}`;
       }
     });
 

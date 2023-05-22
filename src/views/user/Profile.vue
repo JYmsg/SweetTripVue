@@ -54,7 +54,7 @@
             </div>
             <!-- <calendar/> -->
             <tabs fill class="flex-column flex-md-row">
-              <card shadow>
+              <card shadow class="mb-4">
                 <tab-pane key="tab1">
                   <template slot="title"> <i class="ni ni-cart"></i> MY PLACE </template>
                   <div v-if="getCarts && cartslength != 0" id="resultBox" style="width: 100%">
