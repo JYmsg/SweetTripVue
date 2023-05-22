@@ -196,7 +196,7 @@ export default {
     },
     moveList() {
       console.log(this.selected);
-      this.$router.push({ name: "HotplList" });
+      this.$router.push({ name: "HotplList", params: {id: this.selected} });
     },
     initMap() {
       var container = document.getElementById("map");

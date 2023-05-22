@@ -47,7 +47,7 @@
         <div class="col-lg-5 col-sm-5">
           <div id="bag" class="p-3">
             <div id="title_bag" class="text-center p-1">
-              <h4 class="mt-2" style="color: white">장바구니</h4>
+              <h4 class="mt-2" style="color: white">찜한 장소 목록</h4>
             </div>
             <div id="carts" style="overflow:auto; height: 85vh;" class="p-2" v-if="cartslength">
               <div id="cart" v-for="cart in carts" :key="cart.content_id" class="p-1">
@@ -63,7 +63,7 @@
               </div>
             </div>
             <div v-else class="text-center">
-              <h5 style="color: white" class="m-2">장바구니에 아무것도 없습니다.</h5>
+              <h5 style="color: white" class="m-2">찜한 장소가 없습니다.</h5>
             </div>
             <div id="buttons" class="mt-2" style="float: right;">
               <base-button class="btn-1 p-2" type="info">임시저장</base-button>
