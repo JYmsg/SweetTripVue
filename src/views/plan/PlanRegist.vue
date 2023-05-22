@@ -176,57 +176,43 @@ export default {
     makeMarkers(index){
       console.log(index);
     },
-    onlyLine(i){
+    onlyLine(i) {
+      // 전부 삭제후, 자기것만 생성
       for (let j = 0; j < this.travel.days.length; j++){
-        if (i == j) continue;
         this.deleteClickLine(j);
         this.deleteDistnce(j);
         this.deleteCircleDot(j);
       }
-      // if(this.travel.days[i].places != null){
-      //   var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
-      //   var clickLine = new kakao.maps.Polyline({
-      //       map: this.map, // 선을 표시할 지도입니다 
-      //       path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-      //       strokeWeight: 3, // 선의 두께입니다 
-      //       strokeColor: this.colors[i % 9], // 선의 색깔입니다
-      //       strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-      //       strokeStyle: 'solid' // 선의 스타일입니다
-      //   });
-      //   this.$set(this.clickLines, i, clickLine);
-      //   this.displayCircleDot(firstPosition, 0, i);
-      //   for(let j=1; j<this.travel.days[i].places.length; j++){
-      //     var path = this.clickLines[i].getPath();
-      //     var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
-      //     path.push(clickPosition);
-      //     this.clickLines[i].setPath(path);
-
-      //     var distance = Math.round(this.clickLines[i].getLength());
-      //     this.displayCircleDot(clickPosition, distance, i);
-      //   }
-      //   if(path.length > 1){
-      //     if(this.dots[this.dots.length-1].distance){
-      //       this.dots[this.dots.length-1].distance.setMap(null);
-      //       this.dots[this.dots.length-1].distance = null;
-      //     }
-      //     var distance = Math.round(this.clickLines[i].getLength()),
-      //         content = this.getTimeHTML(distance);
+      if(this.travel.days[i].places != null){
+          var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
+          var clickLine = new kakao.maps.Polyline({
+              map: this.map, // 선을 표시할 지도입니다 
+              path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+              strokeWeight: 5, // 선의 두께입니다 
+              strokeColor: this.colors[i % 9], // 선의 색깔입니다
+              strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+              strokeStyle: 'solid' // 선의 스타일입니다
+          });
+          this.$set(this.clickLines, i, clickLine);
+          this.displayCircleDot(firstPosition, 0, i);
+          for(let j=1; j<this.travel.days[i].places.length; j++){
+            var path = this.clickLines[i].getPath();
+            var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
+            path.push(clickPosition);
+            this.clickLines[i].setPath(path);
   
-      //     this.showDistance(content, path[path.length-1], i);
-      //   }else{
-      //     this.deleteClickLine(i);
-      //     this.deleteCircleDot(); 
-      //     this.deleteDistnce(i);
-      //   }
-      // }
+            var distance = Math.round(this.clickLines[i].getLength());
+            this.displayCircleDot(clickPosition, distance, i);
+          }
+        }
     },
     initLine(){
       // 지도에 표시된 것들을 모두 제거
-      // for(let i=0; i<this.travel.days.length; i++){
-      //   this.deleteClickLine(i);
-      //   this.deleteDistnce(i);
-      //   this.deleteCircleDot(i);
-      // }
+      for(let i=0; i<this.travel.days.length; i++){
+        this.deleteClickLine(i);
+        this.deleteDistnce(i);
+        this.deleteCircleDot(i);
+      }
       for(let i=0; i<this.travel.days.length; i++){
         if(this.travel.days[i].places != null){
           var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
@@ -239,7 +225,7 @@ export default {
               strokeStyle: 'solid' // 선의 스타일입니다
           });
           this.$set(this.clickLines, i, clickLine);
-          // this.displayCircleDot(firstPosition, 0, i);
+          this.displayCircleDot(firstPosition, 0, i);
           for(let j=1; j<this.travel.days[i].places.length; j++){
             var path = this.clickLines[i].getPath();
             var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
@@ -247,7 +233,7 @@ export default {
             this.clickLines[i].setPath(path);
   
             var distance = Math.round(this.clickLines[i].getLength());
-            // this.displayCircleDot(clickPosition, distance, i);
+            this.displayCircleDot(clickPosition, distance, i);
           }
           // if(path.length > 1){
           //   if(this.dots[j][this.dots[j].length-1].distance){
@@ -285,27 +271,31 @@ export default {
           }));    
       }
     },
-    // displayCircleDot(position, distance, index){
-    //   // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
-    //   var circleOverlay = new kakao.maps.CustomOverlay({
-    //     content: '<span class="dot"></span>',
-    //     position: position,
-    //     zIndex: 1
-    //   });
-    //   circleOverlay.setMap(this.map);
-    //   if(distance > 0) {
-    //     this.$set(this.distanceOverlays, index, new kakao.maps.CustomOverlay({
-    //         content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
-    //         position: position,
-    //         yAnchor: 1,
-    //         zIndex: 2
-    //     }));
-    //     // 지도에 표시합니다
-    //     this.distanceOverlays[index].setMap(this.map);
-    //   }
-    //   console.log("dots = ", this.dots);
-    //   this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: this.distanceOverlays[index]});
-    // },
+    displayCircleDot(position, distance, index){
+      // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+      var circleOverlay = new kakao.maps.CustomOverlay({
+        content: '<span class="dot"></span>',
+        position: position,
+        zIndex: 1
+      });
+      circleOverlay.setMap(this.map);
+      if (distance > 0) {
+        var distanceOverlay = new kakao.maps.CustomOverlay({
+          content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+          position: position,
+          yAnchor: 1,
+          zIndex: 2
+        });
+        // 지도에 표시합니다
+        distanceOverlay.setMap(this.map);
+        this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: distanceOverlay});
+      }
+      else {
+        this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: null});
+        
+      }
+      console.log("dots = ", this.dots);
+    },
     deleteClickLine(index){
       if(this.clickLines[index]){
         this.clickLines[index].setMap(null);
@@ -317,15 +307,17 @@ export default {
         this.distanceOverlays[index].setMap(null);
       }
     },
-    // deleteCircleDot(index) {
-    //   if (this.dots[index] == null) { this.dots[index] = []; }
-    //   for(let i=0; i<this.dots[index].length; i++){
-    //     if(this.dots[index][i].circle){
-    //       this.dots[index][i].circle.setMap(null);
-    //     }
-    //   }
-    //   this.dots[index] = null;
-    // },
+    deleteCircleDot(index) {
+      for (let i = 0; i < this.dots[index].length; i++){
+        console.log(this.dots[index][i]);
+        if(this.dots[index][i].circle){
+          this.dots[index][i].circle.setMap(null);
+          if(this.dots[index][i].distance != null)
+            this.dots[index][i].distance.setMap(null);
+        }
+      }
+      this.dots[index] = [];
+    },
     getTimeHTML(distance){
       // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
       var walkkTime = distance / 67 | 0;
