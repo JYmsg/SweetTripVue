@@ -12,21 +12,44 @@
             </div>
             <hr />
           </div>
-          <div class="m-3">
-            {{ hotplcnt }}
+          <div class="content m-3">
             <div v-for="(area, index) in areas" :key="index">
-              <!-- <b-card-group deck class="row justify-content-center"> -->
-              <b-card
-                img-src="https://picsum.photos/600/300/?image=25"
-                img-top
-                style="max-width: 20rem"
-                class="mb-2"
-                @click="moveList(area.value)"
-              >
-                <b-card-title>{{ area.text }}</b-card-title>
-                <b-card-text> {{ hotplcnt[area.value] }} 개의 게시물 </b-card-text>
-              </b-card>
-              <!-- </b-card-group> -->
+              <div v-if="index % 3 === 0">
+                <b-card-group deck class="row" style="justify-content: space-between">
+                  <b-card
+                    img-src="https://picsum.photos/600/300/?image=25"
+                    img-top
+                    style="max-width: 20rem"
+                    class="mb-2"
+                    @click="moveList(areas[index].value)"
+                  >
+                    <b-card-title>{{ areas[index].text }}</b-card-title>
+                    <b-card-text> {{ hotplcnt[areas[index].value] }} 개의 게시물 </b-card-text>
+                  </b-card>
+
+                  <b-card
+                    img-src="https://picsum.photos/600/300/?image=25"
+                    img-top
+                    style="max-width: 20rem"
+                    class="mb-2"
+                    @click="moveList(areas[index + 1].value)"
+                  >
+                    <b-card-title>{{ areas[index + 1].text }}</b-card-title>
+                    <b-card-text> {{ hotplcnt[areas[index + 1].value] }} 개의 게시물 </b-card-text>
+                  </b-card>
+
+                  <b-card
+                    img-src="https://picsum.photos/600/300/?image=25"
+                    img-top
+                    style="max-width: 20rem"
+                    class="mb-2"
+                    @click="moveList(areas[index + 2].value)"
+                  >
+                    <b-card-title>{{ areas[index + 2].text }}</b-card-title>
+                    <b-card-text> {{ hotplcnt[areas[index + 2].value] }} 개의 게시물 </b-card-text>
+                  </b-card>
+                </b-card-group>
+              </div>
             </div>
           </div>
         </card>
@@ -55,7 +78,7 @@ export default {
           sido_code: Number,
         },
       ],
-      hotplcnt: [Number],
+      hotplcnt: [],
       areas: [
         { value: 0, text: "전체보기" },
         { value: 1, text: "서울" },
@@ -95,7 +118,10 @@ export default {
     http.get("/hotplaceapi/hotplace/0/none/none").then(({ data }) => {
       console.log(data);
       this.hotpls = data;
-      this.hotplcnt = data.length;
+      for (let i = 0; i < 40; i++) {
+        this.$set(this.hotplcnt, i, 0);
+      }
+      this.$set(this.hotplcnt, 0, data.length);
       for (let i = 0; i < data.length; i++) {
         this.hotplcnt[data[i].sido_code] += 1;
       }
@@ -112,4 +138,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.content {
+  background-image: url("../../../public/img/brand/Korea_map.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
