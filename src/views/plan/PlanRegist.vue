@@ -21,8 +21,7 @@
               </div>
             </div>
             <plan-list v-if="select" :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
-            <!-- <plan-search v-else :daylength="daylength"></plan-search> -->
-            <plan-search v-else :daylength="daylength"  @addPlace="addPlace"></plan-search>
+            <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
         <!-- 장바구니는 5칸 -->
@@ -86,6 +85,45 @@ export default {
       select: true,
       Title: ["title_plan", "noTitle"],
       colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
+      places: [],
+      // maps: [null,],
+
+
+      // 지도 TEST
+      // coffeePositions : [ 
+      //   new kakao.maps.LatLng(37.499590490909185, 127.0263723554437),
+      //   new kakao.maps.LatLng(37.499427948430814, 127.02794423197847),
+      //   new kakao.maps.LatLng(37.498553760499505, 127.02882598822454),
+      //   new kakao.maps.LatLng(37.497625593121384, 127.02935713582038),
+      //   new kakao.maps.LatLng(37.49646391248451, 127.02675574250912),
+      //   new kakao.maps.LatLng(37.49629291770947, 127.02587362608637),
+      //   new kakao.maps.LatLng(37.49754540521486, 127.02546694890695)                
+      // ],
+      // storePositions : [
+      //   new kakao.maps.LatLng(37.497535461505684, 127.02948149502778),
+      //   new kakao.maps.LatLng(37.49671536281186, 127.03020491448352),
+      //   new kakao.maps.LatLng(37.496201943633714, 127.02959405469642),
+      //   new kakao.maps.LatLng(37.49640072567703, 127.02726459882308),
+      //   new kakao.maps.LatLng(37.49640098874988, 127.02609983175294),
+      //   new kakao.maps.LatLng(37.49932849491523, 127.02935780247945),
+      //   new kakao.maps.LatLng(37.49996818951873, 127.02943721562295)
+      // ],
+      // carparkPositions : [
+      //     new kakao.maps.LatLng(37.49966168796031, 127.03007039430118),
+      //     new kakao.maps.LatLng(37.499463762912974, 127.0288828824399),
+      //     new kakao.maps.LatLng(37.49896834100913, 127.02833986892401),
+      //     new kakao.maps.LatLng(37.49893267508434, 127.02673400572665),
+      //     new kakao.maps.LatLng(37.49872543597439, 127.02676785815386),
+      //     new kakao.maps.LatLng(37.49813096097184, 127.02591949495914),
+      //     new kakao.maps.LatLng(37.497680616783086, 127.02518427952202)                       
+      // ],
+      // markerImageSrc : 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png',  // 마커이미지의 주소입니다. 스프라이트 이미지 입니다
+      // coffeeMarkers : [], // 커피숍 마커 객체를 가지고 있을 배열입니다
+      // storeMarkers : [], // 편의점 마커 객체를 가지고 있을 배열입니다
+      // carparkMarkers: [],
+
+
+      
     }
   },
   async created(){
@@ -106,12 +144,12 @@ export default {
 
     await http.get("/cartapi/cart/list/" + this.loginUser.id)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         for (let i = 0; i < data.length; i++){
         this.$set(this.carts, i, data[i]);
         }
         this.cartslength = this.carts.length;
-      console.log(this.carts);
+      // console.log(this.carts);
       })
   },
     computed: {
@@ -166,10 +204,8 @@ export default {
       }else{
         this.distanceOverlays = [];
         this.markers = [];
+
       }
-    },
-    makeMarkers(index){
-      console.log(index);
     },
     onlyLine(i) {
       // 전부 삭제후, 자기것만 생성
@@ -306,7 +342,7 @@ export default {
         this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: null});
         
       }
-      console.log("dots = ", this.dots);
+      // console.log("dots = ", this.dots);
     },
     deleteClickLine(index){
       if(this.clickLines[index]){
@@ -321,7 +357,7 @@ export default {
     },
     deleteCircleDot(index) {
       for (let i = 0; i < this.dots[index].length; i++){
-        console.log(this.dots[index][i]);
+        // console.log(this.dots[index][i]);
         if(this.dots[index][i].circle){
           this.dots[index][i].circle.setMap(null);
           if(this.dots[index][i].distance != null)
@@ -407,7 +443,7 @@ export default {
         // this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
         // this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
         // this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
-        console.log(this.travel);
+        // console.log(this.travel);
       }else{
         let dumy1 = {
           content_id: 839237,
@@ -447,7 +483,7 @@ export default {
       // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy1.content_id);
       // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy2.content_id);
       // this.$set(this.travel.days[index].attractions, this.travel.days[index].attractions.length, dumy3.content_id);
-      console.log(this.travel);
+      // console.log(this.travel);
       }
       this.initLine();
     },

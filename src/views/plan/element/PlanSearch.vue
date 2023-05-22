@@ -38,10 +38,6 @@
         <h3 slot="header" class="modal-title ml-2" id="modal-title-default">{{ modalPlace.title }}</h3>
         <img id="modal_img" :src="`${modalPlace.first_image}`" alt="">
         <p class="m-2">{{modalPlace.overview}}</p>
-        <!-- <p>A small river named Duden flows by their place and supplies it with the necessary
-            regelialia. It is a paradisematic country, in which roasted parts of sentences
-            fly into your mouth.</p> -->
-
         <template slot="footer">
             <div class="">
                 <b-form-select v-model="add" :options="adds" class="rounded-4"></b-form-select>
@@ -60,6 +56,7 @@ import { mapState } from 'vuex';
 export default {
     props: [
         'daylength',
+        'map',
     ],
     components:{
         Modal,
@@ -111,6 +108,8 @@ export default {
             search: "",
             places: [],
             modalPlace: null,
+            markers: [],
+            placelng: 0,
         }
     },
     async created(){
@@ -125,22 +124,41 @@ export default {
     },
     watch:{
         area: {
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         },
         gugun:{
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         },
         type:{
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         }
     },
-    methods:{
+    methods: {
+        sendMarker() {
+            console.log("sendMarker");
+            for (let i = 0; i < this.markers.length; i++){
+                this.markers[i].setMap(null);
+            }
+            this.markers = [];
+            var imageSrc = "img/markers/location-pin.png"
+            var imageSize = new kakao.maps.Size(34, 35);
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+            for (let i = 0; i < this.places.length; i++){
+                var marker = new kakao.maps.Marker({
+                    map: this.map, // 마커를 표시할 지도
+                    position: new kakao.maps.LatLng(this.places[i].latitude, this.places[i].longitude), // 마커를 표시할 위치
+                    image: markerImage, // 마커 이미지
+                });
+                this.$set(this.markers, i, marker);
+            };
+
+        },
         async detail(index){
             console.log(this.places[index])
             await http.get("/placeapi/place/one/"+this.places[index].content_id)
@@ -154,12 +172,6 @@ export default {
                 console.log(this.modalPlace);
             })
             this.modal = true;
-        },
-        dumy(index){
-            this.$emit("dumy", index);
-        },
-        onlyLine(index){
-            this.$emit("onlyLine", index);
         },
         async searchgugun() {
             if(this.area != null){
@@ -182,6 +194,7 @@ export default {
                 })
             }
             this.searchAll();
+
         },
         addPlace(){
             if(this.add == null){
@@ -191,35 +204,7 @@ export default {
             }
         },
         async searchAll(){
-            console.log("클릭햇음")
-            console.log(this.area, this.type)
             this.places = [];
-            // if(this.area == null){
-            //     if(this.type == null){
-            //         console.log("here")
-            //         await http.get("/placeapi/place/list")
-            //         .then(({data})=>{
-            //             for(let i=0; i<data.length; i++){
-            //                 this.$set(this.places, i, data[i]);
-            //             }
-            //         })
-            //         .catch((e)=>{
-            //             alert("검색 오류 입니다.");
-            //         })
-            //     }
-            //     else{
-            //         http.get("/placeapi/place/list/type/"+this.type)
-            //         .then(({data})=>{
-            //             for(let i=0; i<data.length; i++){
-            //                 this.$set(this.places, i, data[i]);
-            //             }
-            //         })
-            //         .catch((e)=>{
-            //             alert("검색 오류 입니다.")
-            //         })
-            //     }
-            // }
-            // else{
             if(this.type == null){
                 // 시도 선택만
                 if(this.gugun == null){
@@ -228,6 +213,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -239,6 +226,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -253,6 +242,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -270,18 +261,14 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
                     })
                 }
             }
-            // }
-            // if(!this.keyword.replace(/^\s+|\s+$/g, "")){
-            //     alert("키워드를 입력해주세요!");
-            //     return false;
-            // }
-            console.log(this.places)
         }
     },
 }
