@@ -55,8 +55,8 @@ import Modal from "@/components/Modal.vue";
 import { mapState } from 'vuex';
 export default {
     props: [
-        'daylength',
-        'map',
+      'daylength',
+      'map',
     ],
     components:{
         Modal,
