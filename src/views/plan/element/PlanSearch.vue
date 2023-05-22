@@ -162,11 +162,10 @@ export default {
             this.$emit("onlyLine", index);
         },
         async searchgugun() {
-            this.gugun = null;
             if(this.area != null){
                 await http.get("/gugunapi/gugun/"+this.area)
                 .then(({ data }) => {
-                    this.gugun = null;
+                    this.gugun = 1;
                     this.guguns = [];
                     let first = { value: null, text: '구군선택' };
                     this.$set(this.guguns, 0, first);

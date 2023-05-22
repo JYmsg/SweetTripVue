@@ -7,7 +7,7 @@
         <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
         <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
         <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
-            <div v-if="place">
+            <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
             <div id="att_img_box" class="mb-1">
                 <img id="att_img" :src="`${place.first_image}`" alt="">
             </div>
@@ -44,7 +44,10 @@ export default {
         },
         onlyLine(index){
             this.$emit("onlyLine", index);
-        }
+      },
+      moveMap(lan, lng) {
+        this.$emit("moveMap", lan, lng);
+      }
     },
 }
 </script>
