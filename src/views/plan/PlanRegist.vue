@@ -129,14 +129,6 @@ export default {
         this.initMap();
     }
   },
-  // watch:{
-  //   'travel.days': {
-  //     handler(){
-  //       this.initLine();
-  //     },
-  //     deep : true,
-  //   }
-  // },
   methods: {
     addPlace(index, place){
       if(this.travel.days[index].places == null) this.travel.days[index].places = [];
