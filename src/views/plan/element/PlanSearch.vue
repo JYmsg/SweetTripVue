@@ -87,9 +87,10 @@ export default {
                 {value: 38, text : '전라남도'},
                 {value: 39, text : '제주도'},
                 ],
-                gugun: null,
+                gugun: 1,
                 guguns: [
-                    {value: null, text : '구군선택'}
+                    {value: null, text : '구군선택'},
+                    {value: 1, text : '강남구'}
                 ],
                 type: null,
                 types: [
