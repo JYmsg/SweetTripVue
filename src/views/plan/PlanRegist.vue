@@ -86,6 +86,7 @@ export default {
       Title: ["title_plan", "noTitle"],
       colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
       places: [],
+      InfoWindow: null,
       // maps: [null,],
 
 
