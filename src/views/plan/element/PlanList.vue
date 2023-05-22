@@ -4,19 +4,25 @@
         <h5>{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
     </div>
     <div id="days" style="overflow:auto; max-height: 90vh;" class="mt-0">
-        <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
-        <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
-        <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
-            <div v-if="place">
-            <div id="att_img_box" class="mb-1">
-                <img id="att_img" :src="`${place.first_image}`" alt="">
+        <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id"
+        @drop.prevent="drop(index)"
+        @dragenter.prevent
+        @dragover.prevent
+        
+        >
+          <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
+          <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1" 
+          >
+            <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
+              <div id="att_img_box" class="mb-1">
+                  <img id="att_img" :src="`${place.first_image}`" alt="">
+              </div>
+              <div id="att_address_box" class="text-center mb-1">
+                  <h4 class="mt-2 mb-0">{{ place.title }}</h4>
+                  <p>{{place.addr1}}</p>
+              </div>
             </div>
-            <div id="att_address_box" class="text-center mb-1">
-                <h4 class="mt-2 mb-0">{{ place.title }}</h4>
-                <p>{{place.addr1}}</p>
-            </div>
-            </div>
-        </div>      
+          </div>      
         <div class="text-center pb-2 mt-2">
             <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
         </div>
@@ -26,25 +32,24 @@
 </template>
 <script>
 export default {
-    // props:{
-    //     travel: {
-    //         title: String,
-    //         days: Array,
-    //         startdate: String,
-    //         enddate: String
-    //     },
-    // }
     props: [
       'travel',
       'colors'
     ],
     methods:{
-        dumy(index){
-            this.$emit("dumy", index);
-        },
-        onlyLine(index){
-            this.$emit("onlyLine", index);
-        }
+      dumy(index){
+          this.$emit("dumy", index);
+      },
+      onlyLine(index){
+          this.$emit("onlyLine", index);
+      },
+      moveMap(lan, lng) {
+        this.$emit("moveMap", lan, lng);
+      },
+      drop(index) {
+        console.log("listin")
+        this.$emit("drop", index);
+      },
     },
 }
 </script>

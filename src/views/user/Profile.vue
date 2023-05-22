@@ -56,7 +56,7 @@
             <tabs fill class="flex-column flex-md-row">
               <card shadow>
                 <tab-pane key="tab1">
-                  <template slot="title"> <i class="ni ni-cart"></i> Cart </template>
+                  <template slot="title"> <i class="ni ni-cart"></i> MY PLACE </template>
                   <div v-if="getCarts && cartslength != 0" id="resultBox" style="width: 100%">
                     <div
                       class="row card m-3 col-lg-11 col-sm-11"
@@ -104,7 +104,7 @@
                     </div>
                   </div>
                   <div v-else style="text-align: center">
-                    <h4>장바구니에 넣은 장소가 없습니다.</h4>
+                    <h4>찜한 장소가 없습니다.</h4>
                     <div>
                       <base-button
                         type="primary"

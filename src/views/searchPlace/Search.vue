@@ -54,7 +54,7 @@
                                                 <p class='card-text'>
                                                     <small class='text-muted'>{{ place.addr1 +" "+ place.addr2}}</small>
                                                 </p>
-                                                <img :src="filters[index]" style="width: 2rem; height: 2rem;" alt="cart" size='sm' type='default' v-b-popover.hover.bottom='`장바구니에 담아서 더 간편하게 여행계획을 세워보아요.`' title='장바구니에 담기!' @click="inCart(index, place.content_id)" />
+                                                <img :src="filters[index]" style="width: 2rem; height: 2rem;" alt="cart" size='sm' type='default' v-b-popover.hover.bottom='`장소를 찜해서 더 간편하게 여행계획을 세워보아요.`' title='나만의 장소로 찜하기' @click="inCart(index, place.content_id)" />
                                             </div>
                                         </div>
                                     </div>

@@ -111,7 +111,7 @@ export default {
                 age : this.age,
             })
             .then(({data}) => {
-                this.$router.push({ name: "home" });
+                this.$router.push({ name: "login" });
             })
             .catch(()=>{
                 alert("회원가입 실패")

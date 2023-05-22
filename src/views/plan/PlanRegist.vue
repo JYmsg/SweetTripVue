@@ -20,38 +20,23 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @dumy="dumy" @onlyLine="onlyLine"></plan-list>
-            <plan-search v-else :daylength="daylength" :colors="colors" @addPlace="addPlace" @onlyLine="onlyLine"></plan-search>
-            <!-- <div id="days" style="overflow:auto; max-height: 90vh;">
-              <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id">
-                <h3 class="day pl-3 pt-1" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
-                <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1">
-                  <div v-if="place">
-                    <div id="att_img_box" class="mb-1">
-                      <img id="att_img" :src="`${place.first_image}`" alt="">
-                    </div>
-                    <div id="att_address_box" class="text-center mb-1">
-                      <h4 class="mt-2 mb-0">{{ place.title }}</h4>
-                      <p>{{place.addr1}}</p>
-                    </div>
-                  </div>
-                </div>      
-                <div class="text-center pb-2 mt-2">
-                  <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
-                </div>
-              </div>
-            </div> -->
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
+            <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
         <!-- 장바구니는 5칸 -->
         <div class="col-lg-5 col-sm-5">
           <div id="bag" class="p-3">
             <div id="title_bag" class="text-center p-1">
-              <h4 class="mt-2" style="color: white">장바구니</h4>
+              <h4 class="mt-2" style="color: white">찜한 장소 목록</h4>
             </div>
             <div id="carts" style="overflow:auto; height: 85vh;" class="p-2" v-if="cartslength">
               <div id="cart" v-for="cart in carts" :key="cart.content_id" class="p-1">
-                <div class="place" v-if="cart.place != null">
+                <div class="place" v-if="cart.place != null"
+                  draggable="true"
+                  @dragstart="moveCart(cart.place)"
+                
+                >
                   <div id="cart_img_box" class="mb-1">
                     <img id="cart_img" :src="`${cart.place.first_image}`" alt="">
                   </div>
@@ -63,7 +48,7 @@
               </div>
             </div>
             <div v-else class="text-center">
-              <h5 style="color: white" class="m-2">장바구니에 아무것도 없습니다.</h5>
+              <h5 style="color: white" class="m-2">찜한 장소가 없습니다.</h5>
             </div>
             <div id="buttons" class="mt-2" style="float: right;">
               <base-button class="btn-1 p-2" type="info">임시저장</base-button>
@@ -71,22 +56,6 @@
               <base-button class="btn-1 p-2" type="warning" @click="deleteTravel()">계획취소</base-button>
             </div>
           </div>
-            <modal :show.sync="modal">
-              <h6 slot="header" class="modal-title" id="modal-title-default">Type your modal title</h6>
-
-              <p>Far far away, behind the word mountains, far from the countries Vokalia and
-                  Consonantia, there live the blind texts. Separated they live in Bookmarksgrove
-                  right at the coast of the Semantics, a large language ocean.</p>
-              <p>A small river named Duden flows by their place and supplies it with the necessary
-                  regelialia. It is a paradisematic country, in which roasted parts of sentences
-                  fly into your mouth.</p>
-
-              <template slot="footer">
-                  <base-button type="primary">Save changes</base-button>
-                  <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Close
-                  </base-button>
-              </template>
-          </modal>
         </div>
       </div>
     </div>
@@ -114,13 +83,15 @@ export default {
       daylength: 0,
       modal: false,
       clickLines: [],
-      testLine: null,
       distanceOverlays: [],
       dots : [],
       markers: [],
       select: true,
       Title: ["title_plan", "noTitle"],
       colors : ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
+      places: [],
+      InfoWindow: null,
+      movePlace: null,
     }
   },
   async created(){
@@ -128,7 +99,11 @@ export default {
     .then(({data})=>{
       this.travel = data;
       this.daylength = data.days.length;
-      console.log(this.daylength);
+      for (let i = 0; i < this.daylength; i++) {
+        this.$set(this.dots, i, []);
+        this.$set(this.distanceOverlays, i, null);
+        this.$set(this.clickLines, i, null);
+      }
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
@@ -137,18 +112,22 @@ export default {
 
     await http.get("/cartapi/cart/list/" + this.loginUser.id)
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         for (let i = 0; i < data.length; i++){
         this.$set(this.carts, i, data[i]);
         }
         this.cartslength = this.carts.length;
-      console.log(this.carts);
-    })
-    },
+      // console.log(this.carts);
+      })
+  },
     computed: {
       ...mapState(["loginUser"]),
     },
-    mounted() {
+  mounted() {
+    if (!this.loginUser) {
+      alert("로그인해야 계획을 짤 수 있습니다.")
+      this.$router.push({ name: "home" });
+      }
     if (!window.kakao || !window.kakao.maps) {
       const script = document.createElement("script");
       script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
@@ -160,25 +139,19 @@ export default {
         this.initMap();
     }
   },
-  watch:{
-    'travel.days': {
-      handler(val){
-        this.initLine();
-      },
-      deep : true,
-    }
-  },
   methods: {
+    moveCart(place) {
+      this.movePlace = place;
+    },
     addPlace(index, place){
-      console.log(index, place);
-      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
-      console.log(this.travel.days[index].places);
-      console.log(place);
       if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
-      this.$set(this.travel.days[index].attractions, this.travel.days[index].length, dumy1.content_id);
-      
-      // this.travel.days[index].places()
+      this.onlyLine(index);
+
+    },
+    moveMap(lat, lng) {
+      this.map.setCenter(new kakao.maps.LatLng(lat, lng));
+      this.map.setLevel(3);
     },
     change(index){
       if(index == 1){
@@ -204,34 +177,30 @@ export default {
       if(this.select){
         this.initLine();
       }else{
-        this.testLine = null;
         this.distanceOverlays = [];
-        this.dots = [];
         this.markers = [];
+
       }
     },
-    makeMarkers(index){
-      console.log(index);
-    },
-    onlyLine(i){
-      for(let j=0; j<this.travel.days.length; j++){
+    onlyLine(i) {
+      // 전부 삭제후, 자기것만 생성
+      for (let j = 0; j < this.travel.days.length; j++){
         this.deleteClickLine(j);
         this.deleteDistnce(j);
+        this.deleteCircleDot(j);
       }
-      this.deleteCircleDot();
       if(this.travel.days[i].places != null){
         var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
         var clickLine = new kakao.maps.Polyline({
             map: this.map, // 선을 표시할 지도입니다 
             path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-            strokeWeight: 3, // 선의 두께입니다 
+            strokeWeight: 5, // 선의 두께입니다 
             strokeColor: this.colors[i % 9], // 선의 색깔입니다
             strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
             strokeStyle: 'solid' // 선의 스타일입니다
         });
         this.$set(this.clickLines, i, clickLine);
-        this.displayCircleDot(firstPosition, 0);
-        // console.log(this.travel.days[0].places.length);
+        this.displayCircleDot(firstPosition, 0, i);
         for(let j=1; j<this.travel.days[i].places.length; j++){
           var path = this.clickLines[i].getPath();
           var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
@@ -239,44 +208,44 @@ export default {
           this.clickLines[i].setPath(path);
 
           var distance = Math.round(this.clickLines[i].getLength());
-          this.displayCircleDot(clickPosition, distance);
+          this.displayCircleDot(clickPosition, distance, i);
         }
         if(path.length > 1){
-          if(this.dots[this.dots.length-1].distance){
-            this.dots[this.dots.length-1].distance.setMap(null);
-            this.dots[this.dots.length-1].distance = null;
+          if(this.dots[i][this.dots[i].length-1].distance){ //dayi의 마지막 점의 거리 distanceOveray가 존재하면
+            this.dots[i][this.dots[i].length-1].distance.setMap(null); // null로 수정해줍니다.
+            this.dots[i][this.dots[i].length-1].distance = null;
           }
           var distance = Math.round(this.clickLines[i].getLength()),
               content = this.getTimeHTML(distance);
   
-          this.showDistance(content, path[path.length-1], i);
+          this.showDistance(content, path[path.length-1], i); // dayi의 distanceOveray를 총 거리정보로 변경해줍니다.
         }else{
           this.deleteClickLine(i);
-          this.deleteCircleDot(); 
+          this.deleteCircleDot(i); 
           this.deleteDistnce(i);
         }
       }
     },
     initLine(){
+      // 지도에 표시된 것들을 모두 제거
       for(let i=0; i<this.travel.days.length; i++){
         this.deleteClickLine(i);
         this.deleteDistnce(i);
+        this.deleteCircleDot(i);
       }
-      this.deleteCircleDot();
       for(let i=0; i<this.travel.days.length; i++){
         if(this.travel.days[i].places != null){
           var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
           var clickLine = new kakao.maps.Polyline({
               map: this.map, // 선을 표시할 지도입니다 
               path: [firstPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-              strokeWeight: 3, // 선의 두께입니다 
+              strokeWeight: 5, // 선의 두께입니다 
               strokeColor: this.colors[i % 9], // 선의 색깔입니다
               strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
               strokeStyle: 'solid' // 선의 스타일입니다
           });
           this.$set(this.clickLines, i, clickLine);
-          this.displayCircleDot(firstPosition, 0);
-          // console.log(this.travel.days[0].places.length);
+          this.displayCircleDot(firstPosition, 0, i);
           for(let j=1; j<this.travel.days[i].places.length; j++){
             var path = this.clickLines[i].getPath();
             var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
@@ -284,20 +253,20 @@ export default {
             this.clickLines[i].setPath(path);
   
             var distance = Math.round(this.clickLines[i].getLength());
-            this.displayCircleDot(clickPosition, distance);
+            this.displayCircleDot(clickPosition, distance, i);
           }
           if(path.length > 1){
-            if(this.dots[this.dots.length-1].distance){
-              this.dots[this.dots.length-1].distance.setMap(null);
-              this.dots[this.dots.length-1].distance = null;
+            if(this.dots[i][this.dots[i].length-1].distance){ //dayi의 마지막 점의 거리 distanceOveray가 존재하면
+              this.dots[i][this.dots[i].length-1].distance.setMap(null); // null로 수정해줍니다.
+              this.dots[i][this.dots[i].length-1].distance = null;
             }
             var distance = Math.round(this.clickLines[i].getLength()),
                 content = this.getTimeHTML(distance);
     
-            this.showDistance(content, path[path.length-1], i);
+            this.showDistance(content, path[path.length-1], i); // dayi의 distanceOveray를 총 거리정보로 변경해줍니다.
           }else{
             this.deleteClickLine(i);
-            this.deleteCircleDot(); 
+            this.deleteCircleDot(i); 
             this.deleteDistnce(i);
           }
         }
@@ -309,6 +278,7 @@ export default {
         // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
         this.distanceOverlays[index].setPosition(position);
         this.distanceOverlays[index].setContent(content);
+        this.distanceOverlays[index].setMap(this.map);
           
       } else { // 커스텀 오버레이가 생성되지 않은 상태이면         
           // 커스텀 오버레이를 생성하고 지도에 표시합니다
@@ -319,7 +289,8 @@ export default {
             xAnchor: 0,
             yAnchor: 0,
             zIndex: 3
-          }));    
+          }));
+          this.distanceOverlays[index].setMap(this.map);
       }
     },
     displayCircleDot(position, distance, index){
@@ -330,17 +301,23 @@ export default {
         zIndex: 1
       });
       circleOverlay.setMap(this.map);
-      if(distance > 0) {
-        this.$set(this.distanceOverlays, index, new kakao.maps.CustomOverlay({
-            content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
-            position: position,
-            yAnchor: 1,
-            zIndex: 2
-        }));
+      if (distance > 0) {
+        var distanceOverlay = new kakao.maps.CustomOverlay({
+          content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+          position: position,
+          yAnchor: 1,
+          zIndex: 2
+        });
         // 지도에 표시합니다
-        this.distanceOverlays[index].setMap(this.map);
+        distanceOverlay.setMap(this.map);
+        this.$set(this.distanceOverlays, index, distanceOverlay);
+        this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: distanceOverlay});
       }
-      this.$set(this.dots, this.dots.length, {circle: circleOverlay, distance: this.distanceOverlays[index]});
+      else {
+        this.$set(this.dots[index], this.dots[index].length, {circle: circleOverlay, distance: null});
+        
+      }
+      // console.log("dots = ", this.dots);
     },
     deleteClickLine(index){
       if(this.clickLines[index]){
@@ -351,17 +328,18 @@ export default {
     deleteDistnce(index){
       if(this.distanceOverlays[index]){
         this.distanceOverlays[index].setMap(null);
-        // this.$set(this.distanceOverlays, index, null);
       }
     },
-    deleteCircleDot(){
-      for(let i=0; i<this.dots.length; i++){
-        if(this.dots[i].circle){
-          // this.dots[i].distance.setMap(null);
-          this.dots[i].circle.setMap(null);
+    deleteCircleDot(index) {
+      for (let i = 0; i < this.dots[index].length; i++){
+        // console.log(this.dots[index][i]);
+        if(this.dots[index][i].circle){
+          this.dots[index][i].circle.setMap(null);
+          if(this.dots[index][i].distance != null)
+            this.dots[index][i].distance.setMap(null);
         }
       }
-      this.dots = [];
+      this.dots[index] = [];
     },
     getTimeHTML(distance){
       // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
@@ -400,7 +378,7 @@ export default {
       return content;
     },
     dumy(index){
-      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      if (this.travel.days[index].places == null) { this.travel.days[index].places = []; }
       if(index == 1){
       let dumy1 = {
         content_id: 131139,
@@ -434,15 +412,13 @@ export default {
         latitude: 37.51202589000000000,
         longitude: 127.05753200000000000,
       }
-        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
-        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
-        this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
-        this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
-        this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
-        this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
-        // this.$set(this.travel.days[index].places, 1, dumy2);
-        // this.$set(this.travel.days[index].places, 2, dumy3);
-        console.log(this.travel);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
+        // this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
+        // this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
+        // this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
+        // console.log(this.travel);
       }else{
         let dumy1 = {
           content_id: 839237,
@@ -476,14 +452,11 @@ export default {
         latitude: 37.510104,
         longitude: 127.0639093,
       }
-      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy1);
-      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy2);
-      this.$set(this.travel.days[index].places, this.travel.days[index].places, dumy3);
-      this.$set(this.travel.days[index].attractions, 0, dumy1.content_id);
-      this.$set(this.travel.days[index].attractions, 1, dumy2.content_id);
-      this.$set(this.travel.days[index].attractions, 2, dumy3.content_id);
-      console.log(this.travel);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
       }
+      this.initLine();
     },
     submitTravel(){
       http.put("/travelapi/travel", this.travel)
@@ -504,6 +477,15 @@ export default {
       .catch((e)=>{
         alert("계획 삭제 실패");
       })
+    },
+    drop(index) {
+      console.log("imhere")
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, this.movePlace);
+      // this.initMap();
+      this.onlyLine(index);
+      // this.travel.days[index]
+
     },
   }
 }
