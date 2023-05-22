@@ -75,7 +75,10 @@ export default {
         });
     },
     moveList() {
-      this.$router.push({ name: "HotplList" });
+      this.$router.push({
+        name: "HotplList",
+        params: { id: this.hotpl.sido_code },
+      });
     },
   },
   created() {

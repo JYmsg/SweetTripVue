@@ -10,47 +10,66 @@
             <div class="row justify-content-center mt-5">
               <h3>🔥 핫 플레이스 🔥</h3>
             </div>
-            <hr />
+            <br />
           </div>
-          <div class="content m-3">
-            <div v-for="(area, index) in areas" :key="index">
-              <div v-if="index % 3 === 0">
-                <b-card-group deck class="row" style="justify-content: space-between">
-                  <b-card
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-top
-                    style="max-width: 20rem"
-                    class="mb-2"
-                    @click="moveList(areas[index].value)"
-                  >
-                    <b-card-title>{{ areas[index].text }}</b-card-title>
-                    <b-card-text> {{ hotplcnt[areas[index].value] }} 개의 게시물 </b-card-text>
-                  </b-card>
+          <div>
+            <b-tabs content-class="mt-3" fill>
+              <b-tab title="지도 구경하기">
+                <b-form-group class="ml-5">
+                  <b-form-radio-group
+                    id="radio-group-1"
+                    v-model="selected"
+                    :options="areas_do"
+                    name="radio-options"
+                  ></b-form-radio-group>
+                </b-form-group>
+                <div class="row justify-content-center mb-5">
+                  <img :src="imgs_do[selected - 31]" style="height: 30rem" />
+                </div>
+              </b-tab>
+              <b-tab title="CATEGORY" active>
+                <div class="m-3">
+                  <div v-for="(area, index) in areas_si" :key="index">
+                    <div v-if="index % 3 === 0">
+                      <b-card-group deck class="row justify-content-center">
+                        <b-card
+                          :img-src="imgs_si[index]"
+                          img-top
+                          style="max-width: 20rem; cursor: pointer"
+                          class="mb-2"
+                          @click="moveList(areas_si[index].value)"
+                        >
+                          <b-card-title>{{ areas_si[index].text }}</b-card-title>
+                          <b-card-text> {{ hotplcnt[areas_si[index].value] }} 개의 게시물 </b-card-text>
+                        </b-card>
 
-                  <b-card
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-top
-                    style="max-width: 20rem"
-                    class="mb-2"
-                    @click="moveList(areas[index + 1].value)"
-                  >
-                    <b-card-title>{{ areas[index + 1].text }}</b-card-title>
-                    <b-card-text> {{ hotplcnt[areas[index + 1].value] }} 개의 게시물 </b-card-text>
-                  </b-card>
+                        <b-card
+                          :img-src="imgs_si[index + 1]"
+                          img-top
+                          style="max-width: 20rem; cursor: pointer"
+                          class="mb-2"
+                          @click="moveList(areas_si[index + 1].value)"
+                        >
+                          <b-card-title>{{ areas_si[index + 1].text }}</b-card-title>
+                          <b-card-text> {{ hotplcnt[areas_si[index + 1].value] }} 개의 게시물 </b-card-text>
+                        </b-card>
 
-                  <b-card
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-top
-                    style="max-width: 20rem"
-                    class="mb-2"
-                    @click="moveList(areas[index + 2].value)"
-                  >
-                    <b-card-title>{{ areas[index + 2].text }}</b-card-title>
-                    <b-card-text> {{ hotplcnt[areas[index + 2].value] }} 개의 게시물 </b-card-text>
-                  </b-card>
-                </b-card-group>
-              </div>
-            </div>
+                        <b-card
+                          :img-src="imgs_si[index + 2]"
+                          img-top
+                          style="max-width: 20rem; cursor: pointer"
+                          class="mb-2"
+                          @click="moveList(areas_si[index + 2].value)"
+                        >
+                          <b-card-title>{{ areas_si[index + 2].text }}</b-card-title>
+                          <b-card-text> {{ hotplcnt[areas_si[index + 2].value] }} 개의 게시물 </b-card-text>
+                        </b-card>
+                      </b-card-group>
+                    </div>
+                  </div>
+                </div>
+              </b-tab>
+            </b-tabs>
           </div>
         </card>
       </div>
@@ -78,8 +97,10 @@ export default {
           sido_code: Number,
         },
       ],
+      imgs_si: [],
+      imgs_do: [],
       hotplcnt: [],
-      areas: [
+      areas_si: [
         { value: 0, text: "전체보기" },
         { value: 1, text: "서울" },
         { value: 2, text: "인천" },
@@ -89,16 +110,16 @@ export default {
         { value: 6, text: "부산" },
         { value: 7, text: "울산" },
         { value: 8, text: "세종특별자치시" },
-        { value: 31, text: "경기도" },
-        { value: 32, text: "강원도" },
-        { value: 33, text: "충청북도" },
-        { value: 34, text: "충청남도" },
-        { value: 35, text: "경상북도" },
-        { value: 36, text: "경상남도" },
-        { value: 37, text: "전라북도" },
-        { value: 38, text: "전라남도" },
-        { value: 39, text: "제주도" },
       ],
+      areas_do: [
+        { value: 31, text: "수도권" },
+        { value: 32, text: "강원도" },
+        { value: 33, text: "충청도" },
+        { value: 34, text: "경상도" },
+        { value: 35, text: "전라도" },
+        { value: 36, text: "제주도" },
+      ],
+      selected: 31,
     };
   },
   computed: {
@@ -126,6 +147,12 @@ export default {
         this.hotplcnt[data[i].sido_code] += 1;
       }
     });
+    for (let i = 0; i < 9; i++) {
+      this.imgs_si[i] = `img/place/image${i}.jpg`;
+    }
+    for (let i = 0; i < 6; i++) {
+      this.imgs_do[i] = `img/place/image${31 + i}.png`;
+    }
   },
   methods: {
     moveList(sido_code) {
@@ -138,10 +165,4 @@ export default {
 };
 </script>
 
-<style>
-.content {
-  background-image: url("../../../public/img/brand/Korea_map.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-</style>
+<style></style>

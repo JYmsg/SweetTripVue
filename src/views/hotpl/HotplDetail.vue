@@ -77,6 +77,7 @@ export default {
         longitude: 0,
         name: "",
         address: "",
+        sido_code: 0,
       },
       map: null,
     };
@@ -104,7 +105,18 @@ export default {
       });
     },
     moveList() {
-      this.$router.push({ name: "HotplList" });
+      console.log(this.hotpl.sido_code);
+      if (this.hotpl.sido_code > 30) {
+        this.$router.push({
+          name: "HotplList",
+          params: { id: 0 },
+        });
+      } else {
+        this.$router.push({
+          name: "HotplList",
+          params: { id: this.hotpl.sido_code },
+        });
+      }
     },
     initMap() {
       http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
