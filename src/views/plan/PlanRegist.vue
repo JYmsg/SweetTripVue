@@ -134,13 +134,16 @@ export default {
       alert("여행 정보를 가져오는데 실패했습니다.");
       this.$router.push({name: "home"});
     });
+
     await http.get("/cartapi/cart/list/" + this.loginUser.id)
-    .then(({ data }) => {
+      .then(({ data }) => {
+        console.log(data);
         for (let i = 0; i < data.length; i++){
         this.$set(this.carts, i, data[i]);
         }
         this.cartslength = this.carts.length;
-      })
+      console.log(this.carts);
+    })
     },
     computed: {
       ...mapState(["loginUser"]),
