@@ -1,152 +1,231 @@
 <template>
-    <div class="profile-page">
-        <section class="section-profile-cover section-shaped my-0">
-            <div class="shape shape-login">
+  <div class="profile-page">
+    <section class="section-profile-cover section-shaped my-0">
+      <div class="shape shape-login"></div>
+    </section>
+    <section class="section section-skew">
+      <div class="container">
+        <card shadow class="card-profile mt--300" no-body>
+          <div class="px-4">
+            <div class="row justify-content-center">
+              <div class="col-lg-3 order-lg-2">
+                <div class="card-profile-image">
+                  <a href="#">
+                    <img v-lazy="'img/logo/boarding-pass.png'" class="rounded-circle" />
+                  </a>
+                </div>
+              </div>
+              <div class="col-lg-4 order-lg-3 text-lg-right align-self-lg-center">
+                <div class="card-profile-actions py-4 mt-lg-0">
+                  <base-button type="info" size="sm" class="mr-4">Connect</base-button>
+                  <base-button type="default" size="sm" class="float-right">Message</base-button>
+                </div>
+              </div>
+              <div class="col-lg-4 order-lg-1">
+                <div class="card-profile-stats d-flex justify-content-center">
+                  <div>
+                    <span class="heading">22</span>
+                    <span class="description">Friends</span>
+                  </div>
+                  <div>
+                    <span class="heading">10</span>
+                    <span class="description">Photos</span>
+                  </div>
+                  <div>
+                    <span class="heading">89</span>
+                    <span class="description">Comments</span>
+                  </div>
+                </div>
+              </div>
             </div>
-        </section>
-        <section class="section section-skew">
-            <div class="container">
-                <card shadow class="card-profile mt--300" no-body>
-                    <div class="px-4">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-3 order-lg-2">
-                                <div class="card-profile-image">
-                                    <a href="#">
-                                        <img v-lazy="'img/logo/boarding-pass.png'" class="rounded-circle">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 order-lg-3 text-lg-right align-self-lg-center">
-                                <div class="card-profile-actions py-4 mt-lg-0">
-                                    <base-button type="info" size="sm" class="mr-4">Connect</base-button>
-                                    <base-button type="default" size="sm" class="float-right">Message</base-button>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 order-lg-1">
-                                <div class="card-profile-stats d-flex justify-content-center">
-                                    <div>
-                                        <span class="heading">22</span>
-                                        <span class="description">Friends</span>
-                                    </div>
-                                    <div>
-                                        <span class="heading">10</span>
-                                        <span class="description">Photos</span>
-                                    </div>
-                                    <div>
-                                        <span class="heading">89</span>
-                                        <span class="description">Comments</span>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="text-center mt-5">
+              <h3>
+                {{ loginUser.id }}
+                <span class="font-weight-light">, {{ loginUser.age }}</span>
+              </h3>
+              <div class="h6 font-weight-300">
+                <i class="ni location_pin mr-2"></i>SSAFY, Seoul 20
+              </div>
+              <div class="h6 mt-4">
+                <i class="ni business_briefcase-24 mr-2"></i>JAVA 전공반에서 공부중 - 유럽으로
+                여행이 가고싶다.
+              </div>
+              <div><i class="ni education_hat mr-2"></i>휴양지 여행을 즐기는 타입</div>
+            </div>
+            <!-- <calendar/> -->
+            <tabs fill class="flex-column flex-md-row">
+              <card shadow>
+                <tab-pane key="tab1">
+                  <template slot="title"> <i class="ni ni-cart"></i> Cart </template>
+                  <div v-if="getCarts && cartslength != 0" id="resultBox" style="width: 100%">
+                    <div
+                      class="row card m-3 col-lg-11 col-sm-11"
+                      v-for="cart in carts"
+                      :key="cart.content_id"
+                    >
+                      <div class="row g-0" v-if="cart.place != null">
+                        <div class="col-md-3">
+                          <img
+                            style="height: 200px; width: 300px"
+                            :src="`${cart.place.first_image}`"
+                            class="img-fluid rounded-start"
+                            alt="test"
+                          />
                         </div>
-                        <div class="text-center mt-5">
-                            <h3>{{ loginUser.id }}
-                                <span class="font-weight-light">, {{ loginUser.age }}</span>
-                            </h3>
-                            <div class="h6 font-weight-300"><i class="ni location_pin mr-2"></i>SSAFY, Seoul 20</div>
-                            <div class="h6 mt-4"><i class="ni business_briefcase-24 mr-2"></i>JAVA 전공반에서 공부중 - 유럽으로 여행이 가고싶다.</div>
-                            <div><i class="ni education_hat mr-2"></i>휴양지 여행을 즐기는 타입</div>
+                        <div class="col-md-8">
+                          <div class="card-body">
+                            <h5 class="card-title">{{ cart.place.title }}</h5>
+                            <p class="card-text">
+                              <small class="text-muted">{{
+                                cart.place.addr1 + " " + cart.place.addr2
+                              }}</small>
+                            </p>
+                          </div>
                         </div>
-                        <!-- <calendar/> -->
-                        <tabs fill class="flex-column flex-md-row">
-                            <card shadow slot-scope="{activeTabIndex}">
-                                <tab-pane key="tab1">
-                                    <template slot="title">
-                                        <i class="ni ni-cart"></i> Cart
-                                    </template>
-                                    <div v-if="getCarts && cartslength != 0" id="resultBox" style="width: 100%">
-                                        <div class='row card m-3 col-lg-11 col-sm-11' v-for="cart in carts" :key="cart.content_id">
-                                            <div class='row g-0' v-if="cart.place != null"><div class='col-md-3'>
-                                                <img style='height:200px; width: 300px'
-                                                :src="`${cart.place.first_image}`"
-                                                class='img-fluid rounded-start' alt='test'></div><div class='col-md-8'>
-                                                    <div class='card-body'>
-                                                        <h5 class='card-title'>{{ cart.place.title }}</h5>
-                                                        <p class='card-text'>
-                                                            <small class='text-muted'>{{ cart.place.addr1 +" "+ cart.place.addr2}}</small>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class='row g-0' v-else>
-                                                <div class='col-md-3' @click="moveHot(cart.hotplace.id)">
-                                                <img style='height:200px; width: 300px'
-                                                :src="`${cart.hotplace.img}`"
-                                                class='img-fluid rounded-start' alt='test'></div><div class='col-md-8'>
-                                                    <div class='card-body'>
-                                                        <h5 class='card-title'>{{ cart.hotplace.name }}</h5>
-                                                        <p class='card-text'>
-                                                            <small class='text-muted'>{{ cart.hotplace.address}}</small>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div v-else class="row justify-content-center">
-                                        <h4>장바구니에 넣은 장소가 없습니다.</h4>
-                                        <base-button type="primary" size="sm" class="justify-content-end" @click="moveSearch()">지금바로 넣으러 가기!</base-button>
-                                    </div>
-                                </tab-pane>
-                                <tab-pane key="tab2">
-                                    <template slot="title">
-                                        <i class="ni ni-calendar-grid-58"></i> Calendar
-                                    </template>
-                                    <div style="background-color: black;">
-                                    Cosby sweater eu banh mi, qui irure terry richardson ex
-                                        squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan
-                                        american apparel, butcher voluptate nisi qui.</div>
-                                </tab-pane>
-
-                            </card>
-                        </tabs>
-                        <div class="m-3"></div>
+                      </div>
+                      <div class="row g-0" v-else>
+                        <div class="col-md-3" @click="moveHot(cart.hotplace.id)">
+                          <img
+                            style="height: 200px; width: 300px"
+                            :src="`${cart.hotplace.img}`"
+                            class="img-fluid rounded-start"
+                            alt="test"
+                          />
+                        </div>
+                        <div class="col-md-8">
+                          <div class="card-body">
+                            <h5 class="card-title">{{ cart.hotplace.name }}</h5>
+                            <p class="card-text">
+                              <small class="text-muted">{{ cart.hotplace.address }}</small>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                </card>
-            </div>
-        </section>
-    </div>
+                  </div>
+                  <div v-else style="text-align: center">
+                    <h4>장바구니에 넣은 장소가 없습니다.</h4>
+                    <div>
+                      <base-button
+                        type="primary"
+                        size="sm"
+                        class="justify-content-end"
+                        @click="moveSearch()"
+                        >지금바로 넣으러 가기!</base-button
+                      >
+                    </div>
+                  </div>
+                </tab-pane>
+                <tab-pane key="tab2">
+                  <template slot="title">
+                    <i class="ni ni-calendar-grid-58"></i> Calendar
+                  </template>
+                  <div>
+                    <div class="w-50" style="margin: 0 auto">
+                      <v-calendar></v-calendar>
+                      <b-calendar
+                        today-variant="info"
+                        nav-button-variant="primary"
+                        block
+                        v-model="value"
+                        @click="showPlan"
+                      ></b-calendar>
+                    </div>
+                    {{ value }}
+                    <div class="m-2">
+                      임시저장된 일정이 {{ notsave }}개 있습니다.
+                      <b-button size="sm" class="ml-2">임시저장 일정 보러가기</b-button>
+                    </div>
+                  </div>
+                </tab-pane>
+              </card>
+            </tabs>
+          </div>
+        </card>
+      </div>
+    </section>
+  </div>
 </template>
 <script>
-import http from "@/util/http-common.js"
+import http from "@/util/http-common.js";
 import { mapState } from "vuex";
 import TabPane from "@/components/Tabs/TabPane.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
 export default {
-    data(){
-        return {
-            carts: [],
-            cartslength: 0,
+  data() {
+    return {
+      plans: [
+        {
+          id: Number,
+          title: String,
+          startdate: String,
+          enddate: String,
+          user_id: String,
+          save: Number,
+        },
+      ],
+      select: [
+        {
+          id: Number,
+          title: String,
+          startdate: String,
+          enddate: String,
+          user_id: String,
+          save: Number,
+        },
+      ],
+      carts: [],
+      cartslength: 0,
+      value: null,
+      notsave: 0,
+      str: "",
+    };
+  },
+  components: {
+    Tabs,
+    TabPane,
+  },
+  created() {
+    const now = new Date();
+    this.value = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    http.get(`travelapi/travel/list/${this.loginUser.id}`).then(({ data }) => {
+      this.plans = data;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].save == 0) this.notsave += 1;
+      }
+    });
+  },
+  computed: {
+    ...mapState(["loginUser"]),
+    async getCarts() {
+      console.log("computed", this.loginUser);
+      await http.get("/cartapi/cart/list/" + this.loginUser.id).then(({ data }) => {
+        for (let i = 0; i < data.length; i++) {
+          this.$set(this.carts, i, data[i]);
         }
-    },
-    components: {
-        Tabs,
-        TabPane
-    },
-    computed: {
-        ...mapState(["loginUser"]),
-        async getCarts(){
-            console.log("computed" , this.loginUser)
-            await http.get("/cartapi/cart/list/" + this.loginUser.id)
-            .then(({ data }) => {
-                for (let i = 0; i < data.length; i++){
-                this.$set(this.carts, i, data[i]);
-                }
-                this.cartslength = this.carts.length;
-            })
-        return true;
+        this.cartslength = this.carts.length;
+      });
+      return true;
     },
   },
-    methods: {
-        moveSearch(){
-            // console.log("move");
-            this.$router.push({ name: "search" });
-        },
-        moveHot(index){
-            this.$router.push({ name: 'HotplDetail', params: { id: index }});
-        }
+  methods: {
+    moveSearch() {
+      // console.log("move");
+      this.$router.push({ name: "search" });
     },
+    moveHot(index) {
+      this.$router.push({ name: "HotplDetail", params: { id: index } });
+    },
+    showPlan() {
+      console.log(this.value);
+      for (let i = 0; i < this.plans.length; i++) {
+        if (plans[i].startdate <= this.value && plans[i].enddate >= this.value) {
+          this.select = this.plans[i];
+        }
+      }
+    },
+  },
 };
 </script>
-<style>
-</style>
+<style></style>

@@ -16,6 +16,7 @@ import NoticeDetail from "@/views/notice/NoticeDetail.vue";
 import NoticeModify from "@/views/notice/NoticeModify.vue";
 
 import HotplView from "@/views/HotplView.vue";
+import HotplMain from "@/views/hotpl/HotplMain.vue";
 import HotplList from "@/views/hotpl/HotplList.vue";
 import HotplRegist from "@/views/hotpl/HotplRegist.vue";
 import HotplDetail from "@/views/hotpl/HotplDetail.vue";
@@ -156,6 +157,15 @@ export default new Router({
       },
       children: [
         {
+          path: "main",
+          name: "HotplMain",
+          components: {
+            header: AppHeader,
+            default: HotplMain,
+            footer: AppFooter,
+          },
+        },
+        {
           path: "regist",
           name: "HotplRegist",
           components: {
@@ -174,7 +184,7 @@ export default new Router({
           },
         },
         {
-          path: "list",
+          path: "list/:id",
           name: "HotplList",
           components: {
             header: AppHeader,

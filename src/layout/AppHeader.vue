@@ -52,7 +52,9 @@
           <li class="nav-item">
             <router-link to="/notice/list" class="nav-link">
               <i class="ni ni-bullet-list-67 d-lg-none"></i>
-              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">QnA</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'"
+                >QnA</span
+              >
             </router-link>
           </li>
           <li class="nav-item">
@@ -60,7 +62,9 @@
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
               <i class="ni ni-square-pin d-lg-none"></i>
-              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">여행위치 검색</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'"
+                >여행위치 검색</span
+              >
               <!-- </a> -->
             </router-link>
           </li>
@@ -74,9 +78,11 @@
           <!-- </router-link>
           </li> -->
           <li class="nav-item">
-            <router-link :to="{ name: 'HotplList' }" class="nav-link">
+            <router-link :to="{ name: 'HotplMain' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
-              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">HotPlace</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'"
+                >HotPlace</span
+              >
               <!-- </a> -->
             </router-link>
           </li>
@@ -86,8 +92,17 @@
               <i class="ni ni-bold-down"></i>
               <!-- <span class="nav-link-inner--text">Components</span> -->
             </a>
-            <a href="#" class="dropdown-item user-nav" @click="logout" style="font-family: 'GangwonEdu_OTFBoldA'">Logout</a>
-            <router-link to="/profile" class="dropdown-item user-nav" style="font-family: 'GangwonEdu_OTFBoldA'"
+            <a
+              href="#"
+              class="dropdown-item user-nav"
+              @click="logout"
+              style="font-family: 'GangwonEdu_OTFBoldA'"
+              >Logout</a
+            >
+            <router-link
+              to="/profile"
+              class="dropdown-item user-nav"
+              style="font-family: 'GangwonEdu_OTFBoldA'"
               >MyPage</router-link
             >
           </base-dropdown>
@@ -96,7 +111,9 @@
               <!-- <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button" @click="login = true"> -->
               <!-- <i class="ni ni-collection d-lg-none"></i> -->
               <i class="ni ni-circle-08 d-lg-none"></i>
-              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">LOGIN</span>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'"
+                >LOGIN</span
+              >
               <!-- </a> -->
             </router-link>
           </li>
@@ -224,7 +241,7 @@ export default {
 };
 </script>
 <style scoped>
-.user-nav{
+.user-nav {
   min-width: 12rem;
 }
 </style>
