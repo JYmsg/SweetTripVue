@@ -239,7 +239,7 @@ export default {
               strokeStyle: 'solid' // 선의 스타일입니다
           });
           this.$set(this.clickLines, i, clickLine);
-          this.displayCircleDot(firstPosition, 0, i);
+          // this.displayCircleDot(firstPosition, 0, i);
           for(let j=1; j<this.travel.days[i].places.length; j++){
             var path = this.clickLines[i].getPath();
             var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
@@ -247,7 +247,7 @@ export default {
             this.clickLines[i].setPath(path);
   
             var distance = Math.round(this.clickLines[i].getLength());
-            this.displayCircleDot(clickPosition, distance, i);
+            // this.displayCircleDot(clickPosition, distance, i);
           }
           // if(path.length > 1){
           //   if(this.dots[j][this.dots[j].length-1].distance){
