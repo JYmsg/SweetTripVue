@@ -20,7 +20,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" :drop="drop" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -479,8 +479,10 @@ export default {
       })
     },
     drop(index) {
+      console.log("imhere")
+      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, this.movePlace);
-      this.initMap();
+      // this.initMap();
       this.onlyLine(index);
       // this.travel.days[index]
 

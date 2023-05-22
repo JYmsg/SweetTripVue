@@ -47,6 +47,7 @@ export default {
         this.$emit("moveMap", lan, lng);
       },
       drop(index) {
+        console.log("listin")
         this.$emit("drop", index);
       },
     },
