@@ -26,24 +26,16 @@
 </template>
 <script>
 export default {
-    // props:{
-    //     travel: {
-    //         title: String,
-    //         days: Array,
-    //         startdate: String,
-    //         enddate: String
-    //     },
-    // }
     props: [
       'travel',
       'colors'
     ],
     methods:{
-        dumy(index){
-            this.$emit("dumy", index);
-        },
-        onlyLine(index){
-            this.$emit("onlyLine", index);
+      dumy(index){
+          this.$emit("dumy", index);
+      },
+      onlyLine(index){
+          this.$emit("onlyLine", index);
       },
       moveMap(lan, lng) {
         this.$emit("moveMap", lan, lng);

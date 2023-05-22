@@ -23,7 +23,7 @@
     </div>
     <div id="days" style="overflow:auto; height: 85vh;" class="mt-0">
         <div id="attractions" v-for="(place, index) in places" :key="place.content_id" class="p-1">
-            <div v-if="place" @click="detail(index)">
+            <div v-if="place" @click="detail(index)" @mouseover="mouseOver(index)" @mouseout="mapCustomOverlay.setMap(null); map.setLevel(5);">
                 <div id="att_img_box" class="mb-1">
                     <img id="att_img" :src="`${place.first_image}`" alt="">
                 </div>
@@ -38,10 +38,6 @@
         <h3 slot="header" class="modal-title ml-2" id="modal-title-default">{{ modalPlace.title }}</h3>
         <img id="modal_img" :src="`${modalPlace.first_image}`" alt="">
         <p class="m-2">{{modalPlace.overview}}</p>
-        <!-- <p>A small river named Duden flows by their place and supplies it with the necessary
-            regelialia. It is a paradisematic country, in which roasted parts of sentences
-            fly into your mouth.</p> -->
-
         <template slot="footer">
             <div class="">
                 <b-form-select v-model="add" :options="adds" class="rounded-4"></b-form-select>
@@ -60,6 +56,7 @@ import { mapState } from 'vuex';
 export default {
     props: [
         'daylength',
+        'map',
     ],
     components:{
         Modal,
@@ -111,6 +108,9 @@ export default {
             search: "",
             places: [],
             modalPlace: null,
+            markers: [],
+            placelng: 0,
+            mapCustomOverlay: null,
         }
     },
     async created(){
@@ -125,22 +125,70 @@ export default {
     },
     watch:{
         area: {
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         },
         gugun:{
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         },
         type:{
-            handler(val){
+            handler(){
                 this.searchAll();
             }
         }
     },
-    methods:{
+    methods: {
+        mouseOver(index) {
+            if (this.mapCustomOverlay) this.mapCustomOverlay.setMap(null);
+            var content = '<div class="overlay_info">' +
+                '    <a href="#" target="_blank"><strong>' +
+                    this.places[index].title +
+                    "</strong></a>" +
+                    '    <div class="desc">' +
+                        '        <span class="address">' +
+                            this.places[index].addr1 +
+                        "</span>" +
+                        "    </div>" +
+                        "</div>";
+                        
+                        // 커스텀 오버레이가 표시될 위치입니다 
+                        var position = new kakao.maps.LatLng(this.places[index].latitude, this.places[index].longitude);
+                        
+                        // 커스텀 오버레이를 생성합니다
+                        this.mapCustomOverlay = new kakao.maps.CustomOverlay({
+                            position: position,
+                            content: content,
+                            xAnchor: 0.5, // 커스텀 오버레이의 x축 위치입니다. 1에 가까울수록 왼쪽에 위치합니다. 기본값은 0.5 입니다
+                            yAnchor: 1.1 // 커스텀 오버레이의 y축 위치입니다. 1에 가까울수록 위쪽에 위치합니다. 기본값은 0.5 입니다
+                        });
+                        this.map.setCenter(position);
+                        this.map.setLevel(3);
+                        
+                        // 커스텀 오버레이를 지도에 표시합니다
+                this.mapCustomOverlay.setMap(this.map);
+            },
+        sendMarker() {
+            console.log("sendMarker");
+            for (let i = 0; i < this.markers.length; i++){
+                this.markers[i].setMap(null);
+            }
+            this.markers = [];
+            var imageSrc = "img/markers/location-pin.png"
+            var imageSize = new kakao.maps.Size(34, 35);
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+            for (let i = 0; i < this.places.length; i++){
+                var marker = new kakao.maps.Marker({
+                    map: this.map, // 마커를 표시할 지도
+                    position: new kakao.maps.LatLng(this.places[i].latitude, this.places[i].longitude), // 마커를 표시할 위치
+                    image: markerImage, // 마커 이미지
+                });
+                this.$set(this.markers, i, marker);
+            };
+
+        },
         async detail(index){
             console.log(this.places[index])
             await http.get("/placeapi/place/one/"+this.places[index].content_id)
@@ -154,12 +202,6 @@ export default {
                 console.log(this.modalPlace);
             })
             this.modal = true;
-        },
-        dumy(index){
-            this.$emit("dumy", index);
-        },
-        onlyLine(index){
-            this.$emit("onlyLine", index);
         },
         async searchgugun() {
             if(this.area != null){
@@ -182,6 +224,7 @@ export default {
                 })
             }
             this.searchAll();
+
         },
         addPlace(){
             if(this.add == null){
@@ -191,35 +234,7 @@ export default {
             }
         },
         async searchAll(){
-            console.log("클릭햇음")
-            console.log(this.area, this.type)
             this.places = [];
-            // if(this.area == null){
-            //     if(this.type == null){
-            //         console.log("here")
-            //         await http.get("/placeapi/place/list")
-            //         .then(({data})=>{
-            //             for(let i=0; i<data.length; i++){
-            //                 this.$set(this.places, i, data[i]);
-            //             }
-            //         })
-            //         .catch((e)=>{
-            //             alert("검색 오류 입니다.");
-            //         })
-            //     }
-            //     else{
-            //         http.get("/placeapi/place/list/type/"+this.type)
-            //         .then(({data})=>{
-            //             for(let i=0; i<data.length; i++){
-            //                 this.$set(this.places, i, data[i]);
-            //             }
-            //         })
-            //         .catch((e)=>{
-            //             alert("검색 오류 입니다.")
-            //         })
-            //     }
-            // }
-            // else{
             if(this.type == null){
                 // 시도 선택만
                 if(this.gugun == null){
@@ -228,6 +243,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -239,6 +256,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -253,6 +272,8 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
@@ -270,18 +291,14 @@ export default {
                         for(let i=0; i<data.length; i++){
                             this.$set(this.places, i, data[i]);
                         }
+                        this.placelng = data.length;
+                        this.sendMarker();
                     })
                     .catch((e)=>{
                         alert("검색 오류 입니다.")
                     })
                 }
             }
-            // }
-            // if(!this.keyword.replace(/^\s+|\s+$/g, "")){
-            //     alert("키워드를 입력해주세요!");
-            //     return false;
-            // }
-            console.log(this.places)
         }
     },
 }
@@ -324,5 +341,59 @@ export default {
 }
 #modal_img{
     width: 100%;
+}
+
+
+
+/* from kakao
+ */
+ .overlay_info {
+  border-radius: 6px;
+  margin-bottom: 12px;
+  float: left;
+  position: relative;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #ddd;
+  background-color: #fff;
+}
+.overlay_info:nth-of-type(n) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.overlay_info a {
+  display: block;
+  background: #d95050;
+  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px
+    center;
+  text-decoration: none;
+  color: #fff;
+  padding: 12px 36px 12px 14px;
+  font-size: 14px;
+  border-radius: 6px 6px 0 0;
+}
+.overlay_info .desc {
+  padding: 14px;
+  position: relative;
+  min-width: 190px;
+  height: 56px;
+}
+.overlay_info img {
+  vertical-align: top;
+}
+.overlay_info .address {
+  font-size: 12px;
+  color: #333;
+  position: absolute;
+  white-space: normal;
+}
+.overlay_info:after {
+  content: "";
+  position: absolute;
+  margin-left: -11px;
+  left: 50%;
+  bottom: -12px;
+  width: 22px;
+  height: 12px;
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;
 }
 </style>
