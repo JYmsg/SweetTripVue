@@ -4,7 +4,8 @@
     <div class="row no-gutters" style="width: 100vw; height: 100vh">
       <!-- 카카오 지도 : 8칸 -->
       <div class="col-lg-8 col-sm-8 m-0">
-        <div id="map" style="width: 100%; height: 100%;"></div>
+        <div id="map" style="width: 100%; height: 100%;">
+        </div>
       </div>
       <!-- 계획표와 장바구니 : 4칸 -->
       <div class="row no-gutters col-lg-4 col-sm-4">

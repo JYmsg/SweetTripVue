@@ -52,7 +52,7 @@
         <h3 slot="header" class="modal-title ml-2" id="modal-title-default">{{modalPlace.title}}에서의 정보를 남겨주세요.</h3>
         <div class="row">
           <div class="col-md-6 col-lg-6 mt-4 mt-md-0">
-            <p class="d-block text-uppercase font-weight-bold mb-2">출발시간</p>
+            <p class="d-block text-uppercase font-weight-bold mb-2">장소 도착 시간</p>
             <div class="row align-items-center">
               <div class="col">
                 <b-form-select v-model="modalPlace.starttime" :options="starts" class="me-2 rounded-4"></b-form-select>
@@ -60,7 +60,7 @@
             </div>
           </div>
           <div class="col-md-6 col-lg-6 mt-4 mt-md-0">
-            <p class="d-block text-uppercase font-weight-bold mb-2">도착시간</p>
+            <p class="d-block text-uppercase font-weight-bold mb-2">장소 떠날 시간</p>
             <div class="row align-items-center">
               <div class="col">
                 <b-form-select class="me-2 rounded-4" v-model="modalPlace.endtime" :options="ends"></b-form-select>
