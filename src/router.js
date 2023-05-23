@@ -7,6 +7,7 @@ import Information from "./views/share/Information.vue";
 import Login from "./views/user/Login.vue";
 import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
+// import Calendar from "./views/user/Calendar.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
 import NoticeView from "@/views/NoticeView.vue";
@@ -40,6 +41,13 @@ export default new Router({
         footer: AppFooter,
       },
     },
+    // {
+    //   path: "/calendar",
+    //   name: "calendar",
+    //   components: {
+    //     default: Calendar,
+    //   },
+    // },
     {
       path: "/information",
       name: "information",
