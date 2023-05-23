@@ -21,7 +21,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap" @removeDayPlace="removeDayPlace"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -42,7 +42,7 @@
                     <img id="cart_img" :src="`${cart.place.first_image}`" alt="">
                   </div>
                   <div id="address_box" class="text-center mb-1">
-                    <h4 class="mt-2 mb-0" style="color: white">{{ cart.place.title }}</h4>
+                    <h5 class="mt-2 mb-0" style="color: white">{{ cart.place.title }}</h5>
                     <p>{{cart.place.addr1}}</p>
                   </div>
                 </div>
@@ -183,9 +183,13 @@ export default {
     moveCart(place) {
       this.movePlace = place;
     },
+    removeDayPlace(index, idx) {
+      console.log(index, idx);
+      this.$delete(this.travel.days[index].places, idx);
+      this.onlyLine(index);
+    },
     addPlace(index, place){
       if (this.travel.days[index].places == null) this.travel.days[index].places = [];
-      place.turn = this.travel.days[index].places.length + 1;
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
       this.onlyLine(index);
 
@@ -530,7 +534,6 @@ export default {
         memo: this.movePlace.memo,
         starttime: this.movePlace.starttime,
         endtime: this.movePlace.endtime,
-        turn: this.travel.days[index].places.length+1,
       };
 
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
