@@ -31,8 +31,8 @@
               <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden"></div>
             </div>
             <div class="px-4 col">
-              <div class="mt-3 row justify-content-center">
-                {{ hotpl.img }}
+              <div class="mb-5 mt-3 row justify-content-center">
+                <img :src="src" class="img-fluid rounded shadow" style="width: 70%; height: 50%" />
               </div>
               <div class="row justify-content-center">
                 <b-form-textarea
@@ -79,6 +79,7 @@ export default {
         address: "",
         sido_code: 0,
       },
+      src: "",
       map: null,
     };
   },
@@ -88,6 +89,7 @@ export default {
     });
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
       this.hotpl = data;
+      this.src = `img/upload/${data.img}`;
     });
   },
   components: {
