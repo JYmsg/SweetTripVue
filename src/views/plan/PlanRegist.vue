@@ -241,6 +241,7 @@ export default {
         this.deleteDistnce(j);
         this.deleteCircleDot(j);
       }
+      var bounds = new kakao.maps.LatLngBounds();
       if(this.travel.days[i].places != null){
         var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
         var clickLine = new kakao.maps.Polyline({
@@ -251,6 +252,7 @@ export default {
             strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
             strokeStyle: 'solid' // 선의 스타일입니다
         });
+        bounds.extend(firstPosition);
         this.$set(this.clickLines, i, clickLine);
         this.displayCircleDot(firstPosition, 0, i);
         for(let j=1; j<this.travel.days[i].places.length; j++){
@@ -258,7 +260,7 @@ export default {
           var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
           path.push(clickPosition);
           this.clickLines[i].setPath(path);
-
+          bounds.extend(clickPosition);
           var distance = Math.round(this.clickLines[i].getLength());
           this.displayCircleDot(clickPosition, distance, i);
         }
@@ -277,6 +279,7 @@ export default {
           this.deleteDistnce(i);
         }
       }
+      this.map.setBounds(bounds);
     },
     initLine(){
       // 지도에 표시된 것들을 모두 제거
@@ -285,6 +288,7 @@ export default {
         this.deleteDistnce(i);
         this.deleteCircleDot(i);
       }
+      var bounds = new kakao.maps.LatLngBounds();
       for(let i=0; i<this.travel.days.length; i++){
         if(this.travel.days[i].places != null){
           var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
@@ -296,6 +300,7 @@ export default {
               strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
               strokeStyle: 'solid' // 선의 스타일입니다
           });
+          bounds.extend(firstPosition);
           this.$set(this.clickLines, i, clickLine);
           this.displayCircleDot(firstPosition, 0, i);
           for(let j=1; j<this.travel.days[i].places.length; j++){
@@ -303,7 +308,7 @@ export default {
             var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
             path.push(clickPosition);
             this.clickLines[i].setPath(path);
-  
+            bounds.extend(clickPosition);
             var distance = Math.round(this.clickLines[i].getLength());
             this.displayCircleDot(clickPosition, distance, i);
           }
@@ -323,6 +328,7 @@ export default {
           }
         }
       }
+      this.map.setBounds(bounds);
     },
     showDistance(content, position, index) {
     
