@@ -4,7 +4,13 @@
     <div class="container pt-lg-md">
       <div class="row justify-content-center">
         <div class="col-lg-5" style="padding-left: 4.5rem; padding-right: 4.5rem">
-          <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5" class="border-0">
+          <card
+            type="secondary"
+            shadow
+            header-classes="bg-white pb-5"
+            body-classes="px-lg-5 py-lg-5"
+            class="border-0"
+          >
             <template>
               <div class="text-muted text-center mb-3"></div>
               <div class="btn-wrapper text-center">
@@ -23,7 +29,13 @@
                 <!-- <small>직접 </small> -->
               </div>
               <form role="form">
-                <base-input alternative v-model="id" class="mb-3" placeholder="Id" addon-left-icon="ni ni-key-25">
+                <base-input
+                  alternative
+                  v-model="id"
+                  class="mb-3"
+                  placeholder="Id"
+                  addon-left-icon="ni ni-key-25"
+                >
                 </base-input>
                 <base-input
                   alternative
@@ -46,36 +58,37 @@
                 <small style="color: black" @click="modal = true">비밀번호를 잊으셨나요?</small>
               </a>
               <modal :show.sync="modal">
-                <h6 slot="header" class="modal-title ml-2" id="modal-title-default">비밀번호 재설정하기</h6>
+                <h6 slot="header" class="modal-title ml-2" id="modal-title-default">
+                  비밀번호 재설정하기
+                </h6>
 
-                <div v-if="modify_pass === false">
-                  <div>아이디를 입력하세요</div>
-                  <base-input
-                    alternative
-                    v-model="search_id"
-                    class="mt-1"
-                    placeholder="Id"
-                    addon-left-icon="ni ni-key-25"
-                  >
-                  </base-input>
-                  <div style="float: right">
-                    <b-button size="sm" @click="searchID">검색</b-button>
-                  </div>
+                <div>아이디를 입력하세요</div>
+                <base-input
+                  alternative
+                  v-model="search_id"
+                  class="mt-1"
+                  placeholder="Id"
+                  addon-left-icon="ni ni-key-25"
+                >
+                </base-input>
+                <div style="float: right" v-if="success === null">
+                  <b-button size="sm" @click="searchID">검색</b-button>
+                </div>
 
-                  <div v-if="find === false" style="color: red">존재하지 않는 ID입니다.</div>
-                  <div v-else-if="find === true">
-                    이메일을 보내는 중입니다.
+                <div v-if="find === false" style="color: red">존재하지 않는 ID입니다.</div>
+                <div v-else-if="find === true">
+                  <div v-if="success === null">이메일을 보내는 중입니다.</div>
 
-                    <div v-if="success === true">
-                      <div>해당 회원의 이메일로 인증코드를 보냈습니다.</div>
-                      <input type="number" v-model="val" />
-                      <b-button class="ml-2" size="sm" @click="checkCode">확인</b-button>
-                    </div>
+                  <div v-if="success === true">
+                    <div class="mb-1">해당 회원의 이메일로 인증코드를 보냈습니다.</div>
+                    <input type="text" v-model="val" placeholder="인증코드를 입력하세요." />
+                    <b-button class="ml-2" size="sm" @click="checkCode">확인</b-button>
                   </div>
                 </div>
-                <div v-else>
+                <div v-if="modify_pass === true" class="mt-3">
                   <div>새로운 비밀번호를 입력해 주세요.</div>
                   <base-input
+                    class="mt-1"
                     alternative
                     v-model="newpassword"
                     type="password"
@@ -92,7 +105,9 @@
                   <div v-else>
                     <base-button type="primary" disabled>수정하기</base-button>
                   </div>
-                  <base-button type="link" class="ml-auto" @click="modal = false">Close </base-button>
+                  <base-button type="link" class="ml-auto" @click="modal = false"
+                    >Close
+                  </base-button>
                 </template>
               </modal>
             </div>
@@ -187,7 +202,7 @@ export default {
         });
     },
     checkCode() {
-      if (this.val === this.code) {
+      if (this.val == this.code) {
         this.modify_pass = true;
       } else {
         this.modify_pass = false;
@@ -195,6 +210,19 @@ export default {
     },
     updateInfo() {
       console.log("정은씨가 할 예정입니다.");
+      // http
+      //   .put(`/userapi/user`, {
+      //     id: this.hotpl.id,
+      //     password: this.newpassword
+      //   })
+      //   .then(({ data }) => {
+      //     let msg = "수정 처리시 문제가 발생했습니다.";
+      //     if (data === 1) {
+      //       msg = "수정이 완료되었습니다.";
+      //     }
+      //     alert(msg);
+      //     this.modal=false;
+      //   });
     },
   },
 };
