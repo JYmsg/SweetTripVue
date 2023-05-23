@@ -1,11 +1,11 @@
 <template>
   <div style="width: 100vw; height: 100vh">
-    <!-- {{ travel }} -->
   <!-- <div class="row"> -->
     <div class="row no-gutters" style="width: 100vw; height: 100vh">
       <!-- 카카오 지도 : 8칸 -->
       <div class="col-lg-8 col-sm-8 m-0">
-        <div id="map" style="width: 100%; height: 100%;"></div>
+        <div id="map" style="width: 100%; height: 100%;">
+        </div>
       </div>
       <!-- 계획표와 장바구니 : 4칸 -->
       <div class="row no-gutters col-lg-4 col-sm-4">
@@ -21,7 +21,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap" @removeDayPlace="removeDayPlace" @dragPlace="dragPlace"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap" @removeDayPlace="removeDayPlace" @dragPlace="dragPlace"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -42,8 +42,8 @@
                     <img id="cart_img" :src="`${cart.place.first_image}`" alt="">
                   </div>
                   <div id="address_box" class="text-center mb-1">
-                    <h5 class="mt-2 mb-0" style="color: white">{{ cart.place.title }}</h5>
-                    <p>{{cart.place.addr1}}</p>
+                    <p class="mt-2 mb-0" style="color: white">{{ cart.place.title }}</p>
+                    <p style="font-size: 13px;">{{cart.place.addr1}}</p>
                   </div>
                 </div>
               </div>
@@ -197,9 +197,23 @@ export default {
     },
     addPlace(index, place){
       if (this.travel.days[index].places == null) this.travel.days[index].places = [];
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
-      this.onlyLine(index);
+      if (this.travel.days[index].places.length == 10) {
+        alert("최대 10개의 장소만 등록할 수 있습니다.");
+      }
+      if (this.isIn(index, place)) {
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+        this.onlyLine(index);
+      } else { 
+        alert("이미 해당 장소가 존재합니다.");
+      }
 
+    },
+    isIn(index, place) { // 넣을 day의 index와 장소를 받아 이미 존재하는지 확인.
+      console.log("check")
+      for (let i = 0; i < this.travel.days[index].places.length; i++) {
+        if (this.travel.days[index].places[i].content_id == place.content_id) return false;
+      }
+      return true;
     },
     moveMap(lat, lng) {
       this.map.setCenter(new kakao.maps.LatLng(lat, lng));
@@ -242,6 +256,7 @@ export default {
         this.deleteCircleDot(j);
       }
       var bounds = new kakao.maps.LatLngBounds();
+
       if(this.travel.days[i].places != null){
         var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
         var clickLine = new kakao.maps.Polyline({
@@ -278,8 +293,8 @@ export default {
           this.deleteCircleDot(i); 
           this.deleteDistnce(i);
         }
+        this.map.setBounds(bounds);
       }
-      this.map.setBounds(bounds);
     },
     initLine(){
       // 지도에 표시된 것들을 모두 제거
@@ -326,9 +341,9 @@ export default {
             this.deleteCircleDot(i); 
             this.deleteDistnce(i);
           }
+          this.map.setBounds(bounds);
         }
       }
-      this.map.setBounds(bounds);
     },
     showDistance(content, position, index) {
     
@@ -435,83 +450,83 @@ export default {
 
       return content;
     },
-    dumy(index){
-      if (this.travel.days[index].places == null) { this.travel.days[index].places = []; }
-      if(index == 1){
-      let dumy1 = {
-        content_id: 131139,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "강남청소년수련관",
-        addr1: "서울특별시 강남구 도산대로59길 9",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/23/2462023_image2_1.jpg",
-        content_type_id: 39,
-        latitude: 37.52044985000000000,
-        longitude: 127.05414320000000000
-      };
-      let dumy2 = {
-        content_id: 131455,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "서울특별시립수서청소년수련관",
-        addr1: "서울특별시 강남구 영동대로 513 코엑스",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
-        content_type_id: 15,
-        latitude: 37.48359919000000000,
-        longitude: 127.08880780000000000
-      };
-      let dumy3 = {
-        content_id: 131903,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "세븐럭카지노(강남코엑스점)",
-        addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
-        latitude: 37.51202589000000000,
-        longitude: 127.05753200000000000,
-      }
-        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
-        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
-        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
-      }else{
-        let dumy1 = {
-          content_id: 839237,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "카페티퍼스트에비뉴",
-        addr1: "서울특별시 강남구 도산대로59길 9",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/30/1922330_image2_1.jpg",
-        content_type_id: 39,
-        latitude: 37.52450471,
-        longitude: 127.0419442
-      };
-      let dumy2 = {
-        content_id: 1066064,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "한일축제한마당 in Seoul",
-        addr1: "서울특별시 강남구 영동대로 513 코엑스",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
-        content_type_id: 15,
-        latitude: 37.5119176,
-        longitude: 127.059218
-      };
-      let dumy3 = {
-        content_id: 2845175,
-        sido_code: 1,
-        gugun_code: 1,
-        title: "카페 노티드 삼성",
-        addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
-        first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
-        latitude: 37.510104,
-        longitude: 127.0639093,
-      }
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
-      }
-      this.initLine();
-    },
+    // dumy(index){
+    //   if (this.travel.days[index].places == null) { this.travel.days[index].places = []; }
+    //   if(index == 1){
+    //   let dumy1 = {
+    //     content_id: 131139,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "강남청소년수련관",
+    //     addr1: "서울특별시 강남구 도산대로59길 9",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/23/2462023_image2_1.jpg",
+    //     content_type_id: 39,
+    //     latitude: 37.52044985000000000,
+    //     longitude: 127.05414320000000000
+    //   };
+    //   let dumy2 = {
+    //     content_id: 131455,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "서울특별시립수서청소년수련관",
+    //     addr1: "서울특별시 강남구 영동대로 513 코엑스",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
+    //     content_type_id: 15,
+    //     latitude: 37.48359919000000000,
+    //     longitude: 127.08880780000000000
+    //   };
+    //   let dumy3 = {
+    //     content_id: 131903,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "세븐럭카지노(강남코엑스점)",
+    //     addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
+    //     latitude: 37.51202589000000000,
+    //     longitude: 127.05753200000000000,
+    //   }
+    //     this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
+    //     this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
+    //     this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
+    //   }else{
+    //     let dumy1 = {
+    //       content_id: 839237,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "카페티퍼스트에비뉴",
+    //     addr1: "서울특별시 강남구 도산대로59길 9",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/30/1922330_image2_1.jpg",
+    //     content_type_id: 39,
+    //     latitude: 37.52450471,
+    //     longitude: 127.0419442
+    //   };
+    //   let dumy2 = {
+    //     content_id: 1066064,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "한일축제한마당 in Seoul",
+    //     addr1: "서울특별시 강남구 영동대로 513 코엑스",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/26/2822726_image2_1.jpg",
+    //     content_type_id: 15,
+    //     latitude: 37.5119176,
+    //     longitude: 127.059218
+    //   };
+    //   let dumy3 = {
+    //     content_id: 2845175,
+    //     sido_code: 1,
+    //     gugun_code: 1,
+    //     title: "카페 노티드 삼성",
+    //     addr1: "서울특별시 강남구 테헤란로103길 9 제일빌딩",
+    //     first_image: "http://tong.visitkorea.or.kr/cms/resource/66/2845166_image2_1.jpg",
+    //     latitude: 37.510104,
+    //     longitude: 127.0639093,
+    //   }
+    //   this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy1);
+    //   this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy2);
+    //   this.$set(this.travel.days[index].places, this.travel.days[index].places.length, dumy3);
+    //   }
+    //   this.initLine();
+    // },
     submitTravel(){
       http.put("/travelapi/travel", this.travel)
       .then(({data})=>{
@@ -548,14 +563,24 @@ export default {
         endtime: this.movePlace.endtime,
       };
       this.movePlace = null;
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
-      if (this.moveDelete) { 
-        this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
+      if (this.isIn(index, p)) {
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
+        if (this.moveDelete != null) {
+          console.log(this.moveDelete, this.idx);
+          this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+          console.log(this.travel.days[this.moveDelete].places);
+          this.moveDelete = null;
+          this.movePlace = null;
+          this.idx = null;
+          // this.travel.days[this.moveDelete]
+        }
+        this.onlyLine(index);
+      } else {
+        alert("해당 장소가 이미 존재합니다.")
         this.movePlace = null;
         this.idx = null;
-        // this.travel.days[this.moveDelete]
       }
-      this.onlyLine(index);
     },
   }
 }
