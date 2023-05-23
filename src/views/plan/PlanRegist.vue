@@ -197,9 +197,23 @@ export default {
     },
     addPlace(index, place){
       if (this.travel.days[index].places == null) this.travel.days[index].places = [];
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
-      this.onlyLine(index);
+      if (this.travel.days[index].places.length == 10) {
+        alert("최대 10개의 장소만 등록할 수 있습니다.");
+      }
+      if (this.isIn(index, place)) {
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
+        this.onlyLine(index);
+      } else { 
+        alert("이미 해당 장소가 존재합니다.");
+      }
 
+    },
+    isIn(index, place) { // 넣을 day의 index와 장소를 받아 이미 존재하는지 확인.
+      console.log("check")
+      for (let i = 0; i < this.travel.days[index].places.length; i++) {
+        if (this.travel.days[index].places[i].content_id == place.content_id) return false;
+      }
+      return true;
     },
     moveMap(lat, lng) {
       this.map.setCenter(new kakao.maps.LatLng(lat, lng));
@@ -288,7 +302,7 @@ export default {
         this.deleteDistnce(i);
         this.deleteCircleDot(i);
       }
-      var bounds = new kakao.maps.LatLngBounds();
+      // var bounds = new kakao.maps.LatLngBounds();
       for(let i=0; i<this.travel.days.length; i++){
         if(this.travel.days[i].places != null){
           var firstPosition = new kakao.maps.LatLng(this.travel.days[i].places[0].latitude, this.travel.days[i].places[0].longitude);
@@ -300,7 +314,7 @@ export default {
               strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
               strokeStyle: 'solid' // 선의 스타일입니다
           });
-          bounds.extend(firstPosition);
+          // bounds.extend(firstPosition);
           this.$set(this.clickLines, i, clickLine);
           this.displayCircleDot(firstPosition, 0, i);
           for(let j=1; j<this.travel.days[i].places.length; j++){
@@ -308,7 +322,7 @@ export default {
             var clickPosition = new kakao.maps.LatLng(this.travel.days[i].places[j].latitude, this.travel.days[i].places[j].longitude);
             path.push(clickPosition);
             this.clickLines[i].setPath(path);
-            bounds.extend(clickPosition);
+            // bounds.extend(clickPosition);
             var distance = Math.round(this.clickLines[i].getLength());
             this.displayCircleDot(clickPosition, distance, i);
           }
@@ -328,7 +342,7 @@ export default {
           }
         }
       }
-      this.map.setBounds(bounds);
+      // this.map.setBounds(bounds);
     },
     showDistance(content, position, index) {
     
@@ -548,14 +562,21 @@ export default {
         endtime: this.movePlace.endtime,
       };
       this.movePlace = null;
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
-      if (this.moveDelete) { 
-        this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
+      if (this.isIn(index, p)) {
+        this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
+        if (this.moveDelete) {
+          this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+          this.movePlace = null;
+          this.idx = null;
+          // this.travel.days[this.moveDelete]
+        }
+        this.onlyLine(index);
+      } else {
+        alert("해당 장소가 이미 존재합니다.")
         this.movePlace = null;
         this.idx = null;
-        // this.travel.days[this.moveDelete]
       }
-      this.onlyLine(index);
     },
   }
 }
