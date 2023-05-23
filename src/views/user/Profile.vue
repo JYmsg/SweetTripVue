@@ -122,14 +122,14 @@
                   </template>
                   <div>
                     <div class="w-50" style="margin: 0 auto">
-                      <v-calendar></v-calendar>
-                      <b-calendar
+                      <calendar></calendar>
+                      <!-- <b-calendar
                         today-variant="info"
                         nav-button-variant="primary"
                         block
                         v-model="value"
                         @click="showPlan"
-                      ></b-calendar>
+                      ></b-calendar> -->
                     </div>
                     {{ value }}
                     <div class="m-2">
@@ -148,6 +148,7 @@
 </template>
 <script>
 import http from "@/util/http-common.js";
+import calendar from "./Calendar.vue"
 import { mapState } from "vuex";
 import TabPane from "@/components/Tabs/TabPane.vue";
 import Tabs from "@/components/Tabs/Tabs.vue";
@@ -184,6 +185,7 @@ export default {
   components: {
     Tabs,
     TabPane,
+    calendar,
   },
   created() {
     const now = new Date();
