@@ -565,8 +565,11 @@ export default {
       // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
       if (this.isIn(index, p)) {
         this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
-        if (this.moveDelete) {
+        if (this.moveDelete != null) {
+          console.log(this.moveDelete, this.idx);
           this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+          console.log(this.travel.days[this.moveDelete].places);
+          this.moveDelete = null;
           this.movePlace = null;
           this.idx = null;
           // this.travel.days[this.moveDelete]
