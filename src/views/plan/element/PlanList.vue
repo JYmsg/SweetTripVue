@@ -13,21 +13,26 @@
         @dragover.prevent
         >
         <div class="row day no-gutters">
-          <h3 class="pl-3 pt-1 col-lg-10" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
+          <h5 class="pl-3 pt-1 col-lg-10" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h5>
         </div>
         <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1" 
         >
-          <base-button type="default" size="sm" class="col-lg-2 float-right mt-1" style="height: 2.5rem;" @click="memo(place)">상세 설정</base-button>
-            <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
-              <div id="att_img_box" class="mb-1">
-                  <img id="att_img" :src="`${place.first_image}`" alt="">
-              </div>
-              <div id="att_address_box" class="text-center mb-1">
-                  <h4 class="mt-2 mb-0">{{ place.title }}</h4>
-                  <p>{{place.addr1}}</p>
-              </div>
+          <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
+            <div style="height: 3rem;">
+            <div id="att_img_box" class="mb-1">
+              <img id="att_img" :src="`${place.first_image}`" alt="">
             </div>
-          </div>      
+            <div id="att_address_box" class="text-center mb-1">
+              <div style="height: 3.5rem;">
+              <h5 class="mt-2 mb-0">{{ place.title }}</h5>
+              <p>{{place.addr1}}</p>
+            </div>
+            <base-button type="default" class="col-lg-2 p-1" @click="memo(place)" style="height:1.5rem; font-size:12px; min-width:2.5rem;
+            ">more</base-button>
+          </div>
+            </div>
+          </div>
+        </div>      
         <div class="text-center pb-2 mt-2">
             <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
         </div>
@@ -255,12 +260,12 @@ export default {
 #att_img_box{
   float: left;
   width: 33%;
-  height: 6rem;
+  height: 4rem;
 }
 #att_address_box{
   float: right;
   width: 66%;
-  height: 6rem;
+  height: 4rem;
   background: #F8F6F4;
   overflow: hidden;
 }
