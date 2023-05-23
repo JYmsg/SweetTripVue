@@ -1,10 +1,21 @@
 <template>
 <div>
     <div>
-    <div id="date" class="p-2 pb-0">
-        <h5>{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
+    <div id="date" class="p-2 pb-0" v-if="showTitle">
+      <div class="row">
+        <h5 class="ml-3 mr-2" style="width: 80%">{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
+        <img class="ml-2" src="img/icons/common/modify.png" style="height: 1rem; width: 1rem;" @click="showTitle=false">
+      </div>
         <base-button type="info" size="sm" @click="add()">날짜추가</base-button>
         <base-button type="default" size="sm" @click="remove()">날짜삭제</base-button>
+    </div>
+    <div id="date" class="p-2 pb-0" v-else>
+      <div class="row">
+        <input class="ml-3 mr-2  rounded-4" type="text" style="border: 0.1px solid; background: transparent; height: 3rem; width: 80%; font: 13px;" v-model="travel.title">
+        <div  class="float-right">
+          <img class="ml-2" src="img/icons/common/save.png" style="height: 1rem; width: 1rem;" @click="showTitle=true">
+        </div>
+      </div>
     </div>
     <div id="days" style="overflow:auto; max-height: 80vh;" class="mt-0">
         <div id="day" class="mb-1" v-for="(day, index) in travel.days" :key="day.id"
@@ -107,6 +118,7 @@ export default {
     ],
     data(){
       return {
+        showTitle: true,
         textMemo: "",
         modal: false,
         start: 1,
