@@ -121,6 +121,18 @@ export default {
           this.$set(this.distanceOverlays, i, null);
           this.$set(this.clickLines, i, null);
         }
+        let check = false;
+        console.log("log = "+this.loginUser.id)
+        console.log("make = "+this.travel.user_id)
+        for(let i=0; i<this.travel.users.length; i++){
+          console.log(this.travel.users[i].id)
+          if(this.travel.users[i].id == this.loginUser.id) check = true;
+        }
+        if(this.travel.user_id == this.loginUser.id) check = true;
+        if(!check){
+          alert("잘못된 접근입니다.");
+          this.$router.push({ name: "home" });
+        }
       })
       .catch((e) => {
         alert("여행 정보를 가져오는데 실패했습니다.");

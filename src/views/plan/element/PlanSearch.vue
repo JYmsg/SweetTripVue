@@ -169,7 +169,7 @@ export default {
                         
                         // 커스텀 오버레이를 지도에 표시합니다
                 this.mapCustomOverlay.setMap(this.map);
-            },
+        },
         sendMarker() {
             console.log("sendMarker");
             for (let i = 0; i < this.markers.length; i++){
