@@ -21,7 +21,8 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.loginUser = null;
-      router.push({ name: "home" });
+      router.go(0);
+      // router.push({ name: "home" });
     },
   },
   actions: {
@@ -70,16 +71,22 @@ export default new Vuex.Store({
         });
     },
     setLoginUser({ commit }, user) {
-      console.log("로그인 성공");
       http
         .post("/userapi/login", user)
         .then(({ data }) => {
-          console.log(data);
+          if (data.length < 1) {
+            console.log("실패");
+            alert("비밀번호를 확인해주세요");
+            return;
+          }
+          console.log("로그인 성공");
           commit("SET_LOGIN_USER", data);
           router.push({ name: "home" });
         })
         .catch((err) => {
           console.log(err);
+          alert("존재하지 않는 아이디입니다.");
+          router.go(0);
         });
     },
   },

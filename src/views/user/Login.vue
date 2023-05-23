@@ -12,51 +12,47 @@
                   <img slot="icon" src="img/logo/kakao.png" />
                   Kakao
                 </base-button>
-                      <base-button type="neutral">
-                          <img slot="icon" src="img/logo/naver.jpg">
-                          Naver
-                      </base-button>
-                  </div>
-              </template>
-              <template>
-                  <div class="text-center text-muted mb-4">
-                      <!-- <small>직접 </small> -->
-                  </div>
-                  <form role="form">
-                      <base-input alternative
-                                  v-model="id"
-                                  class="mb-3"
-                                  placeholder="Id"
-                                  addon-left-icon="ni ni-key-25">
-                      </base-input>
-                      <base-input alternative
-                                  v-model="password"
-                                  type="password"
-                                  placeholder="Password"
-                                  addon-left-icon="ni ni-lock-circle-open">
-                      </base-input>
-                      <base-checkbox>
-                          Remember me
-                      </base-checkbox>
-                      <div class="text-center">
-                          <base-button type="primary" class="my-4" @click="login">Login</base-button>
-                      </div>
-                  </form>
-              </template>
+                <base-button type="neutral">
+                  <img slot="icon" src="img/logo/naver.jpg" />
+                  Naver
+                </base-button>
+              </div>
+            </template>
+            <template>
+              <div class="text-center text-muted mb-4">
+                <!-- <small>직접 </small> -->
+              </div>
+              <form role="form">
+                <base-input alternative v-model="id" class="mb-3" placeholder="Id" addon-left-icon="ni ni-key-25">
+                </base-input>
+                <base-input
+                  alternative
+                  v-model="password"
+                  type="password"
+                  placeholder="Password"
+                  addon-left-icon="ni ni-lock-circle-open"
+                >
+                </base-input>
+                <base-checkbox> Remember me </base-checkbox>
+                <div class="text-center">
+                  <base-button type="primary" class="my-4" @click="login">Login</base-button>
+                </div>
+                <div style="color: red" v-if="show_msg">{{ message }}</div>
+              </form>
+            </template>
           </card>
           <div class="row mt-3">
-              <div class="col-6">
-                  <a href="#" class="text-light">
-                      <small style="color:black">비밀번호를 잊으셨나요?</small>
-                  </a>
-              </div>
-              <div class="col-6 text-right">
-                  <router-link to="register" class="text-light">
-                      <small style="color:black">회원가입 하러 가기 ✏️</small>
-                  </router-link>
-              </div>
+            <div class="col-6">
+              <a href="#" class="text-light">
+                <small style="color: black">비밀번호를 잊으셨나요?</small>
+              </a>
+            </div>
+            <div class="col-6 text-right">
+              <router-link to="register" class="text-light">
+                <small style="color: black">회원가입 하러 가기 ✏️</small>
+              </router-link>
+            </div>
           </div>
-          
         </div>
       </div>
     </div>
@@ -71,12 +67,23 @@ export default {
     return {
       id: "",
       password: "",
-      msg: false,
+      message: "",
+      show_msg: false,
     };
   },
   methods: {
     ...mapActions(["setLoginUser"]),
     login() {
+      console.log(this.id + this.password);
+      if (this.id === "") {
+        this.message = "아이디를 입력해주세요.";
+        this.show_msg = true;
+        return;
+      } else if (this.password === "") {
+        this.message = "비밀번호를 입력해주세요.";
+        this.show_msg = true;
+        return;
+      }
       let user = {
         id: this.id,
         password: this.password,
