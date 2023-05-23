@@ -157,8 +157,10 @@ export default {
       .then(({data})=>{
         this.travel.enddate = Moment(this.travel.enddate).add(1, 'days').format('YYYY-MM-DD');
         this.$set(this.travel.days, this.travel.days.length, day);
-        this.daylength += 1;
-        console.log(this.travel.enddate);
+        this.daylength = this.travel.days.length;
+        console.log(data);
+        this.travel.days[this.travel.days.length - 1].id = data;
+        console.log(this.travel.days[this.travel.days.length - 1]);
         this.$set(this.dots, this.dots.length, []);
         this.$set(this.distanceOverlays, this.distanceOverlays.length, null);
         this.$set(this.clickLines, this.clickLines.length, null);
