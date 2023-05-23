@@ -21,7 +21,7 @@
                 <!-- <h5>분리중</h5> -->
               </div>
             </div>
-            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap" @removeDayPlace="removeDayPlace"></plan-list>
+            <plan-list v-if="select" :travel="travel" :colors="colors" @drop="drop" @dumy="dumy" @remove="remove" @add="add" @onlyLine="onlyLine" @moveMap="moveMap" @removeDayPlace="removeDayPlace" @dragPlace="dragPlace"></plan-list>
             <plan-search v-else :daylength="daylength" :map="map" @addPlace="addPlace"></plan-search>
           </div>
         </div>
@@ -100,6 +100,8 @@ export default {
       places: [],
       InfoWindow: null,
       movePlace: null,
+      moveDelete: null,
+      idx: null,
     }
   },
   async created(){
@@ -179,6 +181,11 @@ export default {
         this.$delete(this.distanceOverlays, this.distanceOverlays.length-1);
         this.$delete(this.clickLines, this.clickLines.length-1);
       })
+    },
+    dragPlace(index, idx, place) {
+      this.movePlace = place;
+      this.moveDelete = index;
+      this.idx = idx;
     },
     moveCart(place) {
       this.movePlace = place;
@@ -520,7 +527,6 @@ export default {
       })
     },
     drop(index) {
-      console.log("imhere")
       if (this.travel.days[index].places == null) this.travel.days[index].places = [];
       var p = {
         content_id: this.movePlace.content_id,
@@ -535,8 +541,14 @@ export default {
         starttime: this.movePlace.starttime,
         endtime: this.movePlace.endtime,
       };
-
+      this.movePlace = null;
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
+      if (this.moveDelete) { 
+        this.$delete(this.travel.days[this.moveDelete].places, this.idx);
+        this.movePlace = null;
+        this.idx = null;
+        // this.travel.days[this.moveDelete]
+      }
       this.onlyLine(index);
     },
   }

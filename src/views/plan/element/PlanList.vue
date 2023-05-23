@@ -15,34 +15,37 @@
         <div class="row day no-gutters">
           <h5 class="pl-3 pt-1 col-lg-10" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h5>
         </div>
-        <div id="attractions" v-for="(place, idx) in day.places" :key="place.content_id" class="p-1" 
-        >
-          <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
-            <div style="height: 3rem;">
-            <div id="att_img_box" class="mb-1">
-              <img id="att_img" :src="`${place.first_image}`" alt="">
-            </div>
-            <div id="att_address_box" class="text-center mb-1">
-              <div style="height: 3.5rem;">
-              <div>
-                <div class="row">
-                  <h5 class="mt-2 mb-0 float-left col-lg-10">{{ place.title }}</h5>
-                  <div class="float-right p-1" style="height: 1.5rem; width: 1.5rem;" @click="removeDayPlace(index, idx)">
-                    <img src="img/logo/logoX.jpg" style="height:100%; width:100%;" alt="">
+          <div id="attractions" v-for="(place, idx) in day.places" :key="day.id+'-'+place.content_id" class="p-1"
+          >
+            <div v-if="place" @click="moveMap(place.latitude, place.longitude)"
+              draggable="true"
+              @dragstart="dragPlace(index, idx, place)"
+              >
+              <div style="height: 3rem;">
+                <div id="att_img_box" class="mb-1">
+                  <img id="att_img" :src="`${place.first_image}`" alt="">
+                </div>
+                <div id="att_address_box" class="text-center mb-1">
+                  <div style="height: 3.5rem;">
+                    <div>
+                      <div class="row">
+                        <h5 class="mt-2 mb-0 float-left col-lg-10">{{ place.title }}</h5>
+                        <div class="float-right p-1" style="height: 1.5rem; width: 1.5rem;" @click="removeDayPlace(index, idx)">
+                          <img src="img/logo/logoX.jpg" style="height:100%; width:100%;" alt="">
+                        </div>
+                      </div>
+                    </div>
+                    <p>{{place.addr1}}</p>
                   </div>
+                  <base-button type="default" class="p-1 float-right mr-1" @click="memo(place)" style="height:1.5rem; font-size:12px; min-width:2.5rem;">more</base-button>
                 </div>
               </div>
-              <p>{{place.addr1}}</p>
-            </div>
-            <base-button type="default" class="p-1 float-right mr-1" @click="memo(place)" style="height:1.5rem; font-size:12px; min-width:2.5rem;">more</base-button>
-          </div>
             </div>
           </div>
-        </div>      
         <div class="text-center pb-2 mt-2">
             <base-button class="btn-2 p-1 pt-2" type="light" icon="ni ni-fat-add" style="box-shadow: none; width: 2rem; height: 2rem;" @click="dumy(index)"></base-button>
         </div>
-        </div>
+      </div>
     </div>
     </div>
     <modal id="planSearchModal" :show.sync="modal">
@@ -91,9 +94,12 @@
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
+import draggable from 'vuedraggable'
+
 export default {
   components:{
-        Modal,
+      Modal,
+      draggable,
     },
     props: [
       'travel',
@@ -196,6 +202,9 @@ export default {
       }
     },
   methods: {
+    dragPlace(index, idx, place) {
+      this.$emit("dragPlace", index, idx, place);
+    },
     removeDayPlace(index, idx) {
       this.$emit("removeDayPlace", index, idx);
     },
