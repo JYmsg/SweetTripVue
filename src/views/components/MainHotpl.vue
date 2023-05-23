@@ -1,8 +1,6 @@
 <template>
   <section class="notice">
     <div class="notice-line">
-      <!-- <div class="bg-left"></div> -->
-      <!-- <div class="bg-right"></div> -->
       <div class="inner">
         <div class="inner__left">
           <h2>공지사항</h2>

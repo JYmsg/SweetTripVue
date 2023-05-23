@@ -2,32 +2,14 @@
   <section class="section-hero section-shaped my-0">
     <div class="shape shape-style-1 shape-main" />
 
-    <!-- </div> -->
     <div class="container shape-container d-flex align-items-center">
       <div class="col px-0">
         <div class="row justify-content-center align-items-center">
           <div class="col-lg-7 text-center pt-lg">
-            <!-- <img src="img/brand/white.png" style="width: 200px;" class="img-fluid"> -->
             <h1 class="text-white">SWEET TRIP, 당신의 여행 플래너</h1>
             <p class="lead text-white mt-4 mb-5">
               지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다
             </p>
-            <!-- <div class="btn-wrapper">
-                            <base-button tag="a"
-                                         href="https://demos.creative-tim.com/vue-argon-design-system/documentation"
-                                         class="mb-3 mb-sm-0"
-                                         type="info"
-                                         icon="fa fa-code">
-                                Components
-                            </base-button>
-                            <base-button tag="a"
-                                         href="https://www.creative-tim.com/product/vue-argon-design-system"
-                                         class="mb-3 mb-sm-0"
-                                         type="white"
-                                         icon="ni ni-cloud-download-95">
-                                Download Vue
-                            </base-button>
-                        </div> -->
           </div>
         </div>
         <div class="row align-items-center justify-content-around stars-and-coded">
@@ -82,9 +64,6 @@
                     </b-input-group>
                   </div>
                   <b-dropdown-divider></b-dropdown-divider>
-                  <!-- <base-input placeholder="Title" value="ssafy(evecomcom98@naver.commymymy)"
-                      addon-right-icon="ni ni-fat-add" class="p-2" readonly>
-                    </base-input> -->
                   <div v-if="users.length">
                     <div v-for="(user, index) in users" :key="user.id">
                       <base-input
@@ -98,34 +77,8 @@
                     </div>
                   </div>
                   <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
-                  <!-- <b-dropdown-item-button>ssafy(evecomcom98@naver.com)</b-dropdown-item-button> -->
                 </b-dropdown>
               </div>
-
-              <!-- <div class="dropdown">
-                  <button class="btn btn-primary btn-block" type="button" id="multiDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Click here
-                  <div class="ripple-container"></div></button>
-                  <div class="dropdown-menu" aria-labelledby="multiDropdownMenu">
-                    <a class="dropdown-item" href="#pablo">Action</a>
-                    <a class="dropdown-item" href="#pablo">Another action</a>
-                    <a class="dropdown-item dropdown-toggle" href="#pablo">Submenu</a>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="#pablo">Submenu action</a>
-                      <a class="dropdown-item" href="#pablo">Submenu action</a>
-                      <a class="dropdown-item dropdown-toggle" href="#pablo">Subsubmenu</a>
-                      <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#pablo">Subsubmenu action 1</a>
-                        <a class="dropdown-item" href="#pablo">Subsubmenu action 2</a>
-                      </div>
-                      <a class="dropdown-item dropdown-toggle" href="#pablo">Second subsubmenu</a>
-                      <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#pablo">Subsubmenu action 1</a>
-                        <a class="dropdown-item" href="#pablo">Subsubmenu action 2</a>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
 
               <template slot="footer">
                 <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
@@ -135,9 +88,6 @@
           </div>
           <div class="col-sm-4 mt-4 mt-sm-0 text-right">
             <span class="text-white alpha-7">Made by MSG 🧂</span>
-            <!-- <a href="https://www.creative-tim.com" target="_blank" title="Creative Tim - Premium Bootstrap Themes and Templates">
-                            <img src="img/brand/creativetim-white-slim.png" class="ml-3" style="height: 30px;">
-                        </a> -->
           </div>
         </div>
       </div>
@@ -197,11 +147,7 @@ export default {
     },
     sendRange(range) {
       this.range = range;
-      // var dates = this.range.split(" to ");
       console.log(range);
-      // this.startdate = dates[0];
-      // this.enddate = dates[1];
-      // console.log(startdate, enddate);
     },
     addUser(index) {
       for (let i = 0; i < this.adds.length; i++) {
@@ -241,8 +187,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* .dropdown-menu { 
-   min-width: 17rem;
-} */
-</style>
+<style scoped></style>
