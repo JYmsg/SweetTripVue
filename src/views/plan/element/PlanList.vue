@@ -14,10 +14,10 @@
         >
         <div class="row day no-gutters">
           <h3 class="pl-3 pt-1 col-lg-10" :style="'color: ' + colors[index % 9]" @click="onlyLine(index)">Day{{index+1}}({{day.date}})</h3>
-          <base-button type="default" size="sm" class="col-lg-2 float-right mt-1" style="height: 2.5rem;" @click="memo(index)">상세 설정</base-button>
         </div>
-          <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1" 
-          >
+        <div id="attractions" v-for="place in day.places" :key="place.content_id" class="p-1" 
+        >
+          <base-button type="default" size="sm" class="col-lg-2 float-right mt-1" style="height: 2.5rem;" @click="memo(place)">상세 설정</base-button>
             <div v-if="place" @click="moveMap(place.latitude, place.longitude)">
               <div id="att_img_box" class="mb-1">
                   <img id="att_img" :src="`${place.first_image}`" alt="">
@@ -35,13 +35,13 @@
     </div>
     </div>
     <modal id="planSearchModal" :show.sync="modal">
-        <h3 slot="header" class="modal-title ml-2" id="modal-title-default">해당 장소에서의 상세 정보를 적어주세요</h3>
+        <h3 slot="header" class="modal-title ml-2" id="modal-title-default">{{modalPlace.title}}에서의 정보를 남겨주세요.</h3>
         <div class="row">
           <div class="col-md-6 col-lg-6 mt-4 mt-md-0">
             <p class="d-block text-uppercase font-weight-bold mb-2">출발시간</p>
             <div class="row align-items-center">
               <div class="col">
-                <b-form-select v-model="start" :options="starts" class="me-2 rounded-4"></b-form-select>
+                <b-form-select v-model="modalPlace.starttime" :options="starts" class="me-2 rounded-4"></b-form-select>
               </div>
             </div>
           </div>
@@ -49,7 +49,7 @@
             <p class="d-block text-uppercase font-weight-bold mb-2">도착시간</p>
             <div class="row align-items-center">
               <div class="col">
-                <b-form-select class="me-2 rounded-4"></b-form-select>
+                <b-form-select class="me-2 rounded-4" v-model="modalPlace.endtime" :options="ends"></b-form-select>
               </div>
             </div>
           </div>
@@ -63,7 +63,7 @@
                       placeholder="메모를 입력하세요"
                       class="form-control"
                       id="content"
-                      v-model="textMemo"
+                      v-model="modalPlace.memo"
                       rows="3"
                     ></textarea>
                 </div>
@@ -71,7 +71,7 @@
           </div>
         </div>
         <template slot="footer">
-            <base-button type="primary">등록</base-button>
+            <base-button type="primary" @click="memoRegi()">등록</base-button>
             <base-button type="link" class="ml-auto" @click="modal = false">Close
             </base-button>
         </template>
@@ -93,7 +93,55 @@ export default {
         textMemo: "",
         modal: false,
         start: 1,
+        modalPlace: {
+          title: "",
+          starttime: 1,
+          endtime: 1,
+        },
+        setPlace: null,
         starts: [
+          {value: 1, text : '00:00'},
+          {value: 2, text : '00:30'},
+          {value: 3, text : '01:00'},
+          {value: 4, text : '01:30'},
+          {value: 5, text : '02:00'},
+          {value: 6, text : '02:30'},
+          {value: 7, text : '03:00'},
+          {value: 8, text : '03:30'},
+          {value: 9, text : '04:00'},
+          {value: 10, text : '04:30'},
+          {value: 11, text : '05:00'},
+          {value: 12, text : '05:30'},
+          {value: 13, text : '06:00'},
+          {value: 14, text : '06:30'},
+          {value: 15, text : '07:00'},
+          {value: 16, text : '07:30'},
+          {value: 17, text : '08:00'},
+          {value: 18, text : '08:30'},
+          {value: 19, text : '09:00'},
+          {value: 20, text : '09:30'},
+          {value: 21, text : '10:00'},
+          {value: 22, text : '10:30'},
+          {value: 23, text : '11:00'},
+          {value: 24, text : '11:30'},
+          {value: 25, text : '12:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+          // {value: 1, text : '05:00'},
+        ],
+        end: 1,
+        ends: [
           {value: 1, text : '00:00'},
           {value: 2, text : '00:30'},
           {value: 3, text : '01:00'},
@@ -136,10 +184,26 @@ export default {
         ],
       }
     },
-    methods:{
-      memo(index){
+  methods: {
+    memoRegi() {
+      this.setPlace.memo = this.modalPlace.memo;
+      this.setPlace.starttime = this.modalPlace.starttime;
+      this.setPlace.endtime = this.modalPlace.endtime;
+      this.modal = false;
+      this.modalPlace = {};
+      this.setPlace = null;
+        // this.modalPlace = null;
+      },
+      memo(place){
         // this.$emit("memo", index);
-        console.log()
+        console.log(place)
+        this.setPlace = place;
+        this.modalPlace = {
+          title: this.setPlace.title,
+          memo: this.setPlace.memo,
+          starttime: this.setPlace.starttime,
+          endtime: this.setPlace.endtime
+        };
         this.modal = true;
       },
       dumy(index){

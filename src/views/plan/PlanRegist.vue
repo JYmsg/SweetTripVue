@@ -1,5 +1,6 @@
 <template>
-<div style="width: 100vw; height: 100vh">
+  <div style="width: 100vw; height: 100vh">
+    <!-- {{ travel }} -->
   <!-- <div class="row"> -->
     <div class="row no-gutters" style="width: 100vw; height: 100vh">
       <!-- 카카오 지도 : 8칸 -->
@@ -183,7 +184,8 @@ export default {
       this.movePlace = place;
     },
     addPlace(index, place){
-      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
+      if (this.travel.days[index].places == null) this.travel.days[index].places = [];
+      place.turn = this.travel.days[index].places.length + 1;
       this.$set(this.travel.days[index].places, this.travel.days[index].places.length, place);
       this.onlyLine(index);
 
@@ -515,8 +517,23 @@ export default {
     },
     drop(index) {
       console.log("imhere")
-      if(this.travel.days[index].places == null) this.travel.days[index].places = [];
-      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, this.movePlace);
+      if (this.travel.days[index].places == null) this.travel.days[index].places = [];
+      var p = {
+        content_id: this.movePlace.content_id,
+        sido_code: this.movePlace.sido_code,
+        title: this.movePlace.title,
+        addr1: this.movePlace.addr1,
+        first_image: this.movePlace.first_image,
+        content_type_id: this.movePlace.content_type_id,
+        latitude: this.movePlace.latitude,
+        longitude: this.movePlace.longitude,
+        memo: this.movePlace.memo,
+        starttime: this.movePlace.starttime,
+        endtime: this.movePlace.endtime,
+        turn: this.travel.days[index].places.length+1,
+      };
+
+      this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
       this.onlyLine(index);
     },
   }
