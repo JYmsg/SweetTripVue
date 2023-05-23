@@ -39,12 +39,20 @@
                 </div>
                 <base-input
                   alternative
-                  class="mb-3"
+                  class="mb-2"
                   placeholder="Email"
                   v-model="email"
                   addon-left-icon="ni ni-email-83"
                 >
                 </base-input>
+                <div class="mb-3">
+                  <b-button size="sm" @click="emailCheck">Email 인증하기</b-button>
+                  <div style="color: green" v-if="show">
+                    <input type="number" v-model="inputkey" />
+                    <small style="color: green" v-if="code.length > 0 && inputkey === code">인증되었습니다.</small>
+                  </div>
+                </div>
+
                 <base-input
                   alternative
                   type="password"
@@ -91,17 +99,36 @@ export default {
       msg: false,
       message: "",
       duplicate: null,
+      show: false,
+      code: null,
+      inputkey: null,
     };
   },
   methods: {
     duplicateCheck() {
-      http
-        .get(`/userapi/user/${this.id}`)
-        .then(() => {
+      http.get(`/userapi/user/${this.id}`).then(({ data }) => {
+        console.log("중복체크들어갑니다" + data);
+        if (data.id != null) {
           this.duplicate = true;
+        } else {
+          this.duplicate = false;
+        }
+      });
+    },
+    emailCheck() {
+      this.show = true;
+      http
+        .post("/userapi/mailcheck", {
+          email: this.email,
+        })
+        .then(({ data }) => {
+          alert("이메일을 보냈습니다.");
+          console.log(data);
+          this.code = data;
         })
         .catch(() => {
-          this.duplicate = false;
+          this.email = "";
+          alert("이메일 인증 실패");
         });
     },
     regist() {
@@ -122,9 +149,19 @@ export default {
         this.message = "아이디 중복 검사를 진행해 주세요.";
         return;
       }
+      if (this.duplicate === true) {
+        this.msg = true;
+        this.message = "사용할 수 없는 아이디입니다.";
+        return;
+      }
       if (this.password !== this.repeat) {
         this.msg = true;
         this.message = "비밀번호가 일치하지 않습니다.";
+        return;
+      }
+      if (this.code === null) {
+        this.msg = true;
+        this.message = "이메일 인증을 진행해 주세요.";
         return;
       }
       http

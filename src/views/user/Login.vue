@@ -33,7 +33,6 @@
                   addon-left-icon="ni ni-lock-circle-open"
                 >
                 </base-input>
-                <base-checkbox> Remember me </base-checkbox>
                 <div class="text-center">
                   <base-button type="primary" class="my-4" @click="login">Login</base-button>
                 </div>
@@ -44,8 +43,58 @@
           <div class="row mt-3">
             <div class="col-6">
               <a href="#" class="text-light">
-                <small style="color: black">비밀번호를 잊으셨나요?</small>
+                <small style="color: black" @click="modal = true">비밀번호를 잊으셨나요?</small>
               </a>
+              <modal :show.sync="modal">
+                <h6 slot="header" class="modal-title ml-2" id="modal-title-default">비밀번호 재설정하기</h6>
+
+                <div v-if="modify_pass === false">
+                  <div>아이디를 입력하세요</div>
+                  <base-input
+                    alternative
+                    v-model="search_id"
+                    class="mt-1"
+                    placeholder="Id"
+                    addon-left-icon="ni ni-key-25"
+                  >
+                  </base-input>
+                  <div style="float: right">
+                    <b-button size="sm" @click="searchID">검색</b-button>
+                  </div>
+
+                  <div v-if="find === false" style="color: red">존재하지 않는 ID입니다.</div>
+                  <div v-else-if="find === true">
+                    이메일을 보내는 중입니다.
+
+                    <div v-if="success === true">
+                      <div>해당 회원의 이메일로 인증코드를 보냈습니다.</div>
+                      <input type="number" v-model="val" />
+                      <b-button class="ml-2" size="sm" @click="checkCode">확인</b-button>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <div>새로운 비밀번호를 입력해 주세요.</div>
+                  <base-input
+                    alternative
+                    v-model="newpassword"
+                    type="password"
+                    placeholder="Password"
+                    addon-left-icon="ni ni-lock-circle-open"
+                  >
+                  </base-input>
+                </div>
+
+                <template slot="footer">
+                  <div v-if="newpassword.length > 0">
+                    <base-button type="primary" @click="updateInfo">수정하기</base-button>
+                  </div>
+                  <div v-else>
+                    <base-button type="primary" disabled>수정하기</base-button>
+                  </div>
+                  <base-button type="link" class="ml-auto" @click="modal = false">Close </base-button>
+                </template>
+              </modal>
             </div>
             <div class="col-6 text-right">
               <router-link to="register" class="text-light">
@@ -60,15 +109,28 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-// import http from "@/util/http-common.js";
+import Modal from "@/components/Modal.vue";
+import http from "@/util/http-common.js";
 // import axios from "axios";
 export default {
+  components: {
+    Modal,
+  },
   data() {
     return {
       id: "",
       password: "",
+      email: null,
+      code: "",
       message: "",
       show_msg: false,
+      modal: false,
+      search_id: "",
+      find: null,
+      success: null,
+      val: "",
+      modify_pass: false,
+      newpassword: "",
     };
   },
   methods: {
@@ -89,6 +151,50 @@ export default {
         password: this.password,
       };
       this.setLoginUser(user);
+    },
+    searchID() {
+      if (this.search_id.length < 1) {
+        this.find = false;
+        return;
+      }
+      http.get(`/userapi/user/${this.search_id}`).then(({ data }) => {
+        console.log(data);
+        if (data.id != null) {
+          this.email = data.email;
+          this.find = true;
+          this.sendEmail();
+        } else {
+          this.find = false;
+        }
+      });
+    },
+    sendEmail() {
+      console.log("hello");
+      http
+        .post("/userapi/mailcheck", {
+          email: this.email,
+        })
+        .then(({ data }) => {
+          alert("이메일을 보냈습니다.");
+          console.log(data);
+          this.code = data;
+          this.success = true;
+        })
+        .catch(() => {
+          alert("이메일 인증 실패");
+          this.find = false;
+          this.modal = false;
+        });
+    },
+    checkCode() {
+      if (this.val === this.code) {
+        this.modify_pass = true;
+      } else {
+        this.modify_pass = false;
+      }
+    },
+    updateInfo() {
+      console.log("정은씨가 할 예정입니다.");
     },
   },
 };
