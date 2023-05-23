@@ -55,8 +55,8 @@ import Modal from "@/components/Modal.vue";
 import { mapState } from 'vuex';
 export default {
     props: [
-      'daylength',
-      'map',
+        // 'daylength',
+        'map',
     ],
     components:{
         Modal,
@@ -165,7 +165,7 @@ export default {
                             yAnchor: 1.1 // 커스텀 오버레이의 y축 위치입니다. 1에 가까울수록 위쪽에 위치합니다. 기본값은 0.5 입니다
                         });
                         this.map.setCenter(position);
-                        this.map.setLevel(3);
+                        this.map.setLevel(5);
                         
                         // 커스텀 오버레이를 지도에 표시합니다
                 this.mapCustomOverlay.setMap(this.map);
@@ -179,6 +179,7 @@ export default {
             var imageSrc = "img/markers/location-pin.png"
             var imageSize = new kakao.maps.Size(34, 35);
             var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+            var bounds = new kakao.maps.LatLngBounds();
             for (let i = 0; i < this.places.length; i++){
                 var marker = new kakao.maps.Marker({
                     map: this.map, // 마커를 표시할 지도
@@ -186,7 +187,9 @@ export default {
                     image: markerImage, // 마커 이미지
                 });
                 this.$set(this.markers, i, marker);
+                bounds.extend(new kakao.maps.LatLng(this.places[i].latitude, this.places[i].longitude));
             };
+            this.map.setBounds(bounds);
 
         },
         async detail(index){
