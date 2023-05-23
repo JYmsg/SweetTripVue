@@ -186,17 +186,25 @@ export default {
         this.$set(this.clickLines, this.clickLines.length, null);
       });
     },
-    remove() {
+    removeConfirm(){
       http.delete("/travelapi/day/" + this.travel.days[this.daylength - 1].id).then(({ data }) => {
         this.$delete(this.travel.days, this.daylength - 1);
         this.daylength -= 1;
         this.travel.enddate = Moment(this.travel.enddate).subtract(1, "days").format("YYYY-MM-DD");
-        console.log(this.travel);
         this.$delete(this.travel.days, this.daylength);
         this.$delete(this.dots, this.dots.length - 1);
         this.$delete(this.distanceOverlays, this.distanceOverlays.length - 1);
         this.$delete(this.clickLines, this.clickLines.length - 1);
       });
+    },
+    remove() {
+      if(this.travel.days[this.travel.days.length-1].places.length > 0){
+        if(confirm("해당 날짜에 저장된 장소가 존재합니다.\n삭제하시겠습니까?")){
+          this.removeConfirm();
+        }
+      }else{
+        this.removeConfirm();
+      }
     },
     dragPlace(index, idx, place) {
       this.movePlace = place;

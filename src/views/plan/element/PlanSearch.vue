@@ -42,7 +42,7 @@
             <div class="">
                 <b-form-select v-model="add" :options="adds" class="rounded-4"></b-form-select>
             </div>
-            <base-button type="primary" @click="addPlace()">추가하기</base-button>
+            <base-button type="primary" @click="addPlace(); modal=false;">추가하기</base-button>
             <base-button type="link" class="ml-auto" @click="modal = false">Close
             </base-button>
         </template>

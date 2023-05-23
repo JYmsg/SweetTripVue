@@ -11,7 +11,7 @@
               <base-dropdown tag="li" class="nav-item">
                 <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button"> &#9776; </a>
                 <router-link :to="`/plan/regist/${travel.id}`" class="dropdown-item">수정</router-link>
-                <a href="#" class="dropdown-item">삭제</a>
+                <a href="#" class="dropdown-item" @click="deleteTravel()">삭제</a>
               </base-dropdown>
             </div>
             <div class="row justify-content-center m-5">
@@ -213,6 +213,17 @@ export default {
     });
   },
   methods: {
+    deleteTravel(){
+      http
+      .delete("/travelapi/travel/" + this.travel.id)
+      .then(({ data }) => {
+        alert("계획이 삭제 되었습니다.");
+        this.$router.push({ name: "home" });
+      })
+      .catch((e) => {
+        alert("계획 삭제 실패");
+      });
+    },
     godView(){
       this.map.setBounds(this.totalBounds);
       this.mapCustomOverlay.setMap(null);  
@@ -261,7 +272,8 @@ export default {
           position: position,
           content: content,
           xAnchor: 0.5, // 커스텀 오버레이의 x축 위치입니다. 1에 가까울수록 왼쪽에 위치합니다. 기본값은 0.5 입니다
-          yAnchor: 1.1 // 커스텀 오버레이의 y축 위치입니다. 1에 가까울수록 위쪽에 위치합니다. 기본값은 0.5 입니다
+          yAnchor: 1.1, // 커스텀 오버레이의 y축 위치입니다. 1에 가까울수록 위쪽에 위치합니다. 기본값은 0.5 입니다
+          zIndex: 5
       });
       this.map.setCenter(position);
       this.map.setLevel(5);
