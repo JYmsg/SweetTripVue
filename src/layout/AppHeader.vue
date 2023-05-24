@@ -32,6 +32,12 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/search" class="nav-link">
+              <i class="ni ni-square-pin d-lg-none"></i>
+              <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">일정 구경하기</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link :to="{ name: 'HotplMain' }" class="nav-link">
               <i class="ni ni-like-2 d-lg-none"></i>
               <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">HotPlace</span>
