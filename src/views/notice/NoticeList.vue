@@ -17,8 +17,8 @@
               <b-button @click="noticeWrite">질문 하기</b-button>
             </div>
             <div class="mb-2">
-              <b-form-select v-model="find" :options="finds" style="width:15%" class="mr-3"></b-form-select>
-              <input type="text" v-model="search"> <b-button class="ml-3" size="sm" @click="reloadList">확인</b-button>
+              <b-form-select v-model="find" :options="finds" style="width:15%;" class="mr-3"></b-form-select>
+              <input type="text" placeholder=" 검색어를 입력해주세요." v-model="search" style="height: 2.7rem; border-radius: 5px 5px 5px 5px; border: 0.5px solid gray;"> <b-button class="ml-3" size="sm" @click="reloadList">확인</b-button>
             </div>
             <div>
               <b-table
