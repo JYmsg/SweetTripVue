@@ -29,14 +29,12 @@
                 {{ date.date }}
               </div>
               <div v-if="check(year, date.month, date.date, 0)" id="travel" style="background-color: #dc3545; height: 1.5rem; width: 100%; font-size: 15px; color: black;" class="mt-1">
-
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
-
               </div>
-              <div v-if="check(year, date.month, date.date, 1)" id="travel" style="background-color: #fd7e14; height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black"></div>
+              <div v-if="check(year, date.month, date.date, 1)" id="travel" style="background-color: #fd7e14; height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black">
+              </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
-
               </div>
             </td>
           </tr>
@@ -149,7 +147,8 @@ export default {
       for (let i = 0; i < this.travels.length; i++) {
         if ((moment(new Date(year, month, date)).format("YYYY-MM-DD") == this.travels[i].startdate) || moment(moment(new Date(year, month, date)).format("YYYY-MM-DD")).isAfter(this.travels[i].startdate)) {
           if ((moment(new Date(year, month, date)).format("YYYY-MM-DD") == this.travels[i].enddate) || moment(moment(new Date(year, month, date)).format("YYYY-MM-DD")).isBefore(this.travels[i].enddate)) {
-            this.$set(showTravel, showTravel.length, this.travels[i]);
+            if(this.travels[i].save == 1)
+              this.$set(showTravel, showTravel.length, this.travels[i]);
           }
         }
       }
@@ -170,21 +169,12 @@ export default {
         for (let i = 1; i < diff; i++) {
           this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
         }
-        // let d = (diff + 1) / 2;
-        // if (title.length > 10) {
-          // this.planListMap.get(start.clone().add(d-1, 'days').format("YYYY-MM-DD"))[index] = title;
-          // this.planListMap.get(start.clone().add(d, 'days').format("YYYY-MM-DD"))[index] = title;
-          // }
           
       } else {
         for (let i = 1; i < diff; i++) {
           this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
         }
-        // let d = diff / 2;
-        // console.log("diff", d, start.clone().add(d, 'days').format("YYYY-MM-DD"));
-        //   this.planListMap.get(start.clone().add(d, 'days').format("YYYY-MM-DD"))[index] = title;
       }
-
     }, //날짜 차이, 넣을 div의 index, i번째 여행
     checkLength(){
       if(this.week.length == 7){
