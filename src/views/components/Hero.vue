@@ -140,10 +140,12 @@ export default {
         .then(({ data }) => {
           console.log(data);
           for (let i = 0; i < data.length; i++) {
+            console.log(this.loginUser.id, data[i].id);
             if (this.loginUser.id != data[i].id) {
-              this.$set(this.users, i, data[i]);
+              this.$set(this.users, this.users.length, data[i]);
             }
           }
+          console.log("users", this.users);
         })
         .catch((err) => {
           alert("유저를 불러오는데 실패했습니다.");
