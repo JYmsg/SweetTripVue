@@ -4,7 +4,12 @@
     <div class="row no-gutters" style="width: 100vw; height: 100vh">
       <!-- 카카오 지도 : 8칸 -->
       <div class="col-lg-8 col-sm-8 m-0">
-        <div id="map" style="width: 100%; height: 100%"></div>
+        <div id="map" style="width: 100%; height: 100%">
+          <div class="btn m-3 p-0" style="background-color: black; height: 3rem; width: 3rem; z-index: 5;" @click="share = true">
+            <img src="img/icons/common/share2.png" style="width: 100%; height: 100%;">
+          </div>
+
+        </div>
       </div>
       <!-- 계획표와 장바구니 : 4칸 -->
       <div class="row no-gutters col-lg-4 col-sm-4">
@@ -66,7 +71,51 @@
         </div>
       </div>
     </div>
-    <!-- </div> -->
+    <modal :show.sync="share">
+      <div class="col-md-11 mt-4 mt-md-0">
+        <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
+        <div v-if="travel.users != []">
+          <div v-for="(add, index) in travel.users" :key="add.id">
+            <base-input
+              addon-right-icon="ni ni-fat-remove"
+              class="text-center"
+              readonly
+              @click="removeUser(index)"
+              :value="add.id + '(' + add.email + ')'"
+            >
+            </base-input>
+          </div>
+        </div>
+        <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
+          <div class="m-2" style="width: 20rem">
+            <b-input-group class="m-1">
+              <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
+              <b-input-group-append>
+                <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </div>
+          <b-dropdown-divider></b-dropdown-divider>
+          <div v-if="users.length">
+            <div v-for="(user, index) in users" :key="user.id">
+              <base-input
+                addon-right-icon="ni ni-fat-add"
+                class="p-2"
+                readonly
+                @click="addUser(index)"
+                :value="user.id + '(' + user.email + ')'"
+              >
+              </base-input>
+            </div>
+          </div>
+          <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
+        </b-dropdown>
+      </div>
+
+      <template slot="footer">
+        <base-button type="link" class="ml-auto" @click="share = false">Close </base-button>
+      </template>
+    </modal>
   </div>
 </template>
 <script>
@@ -93,6 +142,7 @@ export default {
       map: null,
       travel: null,
       carts: [],
+      share: false,
       cartslength: 0,
       daylength: 0,
       modal: false,
@@ -108,6 +158,8 @@ export default {
       movePlace: null,
       moveDelete: null,
       idx: null,
+      users: [],
+      keyword: "",
     };
   },
   async created() {
@@ -167,6 +219,48 @@ export default {
     }
   },
   methods: {
+    searchId() {
+      this.users = [];
+      http
+        .get("/userapi/user/keyword/" + this.keyword)
+        .then(({ data }) => {
+          console.log(this.travel.users, data);
+          for (let i = 0; i < data.length; i++) {
+            if(this.addValid(data[i]))
+              this.$set(this.users, this.users.length, data[i]);
+          }
+          console.log(this.users);
+        })
+        .catch((err) => {
+          alert("유저를 불러오는데 실패했습니다.");
+        });
+    },
+    addValid(user){
+      for(let j=0; j<this.travel.users.length; j++){
+        if(this.travel.users[j].id == user.id || this.loginUser.id == user.id) return false;
+      }
+      return true;
+    },
+    removeUser(index){
+      http.delete("/travelapi/travel/"+this.travel.users[index].id+"/"+this.travel.id)
+      .then(({data})=>{
+        console.log("삭제 완료");
+        this.$delete(this.travel.users, index);
+      }).catch((e)=>{
+        alert("삭제 중 에러 발생");
+      })
+    },
+    addUser(index){
+      http.get("/travelapi/travel/"+this.users[index].id+"/"+this.travel.id)
+      .then(({data})=>{
+        console.log("등록 성공")
+        this.$set(this.travel.users, this.travel.users.length, this.users[index]);
+        this.$delete(this.users, index);
+      })
+      .catch((e)=>{
+        alert("추가 중 에러 발생");
+      })
+    },
     add() {
       var day = {
         date: Moment(this.travel.enddate).add(1, "days").format("YYYY-MM-DD"),
