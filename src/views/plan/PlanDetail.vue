@@ -18,8 +18,9 @@
               <base-button type="info" outline class="m-3" @click="share = true">계획 따라하기</base-button>
             </div>
             <div class="row justify-content-center m-5" v-if="loginUser.id == travel.user_id">
-              <h3> {{ travel.title }}에 대한 여행 계획</h3>
+              <h3> {{ travel.title }}에 대한 여행 계획</h3> <br>
             </div>
+            <h5 v-if="!travel.save" class="float-right" style="color: red">최종 저장되지 않은 일정입니다.</h5>
             <div class="row justify-content-center m-5" v-else>
               <h3> {{ travel.user_id }}님의 여행 일정</h3>
             </div>
@@ -290,6 +291,12 @@ export default {
           this.$set(this.clickLines, i, null);
       }
       if(this.loginUser.id == this.travel.user_id) this.open = true;
+      if(!this.travel.save){
+        if(this.loginUser.id != this.travel.user_id) {
+          alert("잘못된 접근입니다.");
+          this.$router.push({name: "PlanList"});
+        }
+      }
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
