@@ -43,6 +43,7 @@
       v-model="currentPage"
       :total-rows="rows"
       :per-page="perPage"
+      style="font-family: Open Sans; font-size: 20px;"
       aria-controls="notice-table"
     ></b-pagination>
   </div>
