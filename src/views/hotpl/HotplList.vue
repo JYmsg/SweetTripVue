@@ -34,13 +34,6 @@
                   <div v-for="(hotpl, index) in hotpls" :key="index">
                     <div class="card mb-3 text-start">
                       <div class="row g-0">
-                        <!-- <div v-if="hotpl.img === 'not'" class="col-md-3">
-                          <img
-                            style="width: 100%; height: 100%"
-                            src="../../../public/img/logo/noupload.jpg"
-                          />
-                        </div> -->
-                        <!-- <div v-else class="col-md-3"> -->
                         <div class="col-md-3">
                           <img style="width: 100%; height: 100%" :src="hotpl.src" />
                         </div>
@@ -162,7 +155,7 @@ export default {
     },
   },
   created() {
-    http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/none/none`).then(({ data }) => {
+    http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/write_time/none`).then(({ data }) => {
       this.hotpls = data;
       for (let i = 0; i < data.length; i++) {
         this.$set(this.change, i, "img/icons/noti/heart-bean.png");
@@ -184,20 +177,35 @@ export default {
     moveMain() {
       this.$router.push({ name: "HotplMain" });
     },
-    reloadList() {
+    async reloadList() {
       console.log(this.search.length, this.selected);
       if (this.search.length < 1) {
-        http.get(`/hotplaceapi/hotplace/${this.selected}/none`).then(({ data }) => {
+        await http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/${this.selected}/none`).then(({ data }) => {
           this.hotpls = data;
+          for (let i = 0; i < data.length; i++) {
+            this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+            this.$set(this.controll, i, false);
+            this.hotpls[i].src = `img/upload/${data[i].img}`;
+          }
         });
       } else {
-        http.get(`/hotplaceapi/hotplace/${this.selected}/${this.search}`).then(({ data }) => {
-          this.hotpls = data;
-        });
+        await http
+          .get(`/hotplaceapi/hotplace/${this.$route.params.id}/${this.selected}/${this.search}`)
+          .then(({ data }) => {
+            this.hotpls = data;
+            for (let i = 0; i < data.length; i++) {
+              this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+              this.$set(this.controll, i, false);
+              this.hotpls[i].src = `img/upload/${data[i].img}`;
+            }
+          });
       }
+      await http.get(`/likeapi/likehotpl/${this.loginUser.id}`).then(({ data }) => {
+        this.likes = data;
+      });
+      this.getlike;
     },
     changeHeart(id, index) {
-      console.log(id, index);
       if (this.change[index] === "img/icons/noti/heart-color.png") {
         http.put(`/hotplaceapi/good/${id}/-1`);
 

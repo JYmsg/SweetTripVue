@@ -11,9 +11,8 @@
             </h1>
             <VueTyper
               text="지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다"
-              class="lead text-white mt-4 mb-5"
-              style="text-shadow: 3px 3px #2d63a7; font-size: 1.5em"
-              :props-color="white"
+              style="text-shadow: 1px 1px #fff; font-size: 1.5em"
+              :pre-erase-delay="3000"
             >
             </VueTyper>
           </div>
