@@ -20,14 +20,10 @@
         <div class="col-md-6">
           <ul class="nav nav-footer justify-content-end">
             <li class="nav-item">
-              <a href="https://www.creative-tim.com" class="nav-link" target="_blank" rel="noopener"
-                >공공데이터</a
-              >
+              <a href="https://www.creative-tim.com" class="nav-link" target="_blank" rel="noopener">공공데이터</a>
             </li>
             <li class="nav-item">
-              <a href="https://github.com/JYmsg" class="nav-link" target="_blank" rel="noopener"
-                >GIT</a
-              >
+              <a href="https://github.com/JYmsg" class="nav-link" target="_blank" rel="noopener">GIT</a>
             </li>
             <li class="nav-item">
               <a
@@ -39,11 +35,7 @@
               >
             </li>
             <li class="nav-item">
-              <a
-                href="https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp"
-                class="nav-link"
-                target="_blank"
-                rel="noopener"
+              <a href="https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp" class="nav-link" target="_blank" rel="noopener"
                 >SSAFY</a
               >
             </li>

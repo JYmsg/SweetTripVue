@@ -6,8 +6,10 @@
       <div class="col px-0">
         <div class="row justify-content-center align-items-center">
           <div class="col-lg-7 text-center pt-lg">
-            <h1 class="text-white">SWEET TRIP, 당신의 여행 플래너</h1>
-            <p class="lead text-white mt-4 mb-5">
+            <h1 class="text-white" style="text-shadow: 3px 3px #2d63a7; font-size: 4em">
+              SWEET TRIP, 당신의 여행 플래너
+            </h1>
+            <p class="lead text-white mt-4 mb-5" style="text-shadow: 3px 3px #2d63a7; font-size: 1.5em">
               지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다
             </p>
           </div>
@@ -29,8 +31,7 @@
                 <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
                 <div class="row align-items-center">
                   <div class="col">
-                    <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag">
-                    </base-input>
+                    <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag"> </base-input>
                   </div>
                 </div>
               </div>
@@ -50,14 +51,10 @@
                     </base-input>
                   </div>
                 </div>
-                <b-dropdown
-                  class="dropdown mt-4 mt-md-0"
-                  text="다른 유저의 아이디를 검색하여 추가하세요."
-                >
+                <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
                   <div class="m-2" style="width: 20rem">
                     <b-input-group class="m-1">
-                      <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag">
-                      </b-input>
+                      <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
                       <b-input-group-append>
                         <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
                       </b-input-group-append>
