@@ -209,20 +209,19 @@ export default {
       }
     },
     updateInfo() {
-      console.log("정은씨가 할 예정입니다.");
-      // http
-      //   .put(`/userapi/user`, {
-      //     id: this.hotpl.id,
-      //     password: this.newpassword
-      //   })
-      //   .then(({ data }) => {
-      //     let msg = "수정 처리시 문제가 발생했습니다.";
-      //     if (data === 1) {
-      //       msg = "수정이 완료되었습니다.";
-      //     }
-      //     alert(msg);
-      //     this.modal=false;
-      //   });
+      http
+        .put(`/userapi/user`, {
+          id: this.search_id,
+          password: this.newpassword
+        })
+        .then(({ data }) => {
+          let msg = "수정 처리시 문제가 발생했습니다.";
+          if (data === 1) {
+            msg = "수정이 완료되었습니다.";
+          }
+          alert(msg);
+          this.modal=false;
+        });
     },
   },
 };
