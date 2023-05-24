@@ -7,15 +7,21 @@
       <div class="container">
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
-            <div class="form-row mt-3 ml-4">
+            <div class="form-row mt-3 ml-4" v-if="loginUser.id == travel.user_id">
               <base-dropdown tag="li" class="nav-item">
                 <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button"> &#9776; </a>
                 <router-link :to="`/plan/regist/${travel.id}`" class="dropdown-item">수정</router-link>
                 <a href="#" class="dropdown-item" @click="deleteTravel()">삭제</a>
               </base-dropdown>
             </div>
-            <div class="row justify-content-center m-5">
+            <div class="form-row mt-3 ml-4 float-right" v-else>
+              <base-button type="info" outline class="m-3" @click="share = true">계획 따라하기</base-button>
+            </div>
+            <div class="row justify-content-center m-5" v-if="loginUser.id == travel.user_id">
               <h3> {{ travel.title }}에 대한 여행 계획</h3>
+            </div>
+            <div class="row justify-content-center m-5" v-else>
+              <h3> {{ travel.user_id }}님의 여행 일정</h3>
             </div>
             <div class="row justify-content-center mt-5 mb-5 ml-2" style="width: 100%; height: 50vh;">
               <div id="map" style="width: 100%; height: 100%;">
@@ -88,23 +94,96 @@
 
             <base-button type="link" class="ml-auto" @click="modal = false">Close
             </base-button>
-        </template>
-    </modal>
+          </template>
+          </modal>
+            <modal :show.sync="share">
+              <h6 slot="header" class="modal-title ml-2" id="modal-title-default">
+                <i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.
+              </h6>
+              <!-- DataPickers -->
+              <div class="col-md-11 mt-4 mt-md-0">
+                <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag"> </base-input>
+                  </div>
+                </div>
+              </div>
+              <date-pickers :date="date" @sendDate="sendDate"></date-pickers>
+
+              <div class="col-md-11 mt-4 mt-md-0">
+                <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
+                <div v-if="adds != []">
+                  <div v-for="(add, index) in adds" :key="add.id">
+                    <base-input
+                      addon-right-icon="ni ni-fat-remove"
+                      class="text-center"
+                      readonly
+                      @click="removeUser(index)"
+                      :value="add.id + '(' + add.email + ')'"
+                    >
+                    </base-input>
+                  </div>
+                </div>
+                <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
+                  <div class="m-2" style="width: 20rem">
+                    <b-input-group class="m-1">
+                      <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
+                      <b-input-group-append>
+                        <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
+                      </b-input-group-append>
+                    </b-input-group>
+                  </div>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <div v-if="users.length">
+                    <div v-for="(user, index) in users" :key="user.id">
+                      <base-input
+                        addon-right-icon="ni ni-fat-add"
+                        class="p-2"
+                        readonly
+                        @click="addUser(index)"
+                        :value="user.id + '(' + user.email + ')'"
+                      >
+                      </base-input>
+                    </div>
+                  </div>
+                  <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
+                </b-dropdown>
+              </div>
+
+              <template slot="footer">
+                <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
+                <base-button type="link" class="ml-auto" @click="share = false">Close </base-button>
+              </template>
+            </modal>
+
+
+
   </div>
 </template>
 <script>
+import { VueTyper } from "vue-typer";
 import BaseDropdown from "@/components/BaseDropdown";
 import http from "@/util/http-common.js";
 import Modal from "@/components/Modal.vue";
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 import { mapState } from 'vuex';
+import moment from "moment";
+const DatePickers = () => import("../components/JavascriptComponents/SingleDatePickers");
 export default {
   components:{
     Modal,
     BaseDropdown,
+    flatPicker,
+    DatePickers,
+    VueTyper,
+    moment,
   },
   data() {
     return {
       travel: null,
+      share : false,
       map: null,
       modal: false,
       modalPlace: null,
@@ -113,6 +192,11 @@ export default {
       clickLines: [],
       distanceOverlays: [],
       dots: [],
+      keyword: "",
+      title: "",
+      users: [],
+      adds: [],
+      date: moment(new Date()).format("YYYY-MM-DD"),
       markers: [],
       colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
       times: [
@@ -172,7 +256,7 @@ export default {
   },
   mounted() {
     if (!this.loginUser) {
-      alert("로그인해야 계획을 짤 수 있습니다.")
+      alert("로그인해야 볼 수 있습니다.")
       this.$router.push({ name: "home" });
     }
     if (!window.kakao || !window.kakao.maps) {
@@ -213,6 +297,10 @@ export default {
     });
   },
   methods: {
+    sendDate(newDate) {
+      this.date = newDate;
+      console.log(newDate);
+    },
     deleteTravel(){
       http
       .delete("/travelapi/travel/" + this.travel.id)
