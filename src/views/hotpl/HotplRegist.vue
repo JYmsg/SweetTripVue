@@ -12,10 +12,7 @@
             </div>
             <div class="row">
               <div class="col m-3" v-if="initMap">
-                <div
-                  id="map"
-                  style="width: 100%; height: 100%; position: relative; overflow: hidden"
-                ></div>
+                <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden"></div>
                 <div id="menu_wrap" style="background-color: white; opacity: 0.8">
                   <div class="option">
                     <div class="row no-gutters">
@@ -41,7 +38,7 @@
                   <ul id="placesList">
                     <li id="item" v-for="(place, index) in places" :key="index">
                       <!-- <span class="markerbg">{{ index }}</span> -->
-                      <div class="info mt-2" @click="selectPlace(place)">
+                      <div class="ml-4 mt-2" @click="selectPlace(place)">
                         <div class="row">
                           <b-icon icon="bookmark-star"></b-icon>
                           <h5 class="ml-1">{{ place.place_name }}</h5>
@@ -65,11 +62,7 @@
               <div class="col">
                 <div class="mb-4" id="write-place-div">
                   <div>
-                    <b-form-select
-                      v-model="selected"
-                      :options="areas"
-                      class="me-2 rounded-4"
-                    ></b-form-select>
+                    <b-form-select v-model="selected" :options="areas" class="me-2 rounded-4"></b-form-select>
                   </div>
                   <div class="ml-2" style="text-align: left">위치</div>
                   <input type="text" v-model="title" class="form-control" readonly />
@@ -98,12 +91,7 @@
                 </div>
                 <div class="mb-4">
                   <div class="ml-2" style="text-align: left; color: red">이미지 1개 필수</div>
-                  <input
-                    type="file"
-                    id="upload-image"
-                    accept="image/*"
-                    @change="fileChange($event.target.files)"
-                  />
+                  <input type="file" id="upload-image" accept="image/*" @change="fileChange($event.target.files)" />
                   <!-- <label for="upload-image">
                     <img src="img/brand/aa.jpg" />
                   </label> -->
@@ -271,8 +259,7 @@ export default {
       this.map.setBounds(bounds);
     },
     addMarker(position, idx, title) {
-      var imageSrc =
-          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37), // 마커 이미지의 크기
         imgOptions = {
           spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -448,8 +435,7 @@ export default {
 }
 #placesList .info .jibun {
   padding-left: 26px;
-  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png)
-    no-repeat;
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
 }
 #placesList .info .tel {
   color: #009900;
@@ -460,8 +446,7 @@ export default {
   width: 36px;
   height: 37px;
   margin: 10px 0 0 10px;
-  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png)
-    no-repeat;
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
 }
 #placesList .item .marker_1 {
   background-position: 0 -10px;

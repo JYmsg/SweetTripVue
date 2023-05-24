@@ -9,9 +9,13 @@
             <h1 class="text-white" style="text-shadow: 3px 3px #2d63a7; font-size: 4em">
               SWEET TRIP, 당신의 여행 플래너
             </h1>
-            <p class="lead text-white mt-4 mb-5" style="text-shadow: 3px 3px #2d63a7; font-size: 1.5em">
-              지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다
-            </p>
+            <VueTyper
+              text="지금 바로 어디든 떠나보세요 ✈️ Sweet Trip이 여러분과 함께합니다"
+              class="lead text-white mt-4 mb-5"
+              style="text-shadow: 3px 3px #2d63a7; font-size: 1.5em"
+              :props-color="white"
+            >
+            </VueTyper>
           </div>
         </div>
         <div class="row align-items-center justify-content-around stars-and-coded">
@@ -92,6 +96,7 @@
   </section>
 </template>
 <script>
+import { VueTyper } from "vue-typer";
 import http from "@/util/http-common.js";
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -104,7 +109,8 @@ export default {
     DatePickers,
     Modal,
     flatPicker,
-    moment
+    moment,
+    VueTyper,
   },
   data() {
     return {
@@ -113,7 +119,7 @@ export default {
       title: "",
       users: [],
       adds: [],
-      range: moment(new Date()).format('YYYY-MM-DD')+" to "+moment(new Date()).format('YYYY-MM-DD'),
+      range: moment(new Date()).format("YYYY-MM-DD") + " to " + moment(new Date()).format("YYYY-MM-DD"),
     };
   },
   computed: {
