@@ -1,13 +1,38 @@
 <template>
   <div class="promotion">
-    <!-- {{ images }} -->
-    <swiper class="swiper-container" :options="swiperImageOption">
-      <div class="swiper-wrapper" v-for="index in 8" :key="index">
-        <div class="swiper-slide">
-          <img :src="images[index]" />
-          <!-- <a href="#" class="btn">자세히 보기</a> -->
-        </div>
-      </div>
+    <swiper class="swiper-container" :options="swiperOption">
+      <swiper-slide class="slide"
+        ><img :src="images[0]" />
+        <div class="btn" @click="moveList(1)">서울</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[1]" />
+        <div class="btn" @click="moveList(2)">인천</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[2]" />
+        <div class="btn" @click="moveList(3)">대전</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[3]" />
+        <div class="btn" @click="moveList(4)">대구</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[4]" />
+        <div class="btn" @click="moveList(5)">광주</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[5]" />
+        <div class="btn" @click="moveList(6)">부산</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[6]" />
+        <div class="btn" @click="moveList(7)">울산</div></swiper-slide
+      >
+      <swiper-slide class="slide"
+        ><img :src="images[7]" />
+        <div class="btn" @click="moveList(8)">세종</div></swiper-slide
+      >
       <div class="swiper-pagination" slot="pagination"></div>
       <div class="swiper-prev" slot="button-prev">
         <b-icon icon="arrow-left-short" font-scale="2"></b-icon>
@@ -19,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState } from "vuex";
 
 import { swiper, swiperSlide } from "vue-awesome-swiper";
@@ -33,10 +58,9 @@ export default {
   data() {
     return {
       images: [],
-      swiperImageOption: {
-        direction: "horizontal",
+      swiperOption: {
         slidesPerView: 3,
-        spaceBetween: 10,
+        spaceBetween: 50,
         centeredSlides: true,
         loop: true,
         autoplay: {
@@ -63,8 +87,16 @@ export default {
       }
     },
   },
+  methods: {
+    moveList(id) {
+      this.$router.push({
+        name: "HotplList",
+        params: { id: id },
+      });
+    },
+  },
   created() {
-    for (let i = 0; i < 8; i++) this.$set(this.images, i, `img/place/image${i + 1}.jpg`);
+    for (let i = 0; i < 8; i++) this.$set(this.images, i, `img/main/image${i + 1}.jpg`);
   },
 };
 </script>
@@ -80,11 +112,12 @@ img {
   position: relative;
 }
 .btn {
-  width: 130px;
+  width: 80px;
   padding: 10px;
   border: 2px solid #333;
-  border-radius: 4px;
+  border-radius: 1rem;
   color: #333;
+  background-color: rgba(255, 255, 255, 0.7);
   font-size: 16px;
   font-weight: 700;
   text-align: center;
@@ -100,34 +133,36 @@ img {
 
 /* NOTICE */
 .promotion {
-  height: 693px;
+  height: 500px;
   background-color: #fff;
   position: relative;
-  transition: height 0.4s;
+  /* transition: height 0.4s; */
   overflow: hidden;
 }
 .promotion.hide {
   height: 0;
 }
 .promotion .swiper-container {
-  width: calc(819px * 3 + 20px);
-  height: 553px;
+  width: calc(640px * 3 + 50px);
+  height: 500px;
   position: absolute;
   top: 40px;
   left: 50%;
-  margin-left: calc((819px * 3 + 20px) / -2);
+  margin-left: calc((640px * 3 + 50px) / -2);
 }
 .promotion .swiper-slide {
   opacity: 0.5;
-  transition: opacity 1s;
+  /* transition: opacity 1s; */
   position: relative;
 }
 .promotion .swiper-slide-active {
   opacity: 1;
 }
-.promotion .swiper-slide .btn {
+.promotion .slide .btn {
+  /* background-color: white; */
+  /* opacity: 0.5; */
   position: absolute;
-  bottom: 0;
+  bottom: 8rem;
   left: 0;
   right: 0;
   margin: auto;
@@ -137,9 +172,9 @@ img {
   left: 0;
   right: 0;
 }
-/* .promotion .swiper-pagination .swiper-pagination-bullet {
+.promotion .swiper-pagination .swiper-pagination-bullet {
   background-color: transparent;
-  background-image: url("/img/brand/aa.jpg");
+  background-image: url("../../../public/img/main/slide_pager.png");
   width: 12px;
   height: 12px;
   margin-right: 6px;
@@ -149,8 +184,8 @@ img {
   margin-right: 0;
 }
 .promotion .swiper-pagination .swiper-pagination-bullet-active {
-  background-image: url("/img/brand/skyblue.jpg");
-} */
+  background-image: url("../../../public/img/main/slide_pager_on.png");
+}
 .promotion .swiper-prev,
 .promotion .swiper-next {
   width: 42px;

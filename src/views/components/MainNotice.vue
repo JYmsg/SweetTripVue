@@ -1,27 +1,41 @@
 <template>
-  <div class="notice-line">
-    <div class="bg-left"></div>
-    <div class="bg-right"></div>
-    <div class="inner">
-      <div class="inner__left">
-        <h4>공지사항</h4>
-        <div class="swiper-container">
-          <swiper class="swiper-wrapper" :options="swiperOption">
-            <div class="swiper-slide" v-for="(notice, index) in notices" :key="index">
-              <swiperSlide class="move">{{ notice }}</swiperSlide>
-            </div>
-          </swiper>
+  <div>
+    <div class="notice-line">
+      <div class="bg-left"></div>
+      <div class="bg-right"></div>
+      <div class="inner">
+        <div class="inner__left">
+          <h4>공지사항</h4>
+          <div class="swiper-container">
+            <swiper class="swiper-wrapper" :options="swiperOption">
+              <div class="swiper-slide" v-for="(notice, index) in notices" :key="index">
+                <swiperSlide class="move">{{ notice }}</swiperSlide>
+              </div>
+            </swiper>
+          </div>
+          <router-link to="/notice/list" class="notice-line__more">
+            <b-icon icon="plus-circle" font-scale="2" class="mr-3" variant="secondary"></b-icon>
+          </router-link>
         </div>
-        <router-link to="/notice/list" class="notice-line__more">
-          <b-icon icon="plus-circle" font-scale="2" class="mr-3" variant="secondary"></b-icon>
-        </router-link>
+        <div class="inner__right">
+          <h5 class="mr-1">이용 방법이 궁금하신가요</h5>
+          <div class="toggle" v-if="!show">
+            <b-icon icon="question" font-scale="2" variant="dark" @click="showToggle" style="cursor: pointer"></b-icon>
+          </div>
+          <div class="toggle" v-else>
+            <b-icon
+              icon="question"
+              font-scale="2"
+              variant="danger"
+              @click="showToggle"
+              style="cursor: pointer"
+            ></b-icon>
+          </div>
+        </div>
       </div>
-      <div class="inner__right">
-        <h5 class="mr-3">다른 사람 여행 일정 보러가기</h5>
-        <router-link to="/notice/list" class="notice-line__more">
-          <b-icon icon="calendar-range" font-scale="1.5" variant="dark"></b-icon>
-        </router-link>
-      </div>
+    </div>
+    <div v-if="show">
+      <h2>Toggle</h2>
     </div>
   </div>
 </template>
@@ -46,6 +60,7 @@ export default {
         autoplay: true,
       },
       notices: [],
+      show: false,
     };
   },
   computed: {
@@ -69,6 +84,12 @@ export default {
         }
       }
     });
+  },
+  methods: {
+    showToggle() {
+      if (this.show === false) this.show = true;
+      else this.show = false;
+    },
   },
 };
 </script>
