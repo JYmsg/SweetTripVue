@@ -209,9 +209,9 @@ export default {
           .then(({ data }) => {
             this.hotpls = data;
             for (let i = 0; i < data.length; i++) {
-              this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+              this.$set(this.change, i, "/img/icons/noti/heart-bean.png");
               this.$set(this.controll, i, false);
-              this.hotpls[i].src = `img/upload/${data[i].img}`;
+              this.hotpls[i].src = `/img/upload/${data[i].img}`;
             }
           });
       } else {
