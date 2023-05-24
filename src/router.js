@@ -41,13 +41,6 @@ export default new Router({
         footer: AppFooter,
       },
     },
-    // {
-    //   path: "/calendar",
-    //   name: "calendar",
-    //   components: {
-    //     default: Calendar,
-    //   },
-    // },
     {
       path: "/information",
       name: "information",

@@ -97,12 +97,14 @@ import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import Modal from "@/components/Modal.vue";
 import { mapState } from "vuex";
+import moment from "moment";
 const DatePickers = () => import("./JavascriptComponents/DatePickers");
 export default {
   components: {
     DatePickers,
     Modal,
     flatPicker,
+    moment
   },
   data() {
     return {
@@ -111,7 +113,7 @@ export default {
       title: "",
       users: [],
       adds: [],
-      range: "2023-06-01 to 2023-06-05",
+      range: moment(new Date()).format('YYYY-MM-DD')+" to "+moment(new Date()).format('YYYY-MM-DD'),
     };
   },
   computed: {
