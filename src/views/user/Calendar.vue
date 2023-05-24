@@ -28,7 +28,7 @@
               <div v-else :style="'color:'+ dateColors[SecondIdx]">
                 {{ date.date }}
               </div>
-              <div v-if="check(year, date.month, date.date, 0)" id="travel" style="background-color: #dc3545; height: 1.5rem; width: 100%; font-size: 15px; color: black;">
+              <div v-if="check(year, date.month, date.date, 0)" id="travel" style="background-color: #dc3545; height: 1.5rem; width: 100%; font-size: 15px; color: black;" class="mt-1">
 
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
@@ -51,9 +51,6 @@ import moment from "moment";
 import http from "@/util/http-common.js";
 export default {
   components: {
-    // Modal,
-    // PlanList,
-    // PlanSearch,
     moment,
   },
   data(){
@@ -88,50 +85,60 @@ export default {
   },
   async mounted() {
     await http.get("/travelapi/travel/list/" + this.loginUser.id)
-      .then(({ data }) => {
-        console.log(data);
+    .then(({ data }) => {
       this.planListMap = new Map();
       for (let i = 0; i < data.length; i++){
         this.$set(this.travels, i, data[i]);
+        if (!this.travels[i].save) continue;
         var start_arr = this.travels[i].startdate.split("-");
         var end_arr = this.travels[i].enddate.split("-");
         var diff = (new Date(end_arr[0], end_arr[1], end_arr[2]).getTime() - new Date(start_arr[0], start_arr[1], start_arr[2]).getTime())/(1000*60*60*24);
-        if (this.planListMap.get(this.travels[i].startdate) == null) {
-          this.planListMap.set(this.travels[i].startdate, [null, null]);
-        } else if (this.planListMap.get(this.travels[i].startdate)[0] == null) {
-          const start = moment(this.travels[i].startdate)
-          for (let j = 1; j < diff; j++){
-            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
-              this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
-            } else {
-              if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[0] != null) break;
-            }
-          }
-          if (this.planListMap.get(this.travels[i].enddate) == null) {
-            this.planListMap.set(this.travels[i].enddate, [null, null]);
-          } else if (this.planListMap.get(this.travels[i].enddate)[0] == null) {
-            this.pushSetList(diff, 0, i);
-          }
-        } else if (this.planListMap.get(this.travels[i].startdate)[1] == null) {
-          const start = moment(this.travels[i].startdate)
-          for (let j = 1; j < diff; j++){
-            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
-              this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
-
-            } else {
-              if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[1] != null) break;
-            }
-          }
-          if (this.planListMap.get(this.travels[i].enddate) == null) {
-            this.planListMap.set(this.travels[i].enddate, [null, null]);
-          } else if (this.planListMap.get(this.travels[i].enddate)[1] == null) {
-            this.pushSetList(diff, 1, i);
-          }
+        if (this.isView(i, 0, diff)) {
+          this.pushSetList(diff, 0, i);
+        } else if (this.isView(i, 1, diff)) {
+          this.pushSetList(diff, 1, i);
         }
       }
     })
   },
   methods: {
+    isView(i, idx, diff) { //i번째 travel을 idx번째 div에 띄울수 있는지
+      if (this.planListMap.get(this.travels[i].startdate) == null) {
+        this.planListMap.set(this.travels[i].startdate, [null, null]);
+        const start = moment(this.travels[i].startdate);
+        for (let j = 1; j < diff; j++){
+          if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
+            this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
+          } else {
+            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[idx] != null) return false;
+          }
+        }
+        if (this.planListMap.get(this.travels[i].enddate) == null) {
+          this.planListMap.set(this.travels[i].enddate, [null, null]);
+        } else if (this.planListMap.get(this.travels[i].enddate)[idx] != null) {
+          return false;
+        }
+        return true;
+      }
+      else if (this.planListMap.get(this.travels[i].startdate)[idx] == null) {
+        const start = moment(this.travels[i].startdate);
+        for (let j = 1; j < diff; j++){
+          if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
+            this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
+          } else {
+            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[idx] != null) return false;
+          }
+        }
+        if (this.planListMap.get(this.travels[i].enddate) == null) {
+          this.planListMap.set(this.travels[i].enddate, [null, null]);
+        } else if (this.planListMap.get(this.travels[i].enddate)[idx] != null) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+      
+    },
     isToday(year, month, date) {
       if (moment(new Date(year, month, date)).format("YYYY-MM-DD") == moment(this.today).format("YYYY-MM-DD"))
         return true;
