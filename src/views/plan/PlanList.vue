@@ -10,23 +10,6 @@
             <div class="row justify-content-center mt-5">
               <h3>다른 사람들의 여행 일정을 구경해보세요!</h3>
             </div>
-            <!-- <div class="row m-1" style="justify-content: right">
-              <b-button variant="outline-info" size="sm" >목록으로</b-button>
-            </div>
-            <div class="row m-1" style="justify-content: right">
-              <div class="btn btn-outline-warning float-end d-inline">핫 플레이스 등록하기</div>
-            </div>
-            <b-form-group>
-              <b-form-radio-group
-                id="radio-group-1"
-                v-model="selected"
-                :options="options"
-                name="radio-options"
-              ></b-form-radio-group>
-            </b-form-group> -->
-            <!-- <input type="text" placeholder="제목으로 검색하세요." v-model="search" /> -->
-            <b-button class="ml-3" size="sm" >확인</b-button>
-
             <hr />
             <div class="row justify-content-center">
               <div class="hotpl-list" style="width: 90%">
@@ -47,25 +30,6 @@
                                   >{{ travel.title }}</router-link
                                 >
                               </div>
-                              <!-- <div> -->
-                                <!-- <div class="h2" v-if="getUser">
-                                  <img
-                                    :src="change[index]"
-                                    style="width: 2.5rem; height: 2.5rem"
-                                    size="sm"
-                                    type="default"
-                                    @click="changeHeart(hotpl.id, index)"
-                                  />
-                                </div> -->
-                                <!-- <span
-                                  class="h5"
-                                  v-if="controll[index] && change[index] === 'img/icons/noti/heart-color.png'"
-                                  >좋아요 {{ hotpl.good + 1 }}</span
-                                > -->
-                                <!-- <span class="h5" v-else-if="!controll[index]">좋아요 {{ hotpl.good }}</span>
-                                <br />
-                                <span class="h5">조회수 {{ hotpl.hit }}</span> -->
-                              <!-- </div> -->
                             </div>
                             <p class="card-text">
                               <small class="text-muted">다녀온 사람: {{ travel.user_id }}</small
@@ -98,10 +62,6 @@ import http from "@/util/http-common.js";
 import { mapState } from "vuex";
 export default {
   name: "HotplList",
-  // components: {
-  //   BaseNav,
-  //   BaseDropdown,
-  // },
   data() {
     return {
       travels : [],
@@ -129,14 +89,6 @@ export default {
         }
       }
     });
-  },
-  methods: {
-    // hotplRegist() {
-    //   this.$router.push({ name: "HotplRegist" });
-    // },
-    // moveMain() {
-    //   this.$router.push({ name: "HotplMain" });
-    // },
   },
 };
 </script>
