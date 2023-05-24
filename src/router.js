@@ -7,7 +7,6 @@ import Information from "./views/share/Information.vue";
 import Login from "./views/user/Login.vue";
 import Register from "./views/user/Register.vue";
 import Profile from "./views/user/Profile.vue";
-// import Calendar from "./views/user/Calendar.vue";
 import SearchPlace from "@/views/searchPlace/Search.vue";
 
 import NoticeView from "@/views/NoticeView.vue";
@@ -24,6 +23,7 @@ import HotplDetail from "@/views/hotpl/HotplDetail.vue";
 import HotplModify from "@/views/hotpl/HotplModify.vue";
 
 import PlanView from "@/views/PlanView.vue";
+import PlanList from "@/views/plan/PlanList.vue";
 import PlanRegist from "@/views/plan/PlanRegist.vue";
 import PlanDetail from "@/views/plan/PlanDetail.vue";
 
@@ -56,6 +56,15 @@ export default new Router({
       components: {
         header: AppHeader,
         default: PlanDetail,
+        footer: AppFooter,
+      },
+    },
+    {
+      path: "/plan/list",
+      name: "PlanList",
+      components: {
+        header: AppHeader,
+        default: PlanList,
         footer: AppFooter,
       },
     },

@@ -32,7 +32,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/search" class="nav-link">
+            <router-link :to="{name : 'PlanList'}" class="nav-link">
               <i class="ni ni-calendar-grid-58 d-lg-none"></i>
               <span class="nav-link-inner--text" style="font-family: 'GangwonEdu_OTFBoldA'">일정구경하기</span>
             </router-link>
