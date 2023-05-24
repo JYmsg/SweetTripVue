@@ -4,7 +4,7 @@
     <div id="date" class="p-2 pb-0" v-if="showTitle">
       <div class="row">
         <h5 class="ml-3 mr-2" style="width: 80%">{{travel.title}} : {{travel.startdate}} ~ {{travel.enddate}}</h5>
-        <img class="ml-2" src="img/icons/common/modify.png" style="height: 1rem; width: 1rem;" @click="showTitle=false">
+        <img class="ml-2" src="/img/icons/common/modify.png" style="height: 1rem; width: 1rem;" @click="showTitle=false">
       </div>
         <base-button type="info" size="sm" @click="add()">날짜추가</base-button>
         <base-button type="default" size="sm" @click="remove()">날짜삭제</base-button>
@@ -13,7 +13,7 @@
       <div class="row">
         <input class="ml-3 mr-2  rounded-4" type="text" style="border: 0.1px solid; background: transparent; height: 3rem; width: 80%; font: 13px;" v-model="travel.title">
         <div  class="float-right">
-          <img class="ml-2" src="img/icons/common/save.png" style="height: 1rem; width: 1rem;" @click="showTitle=true">
+          <img class="ml-2" src="/img/icons/common/save.png" style="height: 1rem; width: 1rem;" @click="showTitle=true">
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
                       <div class="row">
                         <h5 class="mt-2 mb-0 float-left col-lg-10">{{ place.title }}</h5>
                         <div class="float-right p-1" style="height: 1.5rem; width: 1.5rem;" @click="removeDayPlace(index, idx)">
-                          <img src="img/logo/logoX.jpg" style="height:100%; width:100%;" alt="">
+                          <img src="/img/logo/logoX.jpg" style="height:100%; width:100%;" alt="">
                         </div>
                       </div>
                     </div>

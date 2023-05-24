@@ -147,7 +147,7 @@ export default {
       for (let i = 0; i < this.hotpls.length; i++) {
         for (let j = 0; j < this.likes.length; j++) {
           if (this.hotpls[i].id === this.likes[j].hotplace_id) {
-            this.$set(this.change, i, "img/icons/noti/heart-color.png");
+            this.$set(this.change, i, "/img/icons/noti/heart-color.png");
           }
         }
       }
@@ -158,9 +158,9 @@ export default {
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/write_time/none`).then(({ data }) => {
       this.hotpls = data;
       for (let i = 0; i < data.length; i++) {
-        this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+        this.$set(this.change, i, "/img/icons/noti/heart-bean.png");
         this.$set(this.controll, i, false);
-        this.hotpls[i].src = `img/upload/${data[i].img}`;
+        this.hotpls[i].src = `/img/upload/${data[i].img}`;
       }
     });
 
@@ -183,9 +183,9 @@ export default {
         await http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/${this.selected}/none`).then(({ data }) => {
           this.hotpls = data;
           for (let i = 0; i < data.length; i++) {
-            this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+            this.$set(this.change, i, "/img/icons/noti/heart-bean.png");
             this.$set(this.controll, i, false);
-            this.hotpls[i].src = `img/upload/${data[i].img}`;
+            this.hotpls[i].src = `/img/upload/${data[i].img}`;
           }
         });
       } else {
@@ -194,9 +194,9 @@ export default {
           .then(({ data }) => {
             this.hotpls = data;
             for (let i = 0; i < data.length; i++) {
-              this.$set(this.change, i, "img/icons/noti/heart-bean.png");
+              this.$set(this.change, i, "/img/icons/noti/heart-bean.png");
               this.$set(this.controll, i, false);
-              this.hotpls[i].src = `img/upload/${data[i].img}`;
+              this.hotpls[i].src = `/img/upload/${data[i].img}`;
             }
           });
       }
@@ -206,13 +206,13 @@ export default {
       this.getlike;
     },
     changeHeart(id, index) {
-      if (this.change[index] === "img/icons/noti/heart-color.png") {
+      if (this.change[index] === "/img/icons/noti/heart-color.png") {
         http.put(`/hotplaceapi/good/${id}/-1`);
 
         http.delete(`/likeapi/likehotpl/${this.loginUser.id}/${id}`).then(() => {
           let msg = "좋아요가 취소되었습니다.";
           alert(msg);
-          this.$set(this.change, index, "img/icons/noti/heart-baen.png");
+          this.$set(this.change, index, "/img/icons/noti/heart-baen.png");
           this.$router.go(0);
         });
       } else {
@@ -222,7 +222,7 @@ export default {
             hotplace_id: id,
           })
           .then(() => {
-            this.$set(this.change, index, "img/icons/noti/heart-color.png");
+            this.$set(this.change, index, "/img/icons/noti/heart-color.png");
           });
 
         http.put(`/hotplaceapi/good/${id}/1`);

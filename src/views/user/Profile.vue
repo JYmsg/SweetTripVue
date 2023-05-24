@@ -11,7 +11,7 @@
               <div class="col-lg-3 order-lg-2 mr-5">
                 <div class="card-profile-image">
                   <a href="#">
-                    <img v-lazy="'img/logo/boarding-pass.png'" class="rounded-circle" />
+                    <img v-lazy="'/img/logo/boarding-pass.png'" class="rounded-circle" />
                   </a>
                 </div>
               </div>

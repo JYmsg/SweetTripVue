@@ -11,7 +11,7 @@
                         <div class="m-5">
                           <div class="row float-right">
                             <button type="button" class="btn btn-sky" @click="moveProfile">
-                              <img src="img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info" v-if="getCarts">{{ cartslength }}</span>
+                              <img src="/img/icons/noti/car-full.png" style="width: 1.5rem; height: 1.5rem;" /><span class="badge badge-info" v-if="getCarts">{{ cartslength }}</span>
                             </button>
                           </div>
                           <div class="row justify-content-center">
@@ -170,7 +170,7 @@ export default {
         for (let i = 0; i < data.length; i++){
           var value = data[i];
           if (value.first_image == "") { // 이미지가 없는 경우 이미지 대체
-            data[i].first_image = "img/logo/no-image.PNG";
+            data[i].first_image = "/img/logo/no-image.PNG";
             }
           this.$set(this.places, i, data[i]);
           let markerInfo = {
@@ -179,9 +179,9 @@ export default {
           };
           this.$set(this.markers, i, markerInfo);
           if(data[i].in == true){
-            this.$set(this.filters, i, "img/icons/noti/car-full.png");
+            this.$set(this.filters, i, "/img/icons/noti/car-full.png");
           }else{
-            this.$set(this.filters, i, "img/icons/noti/car-bean.png");
+            this.$set(this.filters, i, "/img/icons/noti/car-bean.png");
           }
         };
         this.displayMarker();
@@ -199,7 +199,7 @@ export default {
       this.map = new kakao.maps.Map(container, options);
     },
     displayMarker() {
-      var imageSrc = "img/markers/marker_share.png"
+      var imageSrc = "/img/markers/marker_share.png"
 
       var bounds = new kakao.maps.LatLngBounds();
 
@@ -250,7 +250,7 @@ export default {
         user_id: this.loginUser.id,
         attraction_id : placeId
       }).then(({ data }) => {
-        this.$set(this.filters, index, "img/icons/noti/car-full.png");
+        this.$set(this.filters, index, "/img/icons/noti/car-full.png");
         this.$set(this.carts, this.cartslength, this.places[placeId]);
         this.cartslength += 1;
         alert("장바구니 담았습니다.")

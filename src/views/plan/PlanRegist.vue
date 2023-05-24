@@ -6,7 +6,7 @@
       <div class="col-lg-8 col-sm-8 m-0">
         <div id="map" style="width: 100%; height: 100%">
           <div class="btn m-3 p-0" style="background-color: black; height: 3rem; width: 3rem; z-index: 5;" @click="share = true">
-            <img src="img/icons/common/share2.png" style="width: 100%; height: 100%;">
+            <img src="/img/icons/common/share2.png" style="width: 100%; height: 100%;">
           </div>
 
         </div>

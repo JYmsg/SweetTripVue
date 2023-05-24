@@ -96,7 +96,7 @@ export default {
     },
   },
   created() {
-    for (let i = 0; i < 8; i++) this.$set(this.images, i, `img/main/image${i + 1}.jpg`);
+    for (let i = 0; i < 8; i++) this.$set(this.images, i, `/img/main/image${i + 1}.jpg`);
   },
 };
 </script>

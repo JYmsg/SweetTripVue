@@ -148,10 +148,10 @@ export default {
       }
     });
     for (let i = 0; i < 9; i++) {
-      this.imgs_si[i] = `img/place/image${i}.jpg`;
+      this.imgs_si[i] = `/img/place/image${i}.jpg`;
     }
     for (let i = 0; i < 6; i++) {
-      this.imgs_do[i] = `img/place/image${31 + i}.png`;
+      this.imgs_do[i] = `/img/place/image${31 + i}.png`;
     }
   },
   methods: {

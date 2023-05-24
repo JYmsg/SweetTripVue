@@ -276,7 +276,7 @@ export default {
       });
       document.head.appendChild(script);
     } else {
-        this.initMap();
+      this.initMap();
     }
     if(!window.Kakao || !window.Kakao.isInitialized()){
        window.Kakao.init("610bf6cd591542b654c6ececbd7a14b0");

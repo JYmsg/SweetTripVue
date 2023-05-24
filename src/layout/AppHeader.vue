@@ -3,13 +3,13 @@
     <header class="header-global">
       <base-nav class="navbar-main" transparent type="white" effect="light" expand>
         <router-link slot="brand" class="navbar-brand mr-lg-5" to="/">
-          <img src="img/brand/air.png" alt="logo" />
+          <img src="/img/brand/air.png" alt="logo" />
         </router-link>
 
         <div class="row" slot="content-header" slot-scope="{ closeMenu }">
           <div class="col-6 collapse-brand">
             <a href="https://demos.creative-tim.com/vue-argon-design-system/documentation/" style="font-size: 22px;">
-              <img src="img/brand/air.png" /> SWEET TRIP
+              <img src="/img/brand/air.png" /> SWEET TRIP
             </a>
           </div>
           <div class="col-6 collapse-close">

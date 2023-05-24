@@ -15,12 +15,12 @@
               <div class="text-muted text-center mb-3"></div>
               <div class="btn-wrapper text-center">
                 <base-button type="neutral">
-                  <img slot="icon" src="img/logo/kakao.png" />
+                  <img slot="icon" src="/img/logo/kakao.png" />
                   Kakao
                 </base-button>
 
                 <base-button type="neutral">
-                  <img slot="icon" src="img/logo/naver.jpg" />
+                  <img slot="icon" src="/img/logo/naver.jpg" />
                   Naver
                 </base-button>
               </div>
