@@ -96,69 +96,66 @@
             </base-button>
           </template>
           </modal>
-            <modal :show.sync="share">
-              <h6 slot="header" class="modal-title ml-2" id="modal-title-default">
-                <i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.
-              </h6>
-              <!-- DataPickers -->
-              <div class="col-md-11 mt-4 mt-md-0">
-                <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
-                <div class="row align-items-center">
-                  <div class="col">
-                    <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag"> </base-input>
-                  </div>
+        <modal :show.sync="share">
+          <h6 slot="header" class="modal-title ml-2" id="modal-title-default">
+            <i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.
+          </h6>
+          <!-- DataPickers -->
+          <div class="col-md-11 mt-4 mt-md-0">
+            <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
+            <div class="row align-items-center">
+              <div class="col">
+                <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag"> </base-input>
+              </div>
+            </div>
+          </div>
+          <date-pickers :date="date" @sendDate="sendDate"></date-pickers>
+
+          <div class="col-md-11 mt-4 mt-md-0">
+            <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
+            <div v-if="adds != []">
+              <div v-for="(add, index) in adds" :key="add.id">
+                <base-input
+                  addon-right-icon="ni ni-fat-remove"
+                  class="text-center"
+                  readonly
+                  @click="removeUser(index)"
+                  :value="add.id + '(' + add.email + ')'"
+                >
+                </base-input>
+              </div>
+            </div>
+            <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
+              <div class="m-2" style="width: 20rem">
+                <b-input-group class="m-1">
+                  <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
+                  <b-input-group-append>
+                    <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </div>
+              <b-dropdown-divider></b-dropdown-divider>
+              <div v-if="users.length">
+                <div v-for="(user, index) in users" :key="user.id">
+                  <base-input
+                    addon-right-icon="ni ni-fat-add"
+                    class="p-2"
+                    readonly
+                    @click="addUser(index)"
+                    :value="user.id + '(' + user.email + ')'"
+                  >
+                  </base-input>
                 </div>
               </div>
-              <date-pickers :date="date" @sendDate="sendDate"></date-pickers>
+              <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
+            </b-dropdown>
+          </div>
 
-              <div class="col-md-11 mt-4 mt-md-0">
-                <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
-                <div v-if="adds != []">
-                  <div v-for="(add, index) in adds" :key="add.id">
-                    <base-input
-                      addon-right-icon="ni ni-fat-remove"
-                      class="text-center"
-                      readonly
-                      @click="removeUser(index)"
-                      :value="add.id + '(' + add.email + ')'"
-                    >
-                    </base-input>
-                  </div>
-                </div>
-                <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
-                  <div class="m-2" style="width: 20rem">
-                    <b-input-group class="m-1">
-                      <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
-                      <b-input-group-append>
-                        <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
-                      </b-input-group-append>
-                    </b-input-group>
-                  </div>
-                  <b-dropdown-divider></b-dropdown-divider>
-                  <div v-if="users.length">
-                    <div v-for="(user, index) in users" :key="user.id">
-                      <base-input
-                        addon-right-icon="ni ni-fat-add"
-                        class="p-2"
-                        readonly
-                        @click="addUser(index)"
-                        :value="user.id + '(' + user.email + ')'"
-                      >
-                      </base-input>
-                    </div>
-                  </div>
-                  <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
-                </b-dropdown>
-              </div>
-
-              <template slot="footer">
-                <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
-                <base-button type="link" class="ml-auto" @click="share = false">Close </base-button>
-              </template>
-            </modal>
-
-
-
+          <template slot="footer">
+            <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
+            <base-button type="link" class="ml-auto" @click="share = false">Close </base-button>
+          </template>
+        </modal>
   </div>
 </template>
 <script>
@@ -297,6 +294,36 @@ export default {
     });
   },
   methods: {
+    searchId() {
+      this.users = [];
+      http
+        .get("/userapi/user/keyword/" + this.keyword)
+        .then(({ data }) => {
+          console.log(data);
+          for (let i = 0; i < data.length; i++) {
+            if (this.loginUser.id != data[i].id) {
+              this.$set(this.users, this.users.length, data[i]);
+            }
+          }
+          console.log(this.users);
+        })
+        .catch((err) => {
+          alert("유저를 불러오는데 실패했습니다.");
+        });
+    },
+    addUser(index) {
+      for (let i = 0; i < this.adds.length; i++) {
+        if (this.adds[i].id == this.users[index].id) {
+          this.$delete(this.users, index);
+          return;
+        }
+      }
+      this.$set(this.adds, this.adds.length, this.users[index]);
+      this.$delete(this.users, index);
+    },
+    removeUser(index) {
+      this.$delete(this.adds, index);
+    },
     sendDate(newDate) {
       this.date = newDate;
       console.log(newDate);
@@ -334,6 +361,34 @@ export default {
           if (this.dots[index][i].distance != null) this.dots[index][i].distance.setMap(null);
         }
       }
+    },
+    makeTravel(){
+      const now = moment(this.date);
+      const start = moment(this.travel.startdate);
+      const end = moment(this.travel.enddate);
+      let diff = end.diff(start, "days");
+      for(let i=0; i<=diff; i++){
+        this.travel.days[i].date = now.clone().add(i, 'days').format("YYYY-MM-DD");
+      }
+      this.travel.startdate = this.date;
+      this.travel.enddate = moment(now).clone().add(diff, 'days').format("YYYY-MM-DD");
+      // 메모 전부 삭제 하기.
+      for(let i=0; i<this.travel.days.length; i++){
+        for(let j=0; j<this.travel.days[i].places.length; j++){
+          this.travel.days[i].places[j].memo = null;
+        }
+      }
+      this.travel.title = this.title;
+      this.travel.users = this.adds;
+      this.travel.user_id = this.loginUser.id;
+      console.log(this.travel);
+      http.post("/travelapi/copytravel", this.travel)
+      .then(({ data }) => {
+        this.$router.push({ name: "PlanRegist", params: { id: data } });
+      })
+      .catch((e) => {
+        alert("여행 계획 생성 실패");
+      });
     },
     moveCenter(place){
       for(let i=0; i<this.dots.length; i++){
