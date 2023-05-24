@@ -35,7 +35,8 @@
                 </div>
                 <div class="mt-5 ml-1 mb-3" v-for="(place, idx) in day.places" :key="place.content_id">
                   <div :style="'height: 7.5rem; width: 10rem; border-radius: 40px 80px / 80px 40px; border: 2px solid '+colors[index]" class="float-left" @click="moveCenter(place)">
-                    <base-button type="" outline class="p-1 float-right mr-1" style="height:1.5rem; font-size:10px; min-width:1.5rem;" @click="detailMore(index, place)">+</base-button>
+                    <i v-show="open && place.memo != null && place.memo != ''" class="ni ni-tag float-right"></i>
+                    <base-button v-show="open" type="" outline class="p-1 float-right mr-1" style="height:1.5rem; font-size:10px; min-width:1.5rem;" @click="detailMore(index, place)">+</base-button>
                     <p class="p-3">{{ idx+1 }}번째 장소
                     <br>
                     {{ place.title }}
@@ -179,6 +180,7 @@ export default {
   },
   data() {
     return {
+      open: false,
       travel: null,
       share : false,
       map: null,
@@ -287,6 +289,7 @@ export default {
           this.$set(this.distanceOverlays, i, null);
           this.$set(this.clickLines, i, null);
       }
+      if(this.loginUser.id == this.travel.user_id) this.open = true;
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
