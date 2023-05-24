@@ -36,13 +36,15 @@
 <script>
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import moment from "moment";
 export default {
   components: {
-    flatPicker
+    flatPicker,
+    moment
   },
   data() {
     return {
-      range: "2023-06-01 to 2023-06-05"
+      range: moment(new Date()).format('YYYY-MM-DD')+" to "+moment(new Date()).format('YYYY-MM-DD')
     };
   },
   watch: {
