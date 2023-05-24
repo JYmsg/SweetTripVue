@@ -1,7 +1,5 @@
 <template>
 <div>
-  <!-- <div style="border: 1px solid red;" @click="beforeMonth()">
-  </div> -->
   <div>
     <div class="row wrap-header" style="background-color: #5e72e4">
       <div class="col-lg-1 mt-4" @click="beforeMonth()">
@@ -23,13 +21,21 @@
       </thead>
       <tbody>
           <tr class="week" v-for="(weeks, FirstIdx) in dates" :key="FirstIdx">
-            <td class=" dayjustify-content-center pl-0 pr-0" scope="row" v-for="(date, SecondIdx) in weeks" :key="SecondIdx" style="height:7rem; width: 7rem;">
-              <div style="color: #5e72e4">
-                {{ date }}
+            <td class=" dayjustify-content-center pl-0 pr-0" scope="row" v-for="(date, SecondIdx) in weeks" :key="SecondIdx" style="height:7rem; width: 7rem;" @click="showPlan(year, date.month, date.date)">
+              <div id="today" v-if="isToday(year, date.month, date.date)" style="">
+                {{ date.date }}
               </div>
-              <!-- <div style="background-color: black; height: 1rem; width: 100%"></div>
-              <div style="background-color: red; height: 1rem; width: 100%"></div>
-              <div style="background-color: blue; height: 1rem; width: 100%"></div> -->
+              <div v-else :style="'color:'+ dateColors[SecondIdx]">
+                {{ date.date }}
+              </div>
+              <div v-if="check(year, date.month, date.date, 0)" id="travel" style="background-color: #dc3545; height: 1.5rem; width: 100%; font-size: 15px; color: black;" class="mt-1">
+              </div>
+              <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
+              </div>
+              <div v-if="check(year, date.month, date.date, 1)" id="travel" style="background-color: #fd7e14; height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black">
+              </div>
+              <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
+              </div>
             </td>
           </tr>
       </tbody>
@@ -38,8 +44,13 @@
 </div>
 </template>
 <script>
-
-export default{
+import { mapState } from "vuex";
+import moment from "moment";
+import http from "@/util/http-common.js";
+export default {
+  components: {
+    moment,
+  },
   data(){
     return{
       today: null,
@@ -53,7 +64,13 @@ export default{
       week: [],
       dates: [],
       days: ["일", "월", "화", "수", "목", "금", "토"],
+      dateColors: ['#e83e8c', 'black', 'black', 'black', 'black', 'black', '#5e72e4'],
+      travels: [],
+      planListMap : null,
     }
+  },
+  computed: {
+    ...mapState(["loginUser"]),
   },
   created(){ // 이번달, 이변년도, 오늘 날짜에 대한 초기값을 받는다.
     this.today = new Date();
@@ -63,11 +80,102 @@ export default{
     this.date = this.today.getDate();
     console.log(this.year, this.month, this.date);
     this.getFirstAndLastDate(); // 달력의 전체 날짜를 출력하는 함수
-    // this.getPrevMonth(this.lastMonthLastDate, this.lastMonthLastDay);
-    // this.getThisMonth(this.thisMonthLastDate);
-    // this.getNextMonth(this.nextMonthFirstDay);
+  },
+  async mounted() {
+    await http.get("/travelapi/travel/list/" + this.loginUser.id)
+    .then(({ data }) => {
+      this.planListMap = new Map();
+      for (let i = 0; i < data.length; i++){
+        this.$set(this.travels, i, data[i]);
+        if (!this.travels[i].save) continue;
+        var start_arr = this.travels[i].startdate.split("-");
+        var end_arr = this.travels[i].enddate.split("-");
+        var diff = (new Date(end_arr[0], end_arr[1], end_arr[2]).getTime() - new Date(start_arr[0], start_arr[1], start_arr[2]).getTime())/(1000*60*60*24);
+        if (this.isView(i, 0, diff)) {
+          this.pushSetList(diff, 0, i);
+        } else if (this.isView(i, 1, diff)) {
+          this.pushSetList(diff, 1, i);
+        }
+      }
+    })
   },
   methods: {
+    isView(i, idx, diff) { //i번째 travel을 idx번째 div에 띄울수 있는지
+      if (this.planListMap.get(this.travels[i].startdate) == null) {
+        this.planListMap.set(this.travels[i].startdate, [null, null]);
+        const start = moment(this.travels[i].startdate);
+        for (let j = 1; j < diff; j++){
+          if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
+            this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
+          } else {
+            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[idx] != null) return false;
+          }
+        }
+        if (this.planListMap.get(this.travels[i].enddate) == null) {
+          this.planListMap.set(this.travels[i].enddate, [null, null]);
+        } else if (this.planListMap.get(this.travels[i].enddate)[idx] != null) {
+          return false;
+        }
+        return true;
+      }
+      else if (this.planListMap.get(this.travels[i].startdate)[idx] == null) {
+        const start = moment(this.travels[i].startdate);
+        for (let j = 1; j < diff; j++){
+          if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
+            this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
+          } else {
+            if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD"))[idx] != null) return false;
+          }
+        }
+        if (this.planListMap.get(this.travels[i].enddate) == null) {
+          this.planListMap.set(this.travels[i].enddate, [null, null]);
+        } else if (this.planListMap.get(this.travels[i].enddate)[idx] != null) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+      
+    },
+    isToday(year, month, date) {
+      if (moment(new Date(year, month, date)).format("YYYY-MM-DD") == moment(this.today).format("YYYY-MM-DD"))
+        return true;
+      else return false;
+    },
+    showPlan(year, month, date){
+      var showTravel = [];
+      for (let i = 0; i < this.travels.length; i++) {
+        if ((moment(new Date(year, month, date)).format("YYYY-MM-DD") == this.travels[i].startdate) || moment(moment(new Date(year, month, date)).format("YYYY-MM-DD")).isAfter(this.travels[i].startdate)) {
+          if ((moment(new Date(year, month, date)).format("YYYY-MM-DD") == this.travels[i].enddate) || moment(moment(new Date(year, month, date)).format("YYYY-MM-DD")).isBefore(this.travels[i].enddate)) {
+            if(this.travels[i].save == 1)
+              this.$set(showTravel, showTravel.length, this.travels[i]);
+          }
+        }
+      }
+      this.$emit("showPlan", showTravel);
+    },
+    check(year, month, date, i) {
+      if (this.planListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD")) == null) return false;
+      if (this.planListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD"))[i] != null) return true;
+      else return false;
+    },
+    pushSetList(diff, index, t) {
+      console.log("in", this.travels[t].startdate, this.travels[t].enddate, index);
+      const start = moment(this.travels[t].startdate);
+      this.planListMap.get(this.travels[t].startdate)[index] = 0;
+      this.planListMap.get(this.travels[t].enddate)[index] = 1;
+      // let title = this.travels[t].title;
+      if (diff % 2 == 1) { // 두칸에 제목 나눠 넣기 
+        for (let i = 1; i < diff; i++) {
+          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
+        }
+          
+      } else {
+        for (let i = 1; i < diff; i++) {
+          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
+        }
+      }
+    }, //날짜 차이, 넣을 div의 index, i번째 여행
     checkLength(){
       if(this.week.length == 7){
         this.$set(this.dates, this.dates.length, this.week);
@@ -79,13 +187,9 @@ export default{
       const lastMonthLastDay = new Date(this.year, this.month, 0).getDay();
       const thisMonthLastDate = new Date(this.year, this.month+1, 0).getDate();
       const nextMonthFirstDay = new Date(this.year, this.month+1).getDay();
-      // this.getFirstAndLastDate(this.month, this.year); // 달력의 전체 날짜를 출력하는 함수
       this.getPrevMonth(lastMonthLastDate, lastMonthLastDay);
       this.getThisMonth(thisMonthLastDate);
       this.getNextMonth(nextMonthFirstDay);
-
-      // return [this.lastMonthLastDate=lastMonthLastDate, this.lastMonthLastDay=lastMonthLastDay, 
-      // this.thisMonthLastDate=thisMonthLastDate, this.nextMonthFirstDay=nextMonthFirstDay];
     },
     beforeMonth(){
       this.dates = [];
@@ -112,21 +216,21 @@ export default{
     getPrevMonth(prevLastDate, prevLastDay){ //저번달 출력
       if(prevLastDay!==6){
         for(let date = prevLastDate-prevLastDay; date <= prevLastDate; date++){
-          this.$set(this.week, this.week.length, date);
+          this.$set(this.week, this.week.length, {date: date, month: this.month-1});
           this.checkLength();
         }
       }
     },
     getThisMonth(thisMonthLastDate){ //이번달 출력
       for(let date = 1; date<=thisMonthLastDate; date++){
-        this.$set(this.week, this.week.length, date);
+        this.$set(this.week, this.week.length, {date: date, month: this.month});
         this.checkLength();
       }
     },
     getNextMonth(nextMonthFirstDay){
       if(nextMonthFirstDay!==0){
         for(let date = 1 ; date <= 7-nextMonthFirstDay; date++){
-          this.$set(this.week, this.week.length, date);
+          this.$set(this.week, this.week.length, {date: date, month: this.month+1});
           this.checkLength();
         }
       }
@@ -135,6 +239,17 @@ export default{
 }
 </script>
 <style>
+#today{
+  margin: 0 auto;
+  border-radius: 20px 20px 20px 20px;
+  background-color: #5e72e4;
+  color: white;
+  width: 2rem;
+}
+#travel{
+  opacity: 0.4;
+  /* border-radius: 20px 0px 0px 20px; * 왼 위,오 위,오 아래, 왼 아래 */
+}
 *,
 *::before,
 *::after {
@@ -143,15 +258,6 @@ export default{
   box-sizing: border-box
 }
 
-/* body {
-  display: flex;
-  min-height: 100vh;
-  padding: 5vh 5vw;
-  color: #37474f;
-  line-height: 1.5;
-  font-family: Lato, sans-serif;
-  background-color: #cfd8dc;
-} */
 
 .note {
   font-size: calc(0.5vw + 0.75rem);
