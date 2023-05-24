@@ -89,7 +89,7 @@ export default {
     });
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
       this.hotpl = data;
-      this.src = `img/upload/${data.img}`;
+      this.src = `/img/upload/${data.img}`;
     });
   },
   components: {
@@ -132,7 +132,7 @@ export default {
         };
         this.map = new kakao.maps.Map(container, options);
 
-        var imageSrc = "img/markers/marker.png";
+        var imageSrc = "/img/markers/marker.png";
         // 마커 이미지의 이미지 크기 입니다
         var imageSize = new kakao.maps.Size(34, 35);
 

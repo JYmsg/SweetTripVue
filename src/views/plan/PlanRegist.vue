@@ -6,7 +6,7 @@
       <div class="col-lg-8 col-sm-8 m-0">
         <div id="map" style="width: 100%; height: 100%">
           <div class="btn m-3 p-0" style="background-color: black; height: 3rem; width: 3rem; z-index: 5;" @click="share = true">
-            <img src="img/icons/common/share2.png" style="width: 100%; height: 100%;">
+            <img src="/img/icons/common/share2.png" style="width: 100%; height: 100%;">
           </div>
 
         </div>
@@ -63,7 +63,7 @@
               <h5 style="color: white" class="m-2">찜한 장소가 없습니다.</h5>
             </div>
             <div id="buttons" class="mt-2" style="float: right">
-              <base-button class="btn-1 p-2" type="info">임시저장</base-button>
+              <base-button class="btn-1 p-2" type="info" @click="firstSubmitTravel()">임시저장</base-button>
               <base-button class="btn-1 p-2" type="primary" @click="submitTravel()">계획완료</base-button>
               <base-button class="btn-1 p-2" type="warning" @click="deleteTravel()">계획취소</base-button>
             </div>
@@ -570,7 +570,20 @@ export default {
 
       return content;
     },
+    firstSubmitTravel(){
+      this.travel.save = 0;
+      http
+        .put("/travelapi/travel", this.travel)
+        .then(({ data }) => {
+          alert("계획 생성 완료");
+          this.$router.push({ name: "PlanDetail", id: this.travel.id });
+        })
+        .catch((e) => {
+          alert("계획 생성 실패");
+        });
+    },
     submitTravel() {
+      this.travel.save = 1;
       http
         .put("/travelapi/travel", this.travel)
         .then(({ data }) => {

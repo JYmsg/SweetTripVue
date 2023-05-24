@@ -7,31 +7,8 @@
       <div class="container">
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
-            <div class="form-row mt-3 ml-4" v-if="loginUser.id == travel.user_id">
-              <base-dropdown tag="li" class="nav-item">
-                <a slot="title" href="#" class="nav-link" data-toggle="dropdown" role="button"> &#9776; </a>
-                <router-link :to="`/plan/regist/${travel.id}`" class="dropdown-item">수정</router-link>
-                <a href="#" class="dropdown-item" @click="deleteTravel()">삭제</a>
-              </base-dropdown>
-            </div>
-
-            <div class="form-row mt-3 ml-4 float-right" v-if="loginUser.id == travel.user_id" >
-            <!-- 카카오톡 공유하기 버튼 -->
-              <a id="kakaotalk-sharing-btn" href="javascript:;" @click="sendKakao()">
-                <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-                  alt="카카오톡 공유 보내기 버튼" />
-              </a>
-            </div>
-
-            <div class="form-row mt-3 ml-4 float-right" v-else>
-              <base-button type="info" outline class="m-3" @click="share = true">계획 따라하기</base-button>
-            </div>
-            <div class="row justify-content-center m-5" v-if="loginUser.id == travel.user_id">
+            <div class="row justify-content-center m-5">
               <h3> {{ travel.title }}에 대한 여행 계획</h3> <br>
-            </div>
-            <h5 v-if="!travel.save" class="float-right" style="color: red">최종 저장되지 않은 일정입니다.</h5>
-            <div class="row justify-content-center m-5" v-if="loginUser.id != travel.user_id">
-              <h3> {{ travel.user_id }}님의 여행 일정</h3>
             </div>
             <div class="row justify-content-center mt-5 mb-5 ml-2" style="width: 100%; height: 50vh;">
               <div id="map" style="width: 100%; height: 100%;">
@@ -45,8 +22,8 @@
                 </div>
                 <div class="mt-5 ml-1 mb-3" v-for="(place, idx) in day.places" :key="place.content_id">
                   <div :style="'height: 7.5rem; width: 10rem; border-radius: 40px 80px / 80px 40px; border: 2px solid '+colors[index]" class="float-left" @click="moveCenter(place)">
-                    <i v-show="open && place.memo != null && place.memo != ''" class="ni ni-tag float-right"></i>
-                    <base-button v-show="open" type="" outline class="p-1 float-right mr-1" style="height:1.5rem; font-size:10px; min-width:1.5rem;" @click="detailMore(index, place)">+</base-button>
+                    <i v-show="place.memo != null && place.memo != ''" class="ni ni-tag float-right"></i>
+                    <base-button  type="" outline class="p-1 float-right mr-1" style="height:1.5rem; font-size:10px; min-width:1.5rem;" @click="detailMore(index, place)">+</base-button>
                     <p class="p-3">{{ idx+1 }}번째 장소
                     <br>
                     {{ place.title }}
@@ -107,66 +84,6 @@
             </base-button>
           </template>
           </modal>
-        <modal :show.sync="share">
-          <h6 slot="header" class="modal-title ml-2" id="modal-title-default">
-            <i class="ni ni-cloud-download-95 mr-3"></i>여행 정보를 입력해주세요.
-          </h6>
-          <!-- DataPickers -->
-          <div class="col-md-11 mt-4 mt-md-0">
-            <p class="d-block text-uppercase font-weight-bold mb-2">여행 제목</p>
-            <div class="row align-items-center">
-              <div class="col">
-                <base-input placeholder="Title" v-model="title" addon-left-icon="ni ni-tag"> </base-input>
-              </div>
-            </div>
-          </div>
-          <date-pickers :date="date" @sendDate="sendDate"></date-pickers>
-
-          <div class="col-md-11 mt-4 mt-md-0">
-            <p class="d-block text-uppercase font-weight-bold mb-2">초대 하기</p>
-            <div v-if="adds != []">
-              <div v-for="(add, index) in adds" :key="add.id">
-                <base-input
-                  addon-right-icon="ni ni-fat-remove"
-                  class="text-center"
-                  readonly
-                  @click="removeUser(index)"
-                  :value="add.id + '(' + add.email + ')'"
-                >
-                </base-input>
-              </div>
-            </div>
-            <b-dropdown class="dropdown mt-4 mt-md-0" text="다른 유저의 아이디를 검색하여 추가하세요.">
-              <div class="m-2" style="width: 20rem">
-                <b-input-group class="m-1">
-                  <b-input placeholder="Title" v-model="keyword" addon-left-icon="ni ni-tag"> </b-input>
-                  <b-input-group-append>
-                    <b-button @click="searchId"><i class="ni ni-check-bold"></i></b-button>
-                  </b-input-group-append>
-                </b-input-group>
-              </div>
-              <b-dropdown-divider></b-dropdown-divider>
-              <div v-if="users.length">
-                <div v-for="(user, index) in users" :key="user.id">
-                  <base-input
-                    addon-right-icon="ni ni-fat-add"
-                    class="p-2"
-                    readonly
-                    @click="addUser(index)"
-                    :value="user.id + '(' + user.email + ')'"
-                  >
-                  </base-input>
-                </div>
-              </div>
-              <div v-else><p class="ml-5 mb-0">조건에 맞는 유저가 존재하지 않습니다.</p></div>
-            </b-dropdown>
-          </div>
-
-          <template slot="footer">
-            <base-button type="primary" @click="makeTravel()">Make a Plan</base-button>
-            <base-button type="link" class="ml-auto" @click="share = false">Close </base-button>
-          </template>
-        </modal>
   </div>
 </template>
 <script>
@@ -178,19 +95,17 @@ import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import { mapState } from 'vuex';
 import moment from "moment";
-const DatePickers = () => import("../components/JavascriptComponents/SingleDatePickers");
 export default {
   components:{
     Modal,
     BaseDropdown,
     flatPicker,
-    DatePickers,
     VueTyper,
     moment,
   },
   data() {
     return {
-      open: false,
+      open: true,
       travel: null,
       share : false,
       map: null,
@@ -264,10 +179,6 @@ export default {
     ...mapState(["loginUser"]),
   },
   mounted() {
-    if (!this.loginUser) {
-      alert("로그인해야 볼 수 있습니다.")
-      this.$router.push({ name: "home" });
-    }
     if (!window.kakao || !window.kakao.maps) {
       const script = document.createElement("script");
       script.src = "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=610bf6cd591542b654c6ececbd7a14b0&libraries=services,clusterer,drawing";
@@ -276,10 +187,7 @@ export default {
       });
       document.head.appendChild(script);
     } else {
-      this.initMap();
-    }
-    if(!window.Kakao || !window.Kakao.isInitialized()){
-       window.Kakao.init("610bf6cd591542b654c6ececbd7a14b0");
+        this.initMap();
     }
   },
   async created(){
@@ -302,13 +210,6 @@ export default {
           this.$set(this.distanceOverlays, i, null);
           this.$set(this.clickLines, i, null);
       }
-      if(this.loginUser.id == this.travel.user_id) this.open = true;
-      if(!this.travel.save){
-        if(this.loginUser.id != this.travel.user_id) {
-          alert("잘못된 접근입니다.");
-          this.$router.push({name: "PlanList"});
-        }
-      }
     })
     .catch((e)=>{
       alert("여행 정보를 가져오는데 실패했습니다.");
@@ -316,17 +217,6 @@ export default {
     });
   },
   methods: {
-    sendKakao() {
-      // 메시지 공유 함수
-      console.log("test")
-      Kakao.Share.createCustomButton({
-        container: '#kakaotalk-sharing-btn',
-        templateId: 94220,
-        templateArgs: {
-          PID: this.travel.id
-        },
-      });
-    },
     searchId() {
       this.users = [];
       http

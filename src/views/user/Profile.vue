@@ -8,13 +8,14 @@
         <card shadow class="card-profile mt--300" no-body>
           <div class="px-4">
             <div class="row justify-content-center">
-              <div class="col-lg-3 order-lg-2">
+              <div class="col-lg-3 order-lg-2 mr-5">
                 <div class="card-profile-image">
                   <a href="#">
-                    <img v-lazy="'img/logo/boarding-pass.png'" class="rounded-circle" />
+                    <img v-lazy="'/img/logo/boarding-pass.png'" class="rounded-circle" />
                   </a>
                 </div>
               </div>
+              <div class="btn"></div>
               <div class="col-lg-4 order-lg-3 text-lg-right align-self-lg-center">
                 <div class="card-profile-actions py-4 mt-lg-0">
                 </div>
@@ -23,6 +24,9 @@
                 <div class="card-profile-stats d-flex justify-content-center">
                 </div>
               </div>
+            </div>
+            <div style="height: 5rem;">
+
             </div>
             <div class="text-center mt-5">
               <h3>

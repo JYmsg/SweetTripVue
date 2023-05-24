@@ -25,12 +25,14 @@ import HotplModify from "@/views/hotpl/HotplModify.vue";
 import PlanView from "@/views/PlanView.vue";
 import PlanList from "@/views/plan/PlanList.vue";
 import PlanRegist from "@/views/plan/PlanRegist.vue";
+import PlanShare from "@/views/plan/PlanShare.vue";
 import PlanDetail from "@/views/plan/PlanDetail.vue";
 
 Vue.use(Router);
 
 export default new Router({
   linkExactActiveClass: "active",
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -39,6 +41,13 @@ export default new Router({
         header: AppHeader,
         default: Components,
         footer: AppFooter,
+      },
+    },
+    {
+      path: "/plan/share/:id",
+      name: "share",
+      components: {
+        default: PlanShare,
       },
     },
     {

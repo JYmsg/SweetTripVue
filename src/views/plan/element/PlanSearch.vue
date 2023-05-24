@@ -176,7 +176,7 @@ export default {
                 this.markers[i].setMap(null);
             }
             this.markers = [];
-            var imageSrc = "img/markers/location-pin.png"
+            var imageSrc = "/img/markers/location-pin.png"
             var imageSize = new kakao.maps.Size(34, 35);
             var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
             var bounds = new kakao.maps.LatLngBounds();

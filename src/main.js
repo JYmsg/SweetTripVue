@@ -27,12 +27,7 @@ Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
 
-import VCalendar from "v-calendar";
-
-// Use v-calendar & v-date-picker components
-Vue.use(VCalendar, {
-  componentPrefix: "vc", // Use <vc-calendar /> instead of <v-calendar />
-});
+Kakao.init('610bf6cd591542b654c6ececbd7a14b0');
 
 Vue.config.productionTip = false;
 Vue.use(Argon);

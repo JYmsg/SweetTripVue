@@ -93,7 +93,7 @@
                   <div class="ml-2" style="text-align: left; color: red">이미지 1개 필수</div>
                   <input type="file" id="upload-image" accept="image/*" @change="fileChange($event.target.files)" />
                   <!-- <label for="upload-image">
-                    <img src="img/brand/aa.jpg" />
+                    <img src="/img/brand/aa.jpg" />
                   </label> -->
                 </div>
                 <div class="row m-3" style="justify-content: right">
