@@ -15,6 +15,7 @@
                   </a>
                 </div>
               </div>
+              <div class="btn"></div>
               <div class="col-lg-4 order-lg-3 text-lg-right align-self-lg-center">
                 <div class="card-profile-actions py-4 mt-lg-0">
                 </div>
