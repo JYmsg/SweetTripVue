@@ -10,11 +10,16 @@
             <div class="row justify-content-center mt-5">
               <h3>🔥 핫 플레이스 🔥</h3>
             </div>
+            <div class="row justify-content-center mt-1">
+              <h2>{{ area }}</h2>
+            </div>
             <div class="row m-1" style="justify-content: right">
               <b-button variant="outline-info" size="sm" @click="moveMain">목록으로</b-button>
             </div>
             <div v-if="getUser" class="row m-1" style="justify-content: right">
-              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
+              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">
+                핫 플레이스 등록하기
+              </div>
             </div>
             <b-form-group>
               <b-form-radio-group
@@ -59,10 +64,15 @@
                                 </div>
                                 <span
                                   class="h5"
-                                  v-if="controll[index] && change[index] === 'img/icons/noti/heart-color.png'"
+                                  v-if="
+                                    controll[index] &&
+                                    change[index] === 'img/icons/noti/heart-color.png'
+                                  "
                                   >좋아요 {{ hotpl.good + 1 }}</span
                                 >
-                                <span class="h5" v-else-if="!controll[index]">좋아요 {{ hotpl.good }}</span>
+                                <span class="h5" v-else-if="!controll[index]"
+                                  >좋아요 {{ hotpl.good }}</span
+                                >
                                 <br />
                                 <span class="h5">조회수 {{ hotpl.hit }}</span>
                               </div>
@@ -129,6 +139,17 @@ export default {
         { text: "조회수", value: "hit" },
       ],
       search: "",
+      areas_si: [
+        { value: 1, text: "서울" },
+        { value: 2, text: "인천" },
+        { value: 3, text: "대전" },
+        { value: 4, text: "대구" },
+        { value: 5, text: "광주" },
+        { value: 6, text: "부산" },
+        { value: 7, text: "울산" },
+        { value: 8, text: "세종특별자치시" },
+      ],
+      area: "",
     };
   },
   computed: {
@@ -155,6 +176,9 @@ export default {
     },
   },
   created() {
+    if (this.$route.params.id !== 0) {
+      this.area = this.areas_si[this.$route.params.id - 1].text;
+    }
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/write_time/none`).then(({ data }) => {
       this.hotpls = data;
       for (let i = 0; i < data.length; i++) {

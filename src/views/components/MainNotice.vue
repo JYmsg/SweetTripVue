@@ -20,7 +20,13 @@
         <div class="inner__right">
           <h5 class="mr-1">이용 방법이 궁금하신가요</h5>
           <div class="toggle" v-if="!show">
-            <b-icon icon="question" font-scale="2" variant="dark" @click="showToggle" style="cursor: pointer"></b-icon>
+            <b-icon
+              icon="question"
+              font-scale="2"
+              variant="dark"
+              @click="showToggle"
+              style="cursor: pointer"
+            ></b-icon>
           </div>
           <div class="toggle" v-else>
             <b-icon
@@ -34,9 +40,40 @@
         </div>
       </div>
     </div>
-    <div v-if="show">
-      <h2>Toggle</h2>
-    </div>
+    <transition name="slide-fade">
+      <div
+        v-if="show"
+        class="row p-5"
+        style="
+          justify-content: space-between;
+          background-color: rgba(249, 249, 239, 0.944);
+          align-items: center;
+        "
+      >
+        <div class="method" style="background-color: #f56e6e; color: white">
+          <div class="txt">
+            등록된 <br />핫플레이스와 일정을 <br />
+            구경해 보세요
+          </div>
+        </div>
+        <b-icon icon="arrow-right" font-scale="2"></b-icon>
+        <div class="method" style="background-color: #ff9364; color: white">
+          <div class="txt">관광지를 찾아서 <br />나만의 장소로 찜!</div>
+        </div>
+        <b-icon icon="arrow-right" font-scale="2"></b-icon>
+        <div class="method" style="background-color: #ffc81e; color: white">
+          <div class="txt">여행 정보를 입력하고 <br />함께 여행할 친구를 <br />선택하세요</div>
+        </div>
+        <b-icon icon="arrow-right" font-scale="2"></b-icon>
+        <div class="method" style="background-color: #4ca975; color: white">
+          <div class="txt">날짜,시간별 계획을 <br />세워보세요</div>
+        </div>
+        <b-icon icon="arrow-right" font-scale="2"></b-icon>
+        <div class="method" style="background-color: #3caeff; color: white">
+          <div class="txt">내가 세운 일정을 <br />확인하세요</div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -87,7 +124,7 @@ export default {
   },
   methods: {
     showToggle() {
-      if (this.show === false) this.show = true;
+      if (!this.show) this.show = true;
       else this.show = false;
     },
   },
@@ -95,6 +132,33 @@ export default {
 </script>
 
 <style scoped>
+.slide-fade-enter-active {
+  transition: all 0.8s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.method {
+  position: relative;
+  width: 12rem;
+  height: 10rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.method .txt {
+  position: absolute;
+  text-align: center;
+  font-size: 18px;
+}
+
 .inner {
   width: 1100px;
   margin: 0 auto;
@@ -137,7 +201,8 @@ export default {
   right: 0;
   width: 50%;
   height: 100%;
-  background-color: #c4d1da;
+  /* background-color: #c4d1da; */
+  background-color: rgba(249, 249, 239, 0.944);
 }
 .notice-line .inner {
   height: 62px;
