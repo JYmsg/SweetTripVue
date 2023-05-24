@@ -146,7 +146,7 @@ img {
   width: calc(640px * 3 + 50px);
   height: 500px;
   position: absolute;
-  top: 40px;
+  top: 1rem;
   left: 50%;
   margin-left: calc((640px * 3 + 50px) / -2);
 }

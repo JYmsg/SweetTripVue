@@ -67,7 +67,7 @@
                     <input
                       type="text"
                       v-model="inputkey"
-                      class="mr-2 w-25"
+                      class="mr-2"
                       placeholder="인증코드를 입력하세요."
                     />
                     <small style="color: green" v-if="code != null && inputkey == code"
