@@ -157,7 +157,14 @@ export default {
       })
     },
     searchPlaces() {
-      http.post("/placeapi/place/list/"+this.loginUser.id, {
+      let id;
+      if (this.loginUser == null) {
+        id = 'admin';
+      }
+      else {
+        id = this.loginUser.id;
+      }
+      http.post("/placeapi/place/list/" + id, {
         sido_code: this.area,
         gugun_code: this.gugun,
         contentTypeId: this.type,
@@ -245,7 +252,9 @@ export default {
       this.$router.push({ name: "profile" });
     },
     inCart(index, placeId) {
-      console.log("incart", this.loginUser)
+      if (this.loginUser == null) {
+        alert("로그인해야 가능합니다.")
+      }
       http.post("/cartapi/cart/place", {
         user_id: this.loginUser.id,
         attraction_id : placeId
@@ -253,7 +262,7 @@ export default {
         this.$set(this.filters, index, "/img/icons/noti/car-full.png");
         this.$set(this.carts, this.cartslength, this.places[placeId]);
         this.cartslength += 1;
-        alert("장바구니 담았습니다.")
+        alert("나만의 장소에 담았습니다.")
       }).catch(() => {
         alert("실패")
       })
