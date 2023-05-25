@@ -29,10 +29,12 @@
                 {{ date.date }}
               </div>
               <div v-if="check(year, date.month, date.date, 0)" id="travel" :style="'height: 1.5rem; width: 100%; font-size: 15px; color: black; background-color:'+ colors[returnColor(year, date.month, date.date, 0)]" class="mt-1">
+              {{ titleCheck(year, date.month, date.date, 0) }}
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
               </div>
-              <div v-if="check(year, date.month, date.date, 1)" id="travel" :style="'height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black; background-color:'+colors[returnColor(year, date.month, date.date, 1)]">
+              <div v-if="check(year, date.month, date.date, 1)" id="travel" :style="'height: 1.5rem; width: 100%; font-size: 15px; color: black; background-color:'+colors[returnColor(year, date.month, date.date, 1)]">
+              {{ titleCheck(year, date.month, date.date, 1) }}
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
               </div>
@@ -64,10 +66,11 @@ export default {
       week: [],
       dates: [],
       days: ["일", "월", "화", "수", "목", "금", "토"],
-      colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
+      colors: ['#c6dbda', '#fee1e8', '#fed7c3', '#f6eac2', '#ecd5e3', '#fcb9aa', '#ffdbcc', '#a2e1db', '#eceae4'], //9가지 색
       dateColors: ['#e83e8c', 'black', 'black', 'black', 'black', 'black', '#5e72e4'],
       travels: [],
       planListMap : null,
+      titleListMap : null,
     }
   },
   computed: {
@@ -86,6 +89,7 @@ export default {
     await http.get("/travelapi/travel/list/" + this.loginUser.id)
     .then(({ data }) => {
       this.planListMap = new Map();
+      this.titleListMap = new Map();
       for (let i = 0; i < data.length; i++){
         this.$set(this.travels, i, data[i]);
         if (!this.travels[i].save) continue;
@@ -158,6 +162,15 @@ export default {
       }
       this.$emit("showPlan", showTravel);
     },
+    titleCheck(year, month, date, i) {
+      if (this.titleListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD")) == null) return '';
+      if (this.titleListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD"))[i] == null) return '';
+      let title = this.titleListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD"))[i];
+      if (title.length > 8) {
+        return title.substr(0, 8);
+      }
+      return title;
+    },
     check(year, month, date, i) {
       if (this.planListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD")) == null) return false;
       if (this.planListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD"))[i] != null) return true;
@@ -167,6 +180,10 @@ export default {
       console.log("in", this.travels[t].startdate, this.travels[t].enddate, index);
       const start = moment(this.travels[t].startdate);
       var color = Math.floor(Math.random() * 9);
+      if (this.titleListMap.get(this.travels[t].startdate) == null) {
+        this.titleListMap.set(this.travels[t].startdate,[null, null]);
+      }
+      this.titleListMap.get(this.travels[t].startdate)[index] = this.travels[t].title;
       this.planListMap.get(this.travels[t].startdate)[index] = color;
       this.planListMap.get(this.travels[t].enddate)[index] = color;
       // let title = this.travels[t].title;
@@ -251,10 +268,7 @@ export default {
   color: white;
   width: 2rem;
 }
-#travel{
-  opacity: 0.4;
-  /* border-radius: 20px 0px 0px 20px; * 왼 위,오 위,오 아래, 왼 아래 */
-}
+
 *,
 *::before,
 *::after {
