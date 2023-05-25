@@ -71,7 +71,6 @@
 <script>
 import http from "@/util/http-common.js"
 import { mapState } from "vuex"
-//https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B1%EB%A1%9C%20634/place/1431214756?c=19,0,0,0,dh&isCorrectAnswer=true 상세 위치 검색
 export default {
     data() {
       return {

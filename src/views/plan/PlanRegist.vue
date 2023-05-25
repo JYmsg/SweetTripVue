@@ -458,7 +458,7 @@ export default {
             this.deleteCircleDot(i);
             this.deleteDistnce(i);
           }
-          this.map.setBounds(bounds);
+          if(bounds != null && this.map != null) this.map.setBounds(bounds);
         }
       }
     },
@@ -509,7 +509,6 @@ export default {
       } else {
         this.$set(this.dots[index], this.dots[index].length, { circle: circleOverlay, distance: null });
       }
-      // console.log("dots = ", this.dots);
     },
     deleteClickLine(index) {
       if (this.clickLines[index]) {
@@ -621,7 +620,6 @@ export default {
         endtime: this.movePlace.endtime,
       };
       this.movePlace = null;
-      // this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
       if (this.isIn(index, p)) {
         this.$set(this.travel.days[index].places, this.travel.days[index].places.length, p);
         if (this.moveDelete != null) {
@@ -631,7 +629,6 @@ export default {
           this.moveDelete = null;
           this.movePlace = null;
           this.idx = null;
-          // this.travel.days[this.moveDelete]
         }
         this.onlyLine(index);
       } else {
