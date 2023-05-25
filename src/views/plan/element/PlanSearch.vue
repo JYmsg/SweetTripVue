@@ -11,7 +11,7 @@
             <b-form-select v-model="type" :options="types" class="me-2 rounded-4"></b-form-select>
         </div>
     </div>
-    <div class="searchlist p-2 pb-0 row justify-content-center no-gutters">
+    <!-- <div class="searchlist p-2 pb-0 row justify-content-center no-gutters">
         <div class="col-lg-8 col-sm-8 m-1">
             <base-input placeholder="Search" v-model="search"
                 addon-left-icon="ni ni-zoom-split-in">
@@ -20,7 +20,7 @@
         <div class="col-lg-3 col-sm-3 mt-1">
             <base-button class="btn-1" type="neutral" @click="searchAll">검색</base-button>
         </div>
-    </div>
+    </div> -->
     <div id="days" style="overflow:auto; height: 85vh;" class="mt-0">
         <div id="attractions" v-for="(place, index) in places" :key="place.content_id" class="p-1">
             <div v-if="place" @click="detail(index)" @mouseover="mouseOver(index)" @mouseout="mapCustomOverlay.setMap(null); map.setLevel(5);">
