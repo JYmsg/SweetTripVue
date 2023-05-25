@@ -28,11 +28,11 @@
               <div v-else :style="'color:'+ dateColors[SecondIdx]">
                 {{ date.date }}
               </div>
-              <div v-if="check(year, date.month, date.date, 0)" id="travel" style="background-color: #dc3545; height: 1.5rem; width: 100%; font-size: 15px; color: black;" class="mt-1">
+              <div v-if="check(year, date.month, date.date, 0)" id="travel" :style="'height: 1.5rem; width: 100%; font-size: 15px; color: black; background-color:'+ colors[returnColor(year, date.month, date.date, 0)]" class="mt-1">
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
               </div>
-              <div v-if="check(year, date.month, date.date, 1)" id="travel" style="background-color: #fd7e14; height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black">
+              <div v-if="check(year, date.month, date.date, 1)" id="travel" :style="'height: 1.5rem; width: 100%; font-size: 15px;letter-spacing: 5px; color: black; background-color:'+colors[returnColor(year, date.month, date.date, 1)]">
               </div>
               <div v-else id="travel" style="height: 1.5rem; width: 100%; font-size: 15px; color: black;">
               </div>
@@ -64,6 +64,7 @@ export default {
       week: [],
       dates: [],
       days: ["일", "월", "화", "수", "목", "금", "토"],
+      colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6610f2', '#6f42c1'], //9가지 색
       dateColors: ['#e83e8c', 'black', 'black', 'black', 'black', 'black', '#5e72e4'],
       travels: [],
       planListMap : null,
@@ -100,6 +101,9 @@ export default {
     })
   },
   methods: {
+    returnColor(year, month, date, index) {
+      return this.planListMap.get(moment(new Date(year, month, date)).format("YYYY-MM-DD"))[index];
+    },
     isView(i, idx, diff) { //i번째 travel을 idx번째 div에 띄울수 있는지
       if (this.planListMap.get(this.travels[i].startdate) == null) {
         this.planListMap.set(this.travels[i].startdate, [null, null]);
@@ -162,17 +166,18 @@ export default {
     pushSetList(diff, index, t) {
       console.log("in", this.travels[t].startdate, this.travels[t].enddate, index);
       const start = moment(this.travels[t].startdate);
-      this.planListMap.get(this.travels[t].startdate)[index] = 0;
-      this.planListMap.get(this.travels[t].enddate)[index] = 1;
+      var color = Math.floor(Math.random() * 9);
+      this.planListMap.get(this.travels[t].startdate)[index] = color;
+      this.planListMap.get(this.travels[t].enddate)[index] = color;
       // let title = this.travels[t].title;
       if (diff % 2 == 1) { // 두칸에 제목 나눠 넣기 
         for (let i = 1; i < diff; i++) {
-          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
+          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = color;
         }
           
       } else {
         for (let i = 1; i < diff; i++) {
-          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = 2;
+          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = color;
         }
       }
     }, //날짜 차이, 넣을 div의 index, i번째 여행
