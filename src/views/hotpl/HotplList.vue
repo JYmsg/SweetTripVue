@@ -17,9 +17,7 @@
               <b-button variant="outline-info" size="sm" @click="moveMain">목록으로</b-button>
             </div>
             <div v-if="getUser" class="row m-1" style="justify-content: right">
-              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">
-                핫 플레이스 등록하기
-              </div>
+              <div class="btn btn-outline-warning float-end d-inline" @click="hotplRegist">핫 플레이스 등록하기</div>
             </div>
             <b-form-group>
               <b-form-radio-group
@@ -64,15 +62,10 @@
                                 </div>
                                 <span
                                   class="h5"
-                                  v-if="
-                                    controll[index] &&
-                                    change[index] === 'img/icons/noti/heart-color.png'
-                                  "
+                                  v-if="controll[index] && change[index] === '/img/icons/noti/heart-color.png'"
                                   >좋아요 {{ hotpl.good + 1 }}</span
                                 >
-                                <span class="h5" v-else-if="!controll[index]"
-                                  >좋아요 {{ hotpl.good }}</span
-                                >
+                                <span class="h5" v-else-if="!controll[index]">좋아요 {{ hotpl.good }}</span>
                                 <br />
                                 <span class="h5">조회수 {{ hotpl.hit }}</span>
                               </div>
@@ -176,7 +169,7 @@ export default {
     },
   },
   created() {
-    if (this.$route.params.id !== 0) {
+    if (this.$route.params.id != 0) {
       this.area = this.areas_si[this.$route.params.id - 1].text;
     }
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}/write_time/none`).then(({ data }) => {
