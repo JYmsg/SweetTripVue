@@ -176,6 +176,7 @@ export default {
     },
   },
   created() {
+    console.log(this.$route.params.id);
     if (this.$route.params.id !== 0) {
       this.area = this.areas_si[this.$route.params.id - 1].text;
     }

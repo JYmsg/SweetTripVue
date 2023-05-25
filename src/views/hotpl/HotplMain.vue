@@ -156,6 +156,7 @@ export default {
   },
   methods: {
     moveList(sido_code) {
+      console.log(sido_code);
       this.$router.push({
         name: "HotplList",
         params: { id: sido_code },
