@@ -21,7 +21,7 @@ export default new Vuex.Store({
     },
     LOGOUT(state) {
       state.loginUser = null;
-      router.go(0);
+      router.push({ name: "home" });
     },
   },
   actions: {
