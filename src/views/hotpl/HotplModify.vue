@@ -25,10 +25,6 @@
                 required
               ></textarea>
             </div>
-            <div class="mb-4">
-              <label for="file" class="h5">사진 첨부</label>
-              <input type="file" class="form-control" id="file" name="file" accept="image/*" />
-            </div>
             <div class="row m-3" style="justify-content: right">
               <b-button @click="updateHotpl">수정 완료</b-button>
               <b-button @click="moveList">취소</b-button>
@@ -51,7 +47,7 @@ export default {
         id: 0,
         title: "",
         content: "",
-        img: "",
+        sido_code: 0,
       },
     };
   },
@@ -62,8 +58,6 @@ export default {
           id: this.hotpl.id,
           title: this.hotpl.title,
           content: this.hotpl.content,
-          // img: this.hotpl.img,
-          img: "...png",
         })
         .then(({ data }) => {
           let msg = "수정 처리시 문제가 발생했습니다.";
@@ -83,10 +77,7 @@ export default {
   },
   created() {
     http.get(`/hotplaceapi/hotplace/${this.$route.params.id}`).then(({ data }) => {
-      this.hotpl.id = this.$route.params.id;
-      this.hotpl.title = data.title;
-      this.hotpl.content = data.content;
-      this.hotpl.img = data.img;
+      this.hotpl = data;
     });
   },
 };

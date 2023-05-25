@@ -11,7 +11,7 @@
               <h3>핫 플레이스 등록하기</h3>
             </div>
             <div class="row">
-              <div class="col m-3" v-if="initMap">
+              <div class="col mb-3" v-if="initMap">
                 <div id="map" style="width: 100%; height: 100%; position: relative; overflow: hidden"></div>
                 <div id="menu_wrap" style="background-color: white; opacity: 0.8">
                   <div class="option">
@@ -60,14 +60,17 @@
                 </div>
               </div>
               <div class="col">
-                <div class="mb-4" id="write-place-div">
+                <div class="mb-2" id="write-place-div">
                   <div>
+                    <div class="ml-2" style="text-align: left">지역을 선택하세요</div>
                     <b-form-select v-model="selected" :options="areas" class="me-2 rounded-4"></b-form-select>
                   </div>
+                </div>
+                <div class="mb-2" id="write-location-div">
                   <div class="ml-2" style="text-align: left">위치</div>
                   <input type="text" v-model="title" class="form-control" readonly />
                 </div>
-                <div class="mb-4" id="write-title-div">
+                <div class="mb-2" id="write-title-div">
                   <div class="ml-2" style="text-align: left">제목</div>
                   <input
                     type="text"
@@ -78,7 +81,7 @@
                     v-model="hotpl.title"
                   />
                 </div>
-                <div class="mb-4" id="write-content-div">
+                <div class="mb-2" id="write-content-div">
                   <div class="ml-2" style="text-align: left">내용</div>
                   <textarea
                     placeholder="내용을입력하세요"
@@ -89,12 +92,12 @@
                     name="content"
                   ></textarea>
                 </div>
-                <div class="mb-4">
+                <div class="mb-2">
                   <div class="ml-2" style="text-align: left; color: red">이미지 1개 필수</div>
+                  <div class="ml-2" style="text-align: left; color: red">
+                    이미지는 수정이 불가능하니 신중하게 등록해 주세요.
+                  </div>
                   <input type="file" id="upload-image" accept="image/*" @change="fileChange($event.target.files)" />
-                  <!-- <label for="upload-image">
-                    <img src="/img/brand/aa.jpg" />
-                  </label> -->
                 </div>
                 <div class="row m-3" style="justify-content: right">
                   <b-button @click="createHotpl">등록 완료</b-button>

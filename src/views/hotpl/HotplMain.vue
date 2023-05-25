@@ -37,7 +37,7 @@
                           img-top
                           style="max-width: 20rem; cursor: pointer"
                           class="mb-2"
-                          @click="moveList(areas_si[index].value)"
+                          @click="moveList(index)"
                         >
                           <b-card-title>{{ areas_si[index].text }}</b-card-title>
                           <b-card-text> {{ hotplcnt[areas_si[index].value] }} 개의 게시물 </b-card-text>
@@ -48,7 +48,7 @@
                           img-top
                           style="max-width: 20rem; cursor: pointer"
                           class="mb-2"
-                          @click="moveList(areas_si[index + 1].value)"
+                          @click="moveList(index + 1)"
                         >
                           <b-card-title>{{ areas_si[index + 1].text }}</b-card-title>
                           <b-card-text> {{ hotplcnt[areas_si[index + 1].value] }} 개의 게시물 </b-card-text>
@@ -59,7 +59,7 @@
                           img-top
                           style="max-width: 20rem; cursor: pointer"
                           class="mb-2"
-                          @click="moveList(areas_si[index + 2].value)"
+                          @click="moveList(index + 2)"
                         >
                           <b-card-title>{{ areas_si[index + 2].text }}</b-card-title>
                           <b-card-text> {{ hotplcnt[areas_si[index + 2].value] }} 개의 게시물 </b-card-text>
@@ -155,11 +155,12 @@ export default {
     }
   },
   methods: {
-    moveList(sido_code) {
-      console.log(sido_code);
+    moveList(index) {
+      console.log(index);
+      let id = this.areas_si[index].value;
       this.$router.push({
         name: "HotplList",
-        params: { id: sido_code },
+        params: { id: id }
       });
     },
   },
