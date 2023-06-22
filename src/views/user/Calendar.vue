@@ -112,7 +112,7 @@ export default {
       if (this.planListMap.get(this.travels[i].startdate) == null) {
         this.planListMap.set(this.travels[i].startdate, [null, null]);
         const start = moment(this.travels[i].startdate);
-        for (let j = 1; j < diff; j++){
+        for (let j = 1; j <= diff; j++){
           if (this.planListMap.get(start.clone().add(j, 'days').format("YYYY-MM-DD")) == null) {
             this.planListMap.set(start.clone().add(j, 'days').format("YYYY-MM-DD"), [null, null]);
           } else {
@@ -187,15 +187,9 @@ export default {
       this.planListMap.get(this.travels[t].startdate)[index] = color;
       this.planListMap.get(this.travels[t].enddate)[index] = color;
       // let title = this.travels[t].title;
-      if (diff % 2 == 1) { // 두칸에 제목 나눠 넣기 
-        for (let i = 1; i < diff; i++) {
-          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = color;
-        }
-          
-      } else {
-        for (let i = 1; i < diff; i++) {
-          this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = color;
-        }
+      for (let i = 1; i <= diff; i++) {
+        console.log(start.clone().add(i, 'days').format("YYYY-MM-DD"));
+        this.planListMap.get(start.clone().add(i, 'days').format("YYYY-MM-DD"))[index] = color;
       }
     }, //날짜 차이, 넣을 div의 index, i번째 여행
     checkLength(){
